@@ -41,6 +41,8 @@ interface VivansContextType {
   carePlans: CarePlanItem[]
   toggleCarePlan: (id: string) => void
   addCarePlanItem: (item: Omit<CarePlanItem, 'id'>) => void
+  updateCarePlanPeriod: (id: string, period: 'manha' | 'tarde' | 'noite') => void
+  reorderCarePlans: (reordered: CarePlanItem[]) => void
   meals: MealRecord[]
   addMealRecord: (meal: Omit<MealRecord, 'id'>) => void
   rateMealRecord: (id: string, ratings: [number, number, number]) => void
@@ -130,6 +132,18 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
     }
     setCarePlans((prev) => [...prev, item])
     notify('Ação adicionada ao plano de cuidado com sucesso.')
+  }
+
+  const updateCarePlanPeriod = (id: string, newPeriod: 'manha' | 'tarde' | 'noite') => {
+    const periodLabels = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' }
+    setCarePlans((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, period: newPeriod } : item)),
+    )
+    notify(`Ação movida para o período da ${periodLabels[newPeriod]}.`)
+  }
+
+  const reorderCarePlans = (reordered: CarePlanItem[]) => {
+    setCarePlans(reordered)
   }
 
   const addMealRecord = (newMeal: Omit<MealRecord, 'id'>) => {
@@ -396,6 +410,8 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         carePlans,
         toggleCarePlan,
         addCarePlanItem,
+        updateCarePlanPeriod,
+        reorderCarePlans,
         meals,
         addMealRecord,
         rateMealRecord,

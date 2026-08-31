@@ -55,14 +55,14 @@ export default function PatientEvolution() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Acompanhamento Longitudinal de Evolução · Instituto Vivans · Dados de Adesão, Peso e Biossinais" />
+      <SimulationDisclaimer text="Evolução e Indicadores de Saúde · Instituto Vivans" />
 
       {/* Header */}
       <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-              Evolução Longitudinal
+              Evolução
             </span>
             <StatusBadge tone="green">Dr. Guilherme Martins</StatusBadge>
           </div>
@@ -70,8 +70,7 @@ export default function PatientEvolution() {
             Sua Trajetória de Saúde
           </h1>
           <p className="mt-1 text-xs sm:text-sm text-[#5a736a] max-w-xl">
-            Acompanhamento contínuo de adesão ao plano, variação de peso, ritmo de sono e movimento
-            diário.
+            Acompanhamento de adesão ao plano, variação de peso, ritmo de sono e movimento diário.
           </p>
         </div>
 

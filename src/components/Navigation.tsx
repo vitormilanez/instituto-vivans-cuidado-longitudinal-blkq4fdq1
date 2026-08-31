@@ -54,7 +54,7 @@ export function NavigationHeader() {
               Instituto Vivans
             </p>
             <p className="hidden text-xs font-medium text-[#698078] sm:block">
-              Cuidado Longitudinal e Longevidade
+              Instituto de Saúde e Longevidade
             </p>
           </div>
         </Link>

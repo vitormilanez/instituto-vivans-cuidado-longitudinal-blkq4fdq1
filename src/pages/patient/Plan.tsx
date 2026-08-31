@@ -9,29 +9,71 @@ import {
 } from '@/components/CommonUI'
 import {
   CheckCircle2,
-  Clock,
   Sparkles,
   ShieldCheck,
-  AlertCircle,
   Plus,
   Target,
-  ArrowRight,
-  Flame,
-  Calendar,
-  ChevronRight,
   Check,
-  HelpCircle,
   X,
   Info,
-  Layers,
+  Sun,
+  Sunset,
+  Moon,
+  Clock,
+  ArrowRightLeft,
 } from 'lucide-react'
-import { CarePlanItem } from '@/data/mockData'
+import { CarePlanItem, ActionPeriod } from '@/data/mockData'
+
+interface PeriodConfig {
+  id: 'manha' | 'tarde' | 'noite'
+  label: string
+  timeRange: string
+  icon: typeof Sun
+  toneBg: string
+  toneBorder: string
+  toneText: string
+  accentColor: string
+}
+
+const PERIOD_CONFIGS: PeriodConfig[] = [
+  {
+    id: 'manha',
+    label: 'Manhã',
+    timeRange: '06h00 às 12h00 · Acordar e desjejum',
+    icon: Sun,
+    toneBg: 'bg-[#fffcf2]',
+    toneBorder: 'border-[#f5e4bc]',
+    toneText: 'text-[#8a5b0f]',
+    accentColor: '#d48b11',
+  },
+  {
+    id: 'tarde',
+    label: 'Tarde',
+    timeRange: '12h00 às 18h00 · Almoço e lanche vespertino',
+    icon: Sunset,
+    toneBg: 'bg-[#fef8f4]',
+    toneBorder: 'border-[#fbd8c7]',
+    toneText: 'text-[#9c4d21]',
+    accentColor: '#c95b28',
+  },
+  {
+    id: 'noite',
+    label: 'Noite',
+    timeRange: '18h00 às 23h00 · Jantar e higiene do sono',
+    icon: Moon,
+    toneBg: 'bg-[#f2f6fc]',
+    toneBorder: 'border-[#d0e0f5]',
+    toneText: 'text-[#204a7a]',
+    accentColor: '#3a6ea5',
+  },
+]
 
 export default function PatientPlan() {
   const {
     carePlans = [],
     toggleCarePlan,
     addCarePlanItem,
+    updateCarePlanPeriod,
     returnJourney,
     scheduledCheckins = [],
     completeScheduledCheckin,
@@ -41,11 +83,16 @@ export default function PatientPlan() {
 
   const [newActionText, setNewActionText] = useState('')
   const [newActionCategory, setNewActionCategory] = useState('Hábitos alimentares')
+  const [newActionPeriod, setNewActionPeriod] = useState<'manha' | 'tarde' | 'noite'>('manha')
   const [newActionRationale, setNewActionRationale] = useState('')
   const [isAdding, setIsAdding] = useState(false)
   const [filterType, setFilterType] = useState<'todos' | 'medico' | 'ia'>('todos')
-  const [filterPeriod, setFilterPeriod] = useState<'todos' | 'manha' | 'tarde' | 'noite'>('todos')
+  const [selectedPeriodTab, setSelectedPeriodTab] = useState<'todos' | 'manha' | 'tarde' | 'noite'>(
+    'todos',
+  )
   const [showAdherenceExplainModal, setShowAdherenceExplainModal] = useState(false)
+  const [draggedItemId, setDraggedItemId] = useState<string | null>(null)
+  const [dragOverPeriod, setDragOverPeriod] = useState<'manha' | 'tarde' | 'noite' | null>(null)
 
   // Separating Approved vs AI Suggestions
   const medicalActions = carePlans.filter((p) => p.type === 'medical')
@@ -78,7 +125,7 @@ export default function PatientPlan() {
       category: newActionCategory,
       type: 'medical',
       completed: false,
-      period: 'livre',
+      period: newActionPeriod,
       timingStatus: 'pendente_hoje',
       frequency: 'Ação pessoal adicionada pela paciente',
       doctorRationale:
@@ -89,20 +136,47 @@ export default function PatientPlan() {
     setIsAdding(false)
   }
 
-  // Filtered lists
-  const filteredMedical = medicalActions.filter((item) => {
-    if (filterPeriod !== 'todos' && item.period !== filterPeriod) return false
-    return true
-  })
+  // Quick Move period handler (click-based mobile friendly)
+  const handleMoveAction = (itemId: string, targetPeriod: 'manha' | 'tarde' | 'noite') => {
+    updateCarePlanPeriod(itemId, targetPeriod)
+  }
 
-  const filteredAi = aiSuggestedActions.filter((item) => {
-    if (filterPeriod !== 'todos' && item.period && item.period !== filterPeriod) return false
-    return true
-  })
+  // HTML5 Drag and Drop Handlers (works on desktop / tablets)
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    e.dataTransfer.setData('text/plain', id)
+    setDraggedItemId(id)
+  }
+
+  const handleDragOver = (e: React.DragEvent, period: 'manha' | 'tarde' | 'noite') => {
+    e.preventDefault()
+    if (dragOverPeriod !== period) {
+      setDragOverPeriod(period)
+    }
+  }
+
+  const handleDragLeave = () => {
+    setDragOverPeriod(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, period: 'manha' | 'tarde' | 'noite') => {
+    e.preventDefault()
+    const id = e.dataTransfer.getData('text/plain') || draggedItemId
+    if (id) {
+      updateCarePlanPeriod(id, period)
+    }
+    setDraggedItemId(null)
+    setDragOverPeriod(null)
+  }
+
+  // Helper to get normalized period (defaulting 'livre' to 'manha')
+  const normalizePeriod = (period?: ActionPeriod): 'manha' | 'tarde' | 'noite' => {
+    if (period === 'tarde' || period === 'noite') return period
+    return 'manha'
+  }
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Programa de Cuidado Longitudinal · Instituto Vivans · Orientações Validadas vs. Sugestões de Copiloto" />
+      <SimulationDisclaimer text="Orientações Médicas e Ações de Cuidado · Instituto Vivans" />
 
       {/* Hero Header: Objetivo da Marina nas palavras dela */}
       <section className="overflow-hidden rounded-3xl border border-[#bfe4d8] bg-gradient-to-br from-[#ebf6f2] via-[#f7faf8] to-white p-5 sm:p-7 shadow-[0_8px_24px_rgba(11,123,104,0.06)]">
@@ -117,7 +191,7 @@ export default function PatientPlan() {
             </div>
 
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#17372f]">
-              Seu Programa de Cuidado
+              Seu Plano de Cuidado
             </h1>
 
             {/* Marina's objective in her own words */}
@@ -223,7 +297,7 @@ export default function PatientPlan() {
             </button>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-[1fr_200px]">
+          <div className="grid gap-3 sm:grid-cols-[1fr_180px_160px]">
             <div>
               <label className="block text-[11px] font-bold text-[#17372f] mb-1">
                 Qual é a ação que você deseja acompanhar?
@@ -236,6 +310,21 @@ export default function PatientPlan() {
                 className="w-full min-h-[44px] rounded-xl border border-[#dfe8e3] bg-white px-3.5 py-2 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
                 required
               />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-[#17372f] mb-1">
+                Período do Dia
+              </label>
+              <select
+                value={newActionPeriod}
+                onChange={(e) => setNewActionPeriod(e.target.value as any)}
+                className="w-full min-h-[44px] rounded-xl border border-[#dfe8e3] bg-white px-3 py-2 text-xs font-semibold text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+              >
+                <option value="manha">🌅 Manhã</option>
+                <option value="tarde">🌤️ Tarde</option>
+                <option value="noite">🌙 Noite</option>
+              </select>
             </div>
 
             <div>
@@ -304,6 +393,16 @@ export default function PatientPlan() {
 
           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1.5 max-w-xl">
+              <div className="flex items-center gap-2">
+                <span className="rounded-md bg-[#0b7b68] px-2 py-0.5 text-[11px] font-bold text-white uppercase tracking-wider">
+                  {normalizePeriod(primaryAction.period) === 'noite'
+                    ? '🌙 Noite'
+                    : normalizePeriod(primaryAction.period) === 'tarde'
+                      ? '🌤️ Tarde'
+                      : '🌅 Manhã'}
+                </span>
+                <span className="text-xs text-[#9cc7ba]">• {primaryAction.category}</span>
+              </div>
               <h3 className="font-serif text-xl sm:text-2xl font-bold text-white leading-tight">
                 {primaryAction.action}
               </h3>
@@ -313,8 +412,6 @@ export default function PatientPlan() {
               </p>
               <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#9cc7ba] pt-1">
                 <span>Frequência: {primaryAction.frequency || 'Diário'}</span>
-                <span>•</span>
-                <span>Categoria: {primaryAction.category}</span>
               </div>
             </div>
 
@@ -383,179 +480,315 @@ export default function PatientPlan() {
 
         {/* Period filter */}
         <div className="flex items-center gap-1.5 text-xs">
-          <span className="text-[11px] text-[#698078] hidden sm:inline">Período:</span>
+          <span className="text-[11px] text-[#698078] hidden sm:inline">Filtrar período:</span>
           {(['todos', 'manha', 'tarde', 'noite'] as const).map((p) => (
             <button
               key={p}
               type="button"
-              onClick={() => setFilterPeriod(p)}
+              onClick={() => setSelectedPeriodTab(p)}
               className={`min-h-[32px] rounded-lg px-2.5 text-[11px] font-bold capitalize transition-all ${
-                filterPeriod === p
+                selectedPeriodTab === p
                   ? 'bg-[#edf7f4] text-[#0b7b68] border border-[#b9d8cf]'
                   : 'text-[#60766f] hover:bg-white border border-transparent'
               }`}
             >
-              {p === 'todos' ? 'Qualquer hora' : p}
+              {p === 'todos'
+                ? 'Todos os horários'
+                : p === 'manha'
+                  ? '🌅 Manhã'
+                  : p === 'tarde'
+                    ? '🌤️ Tarde'
+                    : '🌙 Noite'}
             </button>
           ))}
         </div>
       </div>
 
-      {/* SECTION 1: ORIENTAÇÕES APROVADAS PELO MÉDICO */}
-      {(filterType === 'todos' || filterType === 'medico') && (
-        <section className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-2">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="size-5 text-[#0b7b68]" />
-              <h2 className="font-serif text-xl font-bold text-[#17372f]">
-                Orientações Aprovadas pelo Médico
-              </h2>
-              <span className="rounded-full bg-[#ebf6f2] border border-[#bfe4d8] px-2.5 py-0.5 text-xs font-bold text-[#075f50]">
-                Vigentes ({completedMedical}/{totalMedical})
-              </span>
-            </div>
-            <p className="text-xs text-[#698078]">
-              Prescrito e validado pelo Dr. Guilherme Martins
+      {/* REORGANIZAÇÃO DE AÇÕES POR PERÍODO DO DIA (MANHÃ / TARDE / NOITE) */}
+      <div className="space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-2">
+          <div>
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#17372f]">
+              Rotina Diária por Período
+            </h2>
+            <p className="text-xs text-[#60766f] mt-0.5">
+              Organize suas ações conforme a sua rotina real. Arraste ou use os botões discretos
+              para mover entre os períodos.
             </p>
           </div>
+          <span className="rounded-full bg-[#f4f7f5] border border-[#dfe8e3] px-3 py-1 text-xs text-[#526b63] font-semibold flex items-center gap-1">
+            <ArrowRightLeft className="size-3 text-[#0b7b68]" />
+            <span>Reordenação flexível</span>
+          </span>
+        </div>
 
-          <div className="space-y-3">
-            {filteredMedical.map((item) => {
-              const isDelayed = !item.completed && item.timingStatus === 'atrasado'
-              return (
-                <article
-                  key={item.id}
-                  className={`rounded-3xl border p-4.5 sm:p-5 transition-all shadow-2xs ${
-                    item.completed
-                      ? 'border-[#b9d8cf] bg-[#f4faf7]'
-                      : isDelayed
-                        ? 'border-[#f8deb0] bg-[#fffcf5]'
-                        : 'border-[#dfe8e3] bg-white hover:border-[#9fc9bd]'
-                  }`}
-                >
-                  <div className="flex items-start gap-3.5">
-                    {/* Interactive Checkbox with >=44px touch target */}
-                    <button
-                      type="button"
-                      onClick={() => toggleCarePlan(item.id)}
-                      className={`grid size-9 shrink-0 place-items-center rounded-2xl border transition-all cursor-pointer ${
-                        item.completed
-                          ? 'border-[#0b7b68] bg-[#0b7b68] text-white shadow-xs'
-                          : 'border-[#b7c7c1] bg-white text-transparent hover:border-[#0b7b68]'
-                      }`}
-                      aria-label={`Marcar ${item.action} como ${item.completed ? 'pendente' : 'concluída'}`}
+        {PERIOD_CONFIGS.filter(
+          (pConf) => selectedPeriodTab === 'todos' || selectedPeriodTab === pConf.id,
+        ).map((periodConf) => {
+          const PeriodIcon = periodConf.icon
+          const periodId = periodConf.id
+
+          // Actions in this period
+          const periodMedicalActions = medicalActions.filter(
+            (item) => normalizePeriod(item.period) === periodId,
+          )
+          const periodAiActions = aiSuggestedActions.filter(
+            (item) => normalizePeriod(item.period) === periodId,
+          )
+
+          const isDropTarget = dragOverPeriod === periodId
+          const totalInPeriod =
+            (filterType === 'ia' ? 0 : periodMedicalActions.length) +
+            (filterType === 'medico' ? 0 : periodAiActions.length)
+
+          return (
+            <section
+              key={periodId}
+              onDragOver={(e) => handleDragOver(e, periodId)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, periodId)}
+              className={`rounded-3xl border-2 transition-all p-5 sm:p-6 space-y-4 ${
+                isDropTarget
+                  ? 'border-[#0b7b68] bg-[#edf7f4] shadow-md ring-2 ring-[#0b7b68]/20'
+                  : 'border-[#dfe8e3] bg-white shadow-sm'
+              }`}
+            >
+              {/* Period Header */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf2ef] pb-3">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`grid size-11 place-items-center rounded-2xl border ${periodConf.toneBg} ${periodConf.toneBorder} ${periodConf.toneText} shadow-2xs`}
+                  >
+                    <PeriodIcon className="size-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-serif text-lg sm:text-xl font-bold text-[#17372f]">
+                        {periodConf.label}
+                      </h3>
+                      <span className="rounded-full bg-[#f4f7f5] border border-[#dfe8e3] px-2.5 py-0.5 text-xs font-bold text-[#526b63]">
+                        {totalInPeriod} {totalInPeriod === 1 ? 'ação' : 'ações'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#698078]">{periodConf.timeRange}</p>
+                  </div>
+                </div>
+
+                <span className="hidden sm:inline text-[11px] font-medium text-[#698078]">
+                  Solte aqui para mover para a {periodConf.label}
+                </span>
+              </div>
+
+              {/* Empty state for period */}
+              {totalInPeriod === 0 && (
+                <div className="rounded-2xl border-2 border-dashed border-[#dfe8e3] bg-[#fbfcfb] p-6 text-center text-xs text-[#789087] space-y-1">
+                  <p className="font-semibold text-[#17372f]">
+                    Nenhuma ação alocada para a {periodConf.label}
+                  </p>
+                  <p>
+                    Use os botões de mover em outras ações para distribuí-las neste horário da sua
+                    rotina.
+                  </p>
+                </div>
+              )}
+
+              {/* MEDICAL ACTIONS IN THIS PERIOD */}
+              {(filterType === 'todos' || filterType === 'medico') &&
+                periodMedicalActions.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#0b7b68]">
+                      <ShieldCheck className="size-4 text-[#0b7b68]" />
+                      <span>Orientações Aprovadas pelo Dr. Guilherme</span>
+                    </div>
+
+                    {periodMedicalActions.map((item) => {
+                      const isDelayed = !item.completed && item.timingStatus === 'atrasado'
+                      return (
+                        <article
+                          key={item.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, item.id)}
+                          className={`rounded-2xl border p-4 sm:p-4.5 transition-all shadow-2xs cursor-grab active:cursor-grabbing ${
+                            item.completed
+                              ? 'border-[#b9d8cf] bg-[#f4faf7]'
+                              : isDelayed
+                                ? 'border-[#f8deb0] bg-[#fffcf5]'
+                                : 'border-[#dfe8e3] bg-[#fafcfb] hover:border-[#9fc9bd]'
+                          }`}
+                        >
+                          <div className="flex items-start gap-3.5">
+                            {/* Interactive Checkbox with >=44px touch target */}
+                            <button
+                              type="button"
+                              onClick={() => toggleCarePlan(item.id)}
+                              className={`grid size-9 shrink-0 place-items-center rounded-2xl border transition-all cursor-pointer ${
+                                item.completed
+                                  ? 'border-[#0b7b68] bg-[#0b7b68] text-white shadow-xs'
+                                  : 'border-[#b7c7c1] bg-white text-transparent hover:border-[#0b7b68]'
+                              }`}
+                              aria-label={`Marcar ${item.action} como ${item.completed ? 'pendente' : 'concluída'}`}
+                            >
+                              <Check className="size-5 stroke-[3]" />
+                            </button>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <span className="text-xs font-bold text-[#0b7b68]">
+                                  {item.category}
+                                </span>
+                                <div className="flex items-center gap-1.5">
+                                  {item.completed ? (
+                                    <StatusBadge tone="green">
+                                      Concluído{' '}
+                                      {item.lastCompletedAt ? `· ${item.lastCompletedAt}` : ''}
+                                    </StatusBadge>
+                                  ) : isDelayed ? (
+                                    <StatusBadge tone="amber">Atenção · Pendente</StatusBadge>
+                                  ) : (
+                                    <StatusBadge tone="blue">Em dia · Hoje</StatusBadge>
+                                  )}
+                                </div>
+                              </div>
+
+                              <h4
+                                className={`mt-1 font-serif text-base font-bold leading-snug ${
+                                  item.completed ? 'text-[#45655c] line-through' : 'text-[#17372f]'
+                                }`}
+                              >
+                                {item.action}
+                              </h4>
+
+                              {item.doctorRationale && (
+                                <p className="mt-1.5 text-xs text-[#526b63] leading-relaxed">
+                                  <strong>Por que fazer:</strong> {item.doctorRationale}
+                                </p>
+                              )}
+
+                              {/* Mobile-First Reorder Controls (Move to other periods) */}
+                              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-black/5 pt-2.5">
+                                <div className="text-[11px] text-[#698078]">
+                                  Frequência: <strong>{item.frequency || 'Diário'}</strong>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[11px] text-[#698078] hidden sm:inline mr-1">
+                                    Mover para:
+                                  </span>
+                                  {(['manha', 'tarde', 'noite'] as const).map((targetP) => {
+                                    const isCurrent = normalizePeriod(item.period) === targetP
+                                    const targetLabel =
+                                      targetP === 'manha'
+                                        ? '🌅 Manhã'
+                                        : targetP === 'tarde'
+                                          ? '🌤️ Tarde'
+                                          : '🌙 Noite'
+                                    return (
+                                      <button
+                                        key={targetP}
+                                        type="button"
+                                        disabled={isCurrent}
+                                        onClick={() => handleMoveAction(item.id, targetP)}
+                                        className={`min-h-[30px] rounded-lg px-2 text-[10px] font-bold transition-all ${
+                                          isCurrent
+                                            ? 'bg-[#17372f] text-white cursor-default'
+                                            : 'border border-[#dfe8e3] bg-white text-[#526b63] hover:border-[#0b7b68] hover:text-[#0b7b68] cursor-pointer'
+                                        }`}
+                                        title={`Mover para ${targetLabel}`}
+                                      >
+                                        {targetLabel}
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
+                )}
+
+              {/* AI SUGGESTIONS IN THIS PERIOD */}
+              {(filterType === 'todos' || filterType === 'ia') && periodAiActions.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#a06015]">
+                      <Sparkles className="size-4 text-[#c57d19]" />
+                      <span>Sugestões do Copiloto (IA)</span>
+                    </div>
+                    <AiDraftBadge
+                      status="Rascunho gerado com IA - requer validação médica"
+                      variant="compact"
+                    />
+                  </div>
+
+                  {periodAiActions.map((item) => (
+                    <article
+                      key={item.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, item.id)}
+                      className="rounded-2xl border border-[#e6c98c] bg-[#fffcf5] p-4 space-y-2 shadow-2xs cursor-grab active:cursor-grabbing"
                     >
-                      <Check className="size-5 stroke-[3]" />
-                    </button>
-
-                    <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-xs font-bold text-[#0b7b68]">{item.category}</span>
-                        <div className="flex items-center gap-1.5">
-                          {item.completed ? (
-                            <StatusBadge tone="green">
-                              Concluído {item.lastCompletedAt ? `· ${item.lastCompletedAt}` : ''}
-                            </StatusBadge>
-                          ) : isDelayed ? (
-                            <StatusBadge tone="amber">Atenção · Pendente</StatusBadge>
-                          ) : (
-                            <StatusBadge tone="blue">Em dia · Hoje</StatusBadge>
-                          )}
-                        </div>
+                        <span className="text-xs font-bold text-[#a06015]">{item.category}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#fef3db] text-[#8d4e0b] px-2 py-0.5">
+                          Rascunho para Consulta
+                        </span>
                       </div>
 
-                      <h3
-                        className={`mt-1 font-serif text-base sm:text-lg font-bold leading-snug ${
-                          item.completed ? 'text-[#45655c] line-through' : 'text-[#17372f]'
-                        }`}
-                      >
-                        {item.action}
-                      </h3>
+                      <h4 className="font-serif text-base font-bold text-[#17372f]">
+                        💡 {item.action}
+                      </h4>
 
-                      {item.doctorRationale && (
-                        <p className="mt-1.5 text-xs text-[#526b63] leading-relaxed">
-                          <strong>Por que fazer:</strong> {item.doctorRationale}
+                      {item.aiDraftNote && (
+                        <p className="text-xs text-[#60766f] leading-relaxed italic">
+                          “{item.aiDraftNote}”
                         </p>
                       )}
 
-                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-black/5 pt-2 text-[11px] text-[#698078]">
-                        <span>
-                          Frequência: <strong>{item.frequency || 'Diário'}</strong>
-                        </span>
-                        <span className="text-[#0b7b68] font-medium">Validado em consulta</span>
+                      {/* Move buttons for AI action */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#f0ebe0] pt-2 text-[11px] text-[#825b0b]">
+                        <span className="font-semibold">Requer validação médica</span>
+
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-[#825b0b] hidden sm:inline mr-1">
+                            Mover para:
+                          </span>
+                          {(['manha', 'tarde', 'noite'] as const).map((targetP) => {
+                            const isCurrent = normalizePeriod(item.period) === targetP
+                            const targetLabel =
+                              targetP === 'manha'
+                                ? '🌅 Manhã'
+                                : targetP === 'tarde'
+                                  ? '🌤️ Tarde'
+                                  : '🌙 Noite'
+                            return (
+                              <button
+                                key={targetP}
+                                type="button"
+                                disabled={isCurrent}
+                                onClick={() => handleMoveAction(item.id, targetP)}
+                                className={`min-h-[28px] rounded-lg px-2 text-[10px] font-bold transition-all ${
+                                  isCurrent
+                                    ? 'bg-[#8d4e0b] text-white cursor-default'
+                                    : 'border border-[#e6c98c] bg-white text-[#8d4e0b] hover:bg-[#fef3db] cursor-pointer'
+                                }`}
+                              >
+                                {targetLabel}
+                              </button>
+                            )
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* SECTION 2: SUGESTÕES DO COPILOTO (IA) — SEPARAÇÃO VISUAL TOTAL */}
-      {(filterType === 'todos' || filterType === 'ia') && (
-        <section className="space-y-4 pt-4">
-          <div className="rounded-3xl border border-[#f0d59c] bg-[#fffbf2] p-5 sm:p-6 shadow-sm space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#f3deaf] pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="size-5 text-[#c57d19]" />
-                <h2 className="font-serif text-xl font-bold text-[#70480e]">
-                  Sugestões do Copiloto (IA) · Aguardando Validação
-                </h2>
-              </div>
-              <AiDraftBadge
-                status="Rascunho gerado com IA - requer validação médica"
-                variant="highlight"
-              />
-            </div>
-
-            <div className="rounded-2xl bg-white/80 p-3.5 text-xs text-[#805f24] leading-relaxed border border-[#f0d59c]/50 space-y-1">
-              <p className="font-bold text-[#70480e] flex items-center gap-1.5">
-                <Info className="size-3.5 text-[#a37628]" />
-                <span>O que são estas sugestões?</span>
-              </p>
-              <p>
-                O copiloto clínico identificou padrões nas suas respostas de sono e diário e
-                preparou estas ideias como <strong>rascunhos de apoio</strong>. Elas ainda{' '}
-                <strong>não são orientações médicas aprovadas</strong> e serão discutidas com o Dr.
-                Guilherme Martins no seu próximo retorno.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {filteredAi.map((item) => (
-                <article
-                  key={item.id}
-                  className="rounded-2xl border border-[#e6c98c] bg-white p-4.5 space-y-2.5 shadow-2xs"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-[#a06015]">{item.category}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#fef3db] text-[#8d4e0b] px-2 py-0.5">
-                      Rascunho para Consulta
-                    </span>
-                  </div>
-
-                  <h3 className="font-serif text-base font-bold text-[#17372f]">
-                    💡 {item.action}
-                  </h3>
-
-                  {item.aiDraftNote && (
-                    <p className="text-xs text-[#60766f] leading-relaxed italic">
-                      “{item.aiDraftNote}”
-                    </p>
-                  )}
-
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#f0ebe0] pt-2 text-[11px] text-[#825b0b]">
-                    <span>Status: Em análise pelo médico</span>
-                    <span className="font-bold">Não substitui conduta prescrita</span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          )
+        })}
+      </div>
 
       {/* CHECK-INS PROGRAMADOS DO RETORNO */}
       <section className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
@@ -610,7 +843,7 @@ export default function PatientPlan() {
                 <button
                   type="button"
                   onClick={() => completeScheduledCheckin(chk.id, 'Realizado', 'Check-in pontual')}
-                  className="mt-3 min-h-[40px] w-full rounded-xl bg-[#0b7b68] py-2 text-xs font-bold text-white hover:bg-[#086555] transition-colors"
+                  className="mt-3 min-h-[40px] w-full rounded-xl bg-[#0b7b68] py-2 text-xs font-bold text-white hover:bg-[#086555] transition-colors cursor-pointer"
                 >
                   Registrar Agora
                 </button>

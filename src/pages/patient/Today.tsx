@@ -92,7 +92,7 @@ export default function PatientToday() {
   return (
     <div className="space-y-6">
       {/* Simulation Notice */}
-      <SimulationDisclaimer text="Área da Paciente · Marina Costa · Cuidado Longitudinal Instituto Vivans" />
+      <SimulationDisclaimer text="Protótipo Demonstrativo · Instituto Vivans" />
 
       {/* Greeting & Header with Clear Objective */}
       <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -339,7 +339,7 @@ export default function PatientToday() {
               <StatusBadge tone="green">Confirmada</StatusBadge>
             </div>
             <p className="mt-2.5 text-xs text-[#60766f] leading-relaxed">
-              Dr. Guilherme Martins · Retorno longitudinal de 30 min por vídeo.
+              Dr. Guilherme Martins · Retorno de 30 min por vídeo.
             </p>
 
             <div className="mt-4 rounded-2xl bg-[#f4f7f5] p-3 text-xs space-y-1 text-[#45655c]">

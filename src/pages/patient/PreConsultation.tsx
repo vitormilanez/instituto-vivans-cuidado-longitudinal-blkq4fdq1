@@ -149,7 +149,7 @@ export default function PatientPreConsultation() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <SimulationDisclaimer text="Pré-Consulta Longitudinal Guiada · Instituto Vivans" />
+      <SimulationDisclaimer text="Pré-Consulta Guiada · Instituto Vivans" />
 
       {/* 9-Step Progress Header Indicator */}
       <div className="flex items-center justify-between border-b border-[#dfe8e3] pb-3 text-xs text-[#698078]">

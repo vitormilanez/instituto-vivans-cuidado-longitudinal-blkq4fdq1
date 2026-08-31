@@ -306,7 +306,7 @@ export default function PatientDiary() {
                   Avaliação enviada com sucesso ao Dr. Guilherme!
                 </p>
                 <p className="text-[11px] text-[#526a62] mt-0.5">
-                  O registro foi compilado no prontuário longitudinal.
+                  O registro foi compilado no seu prontuário.
                 </p>
               </div>
             ) : (

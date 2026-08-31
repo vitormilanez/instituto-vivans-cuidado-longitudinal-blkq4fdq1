@@ -143,9 +143,9 @@ export function UrgentCareWarning({ className }: { className?: string }) {
     >
       <Info className="size-4 shrink-0 text-[#0b7b68] mt-0.5" />
       <p className="leading-relaxed">
-        <strong>Aviso informativo:</strong> Este aplicativo é para acompanhamento longitudinal e{' '}
-        <strong>não substitui atendimento médico de urgência ou emergência</strong>. Em situações
-        agudas ou graves, procure imediatamente um pronto-atendimento ou ligue 192.
+        <strong>Aviso informativo:</strong> Este aplicativo é para acompanhamento contínuo de
+        hábitos e <strong>não substitui atendimento médico de urgência ou emergência</strong>. Em
+        situações agudas ou graves, procure imediatamente um pronto-atendimento ou ligue 192.
       </p>
     </div>
   )

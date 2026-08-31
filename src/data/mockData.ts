@@ -215,14 +215,25 @@ export interface MealRecord {
   feedbackSent?: boolean
 }
 
+export interface WeeklyAdherenceSummaryData {
+  completedActions: number
+  totalActions: number
+  adherencePct: number
+  trendPct: number
+  nextFriendlyStep: string
+  periodLabel: string
+  aiDraftNote?: string
+}
+
 export interface MessageItem {
   id: string
-  sender: 'doctor' | 'patient' | 'system' | 'ai_draft'
+  sender: 'doctor' | 'patient' | 'system' | 'ai_draft' | 'team_summary'
   author: string
   time: string
   content: string
   isAiDraft?: boolean
   status?: 'enviada' | 'revisando' | 'aguardando_aprovacao'
+  weeklySummary?: WeeklyAdherenceSummaryData
 }
 
 export interface ClinicalReport {
@@ -1762,6 +1773,25 @@ export const initialMeals: MealRecord[] = [
 ]
 
 export const initialMessages: MessageItem[] = [
+  {
+    id: 'msg-team-summary',
+    sender: 'team_summary',
+    author: 'Equipe Instituto Vivans',
+    time: 'Hoje · 08:00',
+    content:
+      'Olá, Marina! Preparamos o seu resumo semanal de adesão com muito carinho. Você concluiu 4 de 5 ações desta semana, mantendo uma excelente consistência de 82% (+6% vs. início). Nesta semana, que tal focar no lanche vespertino e na caminhada leve matinal? Seguimos juntos!',
+    status: 'enviada',
+    weeklySummary: {
+      completedActions: 4,
+      totalActions: 5,
+      adherencePct: 82,
+      trendPct: 6,
+      nextFriendlyStep:
+        'Nesta semana, que tal focar no ajuste do lanche vespertino às 16h30 e na caminhada leve matinal?',
+      periodLabel: 'Semana 4 · 18 a 25 de Agosto',
+      aiDraftNote: 'Rascunho de métricas estruturado com IA e revisado pela equipe médica.',
+    },
+  },
   {
     id: 'msg-1',
     sender: 'doctor',
