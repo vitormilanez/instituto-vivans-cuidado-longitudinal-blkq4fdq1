@@ -1,8 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
-import { Calendar, Video, Clock, CheckCircle2, FileText, ArrowRight, Sparkles } from 'lucide-react'
+import { StatusBadge, SimulationDisclaimer, UrgentCareWarning } from '@/components/CommonUI'
+import {
+  Calendar,
+  Video,
+  Clock,
+  CheckCircle2,
+  FileText,
+  ArrowRight,
+  Sparkles,
+  ShieldCheck,
+  Check,
+} from 'lucide-react'
 
 export default function PatientAppointments() {
   const { appointments, preConsultation } = useVivans()
@@ -17,7 +27,7 @@ export default function PatientAppointments() {
       type: 'Primeira Consulta · Longevidade e Emagrecimento',
       doctor: 'Dr. Guilherme Martins',
       summary:
-        'Definição das metas de peso (80kg -> 72kg), início do plano de saciedade noturna e solicitação de exames laboratoriais.',
+        'Definição das metas ponderais (80 kg -> 72 kg), alinhamento do protocolo de saciedade noturna e solicitação de exames laboratoriais.',
       documents: ['Síntese da Consulta (PDF)', 'Plano Inicial v1.0'],
     },
     {
@@ -32,35 +42,35 @@ export default function PatientAppointments() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
       <SimulationDisclaimer text="Agenda e Histórico de Consultas · Instituto Vivans" />
 
       {/* Header */}
       <section>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-          Consultas e Retornos
-        </p>
-        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-[#17372f]">
-          Seus Atendimentos com o Dr. Guilherme
+        <div className="flex items-center gap-2">
+          <StatusBadge tone="green">Acompanhamento Médico</StatusBadge>
+          <span className="text-xs text-[#5e776e]">Dr. Guilherme Martins</span>
+        </div>
+        <h1 className="mt-2 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#17372f]">
+          Consultas &amp; Retornos
         </h1>
-        <p className="mt-1 text-sm text-[#60766f]">
-          Acompanhe suas consultas agendadas, pré-consulta conversacional e prontuários
-          pós-atendimento.
+        <p className="mt-0.5 text-xs sm:text-sm text-[#5a736a]">
+          Acompanhe suas consultas agendadas, pré-consulta e histórico de orientações médicas.
         </p>
       </section>
 
-      {/* Upcoming Consultation Hero */}
-      <article className="rounded-3xl border border-[#9fc9bd] bg-white p-6 sm:p-7 shadow-[0_12px_34px_rgba(28,55,47,0.06)]">
+      {/* Upcoming Consultation Hero Card */}
+      <article className="rounded-3xl border border-[#9fc9bd] bg-white p-5 sm:p-7 shadow-[0_12px_34px_rgba(28,55,47,0.06)] space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf2ef] pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="grid size-10 place-items-center rounded-2xl bg-[#e8f4f0] text-[#0b7b68]">
+          <div className="flex items-center gap-3">
+            <div className="grid size-11 place-items-center rounded-2xl bg-[#e8f4f0] text-[#0b7b68]">
               <Calendar className="size-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#0b7b68]">
                 Próxima Consulta Agendada
               </p>
-              <h2 className="font-serif text-2xl font-bold text-[#17372f]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#17372f]">
                 Hoje, 25 de agosto · 10:30
               </h2>
             </div>
@@ -68,16 +78,17 @@ export default function PatientAppointments() {
           <StatusBadge tone="green">Confirmada</StatusBadge>
         </div>
 
-        <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-xs text-[#60766f]">
+            <div className="flex items-center gap-2 text-xs text-[#5e776e]">
               <Clock className="size-4 text-[#0b7b68]" />
-              <span>Duração estimada: 30 minutos · Modalidade: Vídeo ao vivo</span>
+              <span>Duração: 30 minutos · Teleconsulta segura</span>
             </div>
             <p className="text-xs sm:text-sm text-[#45655c] leading-relaxed">
-              <strong>Objetivo registrado:</strong> “{preConsultation.objective}”
+              <strong>Objetivo alinhado:</strong> “{preConsultation.objective}”
             </p>
 
+            {/* Pre-consultation Status Box */}
             <div className="rounded-2xl border border-[#dfe8e3] bg-[#f8faf9] p-4 text-xs space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-[#17372f]">Status da Pré-consulta:</span>
@@ -85,7 +96,7 @@ export default function PatientAppointments() {
                   {preConsultation.completed ? 'Enviada e Vinculada' : 'Pendente de envio'}
                 </StatusBadge>
               </div>
-              <p className="text-[#698078]">
+              <p className="text-[#698078] leading-relaxed">
                 {preConsultation.completed
                   ? 'O Dr. Guilherme já recebeu a síntese do seu sono e saciedade para guiar a consulta.'
                   : 'Preencha a pré-consulta para que o médico conheça suas prioridades antes de entrar na sala.'}
@@ -93,43 +104,43 @@ export default function PatientAppointments() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center gap-3">
+          <div className="flex flex-col justify-center gap-2.5">
             <Link
               to="/medico/consulta/apt-marina"
-              className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#0b7b68] px-6 text-sm font-bold text-white shadow-md hover:bg-[#096656] transition-colors"
+              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-[#0b7b68] px-6 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#096656] transition-colors"
             >
               <Video className="size-4" />
               <span>Entrar na Sala Virtual</span>
             </Link>
             <Link
               to="/paciente/pre-consulta"
-              className="flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors"
             >
               <Sparkles className="size-4 text-[#0b7b68]" />
               <span>
                 {preConsultation.completed
                   ? 'Ver Resumo da Pré-Consulta'
-                  : 'Fazer Pré-Consulta Estruturada'}
+                  : 'Iniciar Pré-Consulta Estruturada'}
               </span>
-            </Link>{' '}
+            </Link>
           </div>
         </div>
       </article>
 
       {/* History Timeline */}
       <section className="space-y-4">
-        <h3 className="font-serif text-xl font-bold text-[#17372f]">Histórico de Consultas</h3>
+        <h2 className="font-serif text-xl font-bold text-[#17372f]">Histórico de Atendimentos</h2>
 
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {pastAppointments.map((past) => (
-            <div
+            <article
               key={past.id}
-              className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-3"
+              className="rounded-3xl border border-[#dfe8e3] bg-white p-5 sm:p-6 shadow-sm space-y-3"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <span className="text-xs font-bold text-[#0b7b68]">{past.date}</span>
-                  <h4 className="font-serif text-base font-bold text-[#17372f]">{past.type}</h4>
+                  <h3 className="font-serif text-base font-bold text-[#17372f]">{past.type}</h3>
                 </div>
                 <StatusBadge tone="gray">Concluída</StatusBadge>
               </div>
@@ -147,10 +158,12 @@ export default function PatientAppointments() {
                   </span>
                 ))}
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </section>
+
+      <UrgentCareWarning />
     </div>
   )
 }
