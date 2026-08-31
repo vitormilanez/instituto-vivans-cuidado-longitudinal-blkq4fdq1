@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import { cohortWeeklyAdherence } from '@/data/mockData'
 import {
   Calendar,
@@ -701,8 +702,17 @@ export default function DoctorOverview() {
           {/* Cards List */}
           <div className="space-y-3.5">
             {filteredAlerts.map((al) => {
-              const IconComponent = al.icon
               const isHighlight = al.patientId === 'marina-costa'
+              const patientObj = patients.find((p) => p.id === al.patientId)
+              const avatarSrc = patientObj?.avatarUrl
+              const initials =
+                patientObj?.initials ||
+                al.patient
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')
+                  .slice(0, 2)
+
               return (
                 <div
                   key={al.patient}
@@ -716,19 +726,13 @@ export default function DoctorOverview() {
                   {/* Top line: Patient + Clinical Reason Tag + Action */}
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-3">
-                      <div
-                        className={`grid size-9 place-items-center rounded-xl text-xs font-bold ${
-                          al.tone === 'amber'
-                            ? 'bg-[#FEEED1] text-[#7D5308]'
-                            : al.tone === 'rose'
-                              ? 'bg-[#FCF0EE] text-[#8E2E28]'
-                              : al.tone === 'green'
-                                ? 'bg-[#EAF3EF] text-[#075F50]'
-                                : 'bg-[#EFF5FC] text-[#244C77]'
-                        }`}
-                      >
-                        <IconComponent className="size-4" />
-                      </div>
+                      <VivansAvatar
+                        src={avatarSrc}
+                        name={al.patient}
+                        initials={initials}
+                        size="md"
+                        className="border border-[#DEE7E2]"
+                      />
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold text-sm text-[#112822]">{al.patient}</h3>
@@ -862,6 +866,13 @@ export default function DoctorOverview() {
                         <span className="font-mono text-xs font-bold text-[#112822] bg-[#F5F8F6] px-2.5 py-1 rounded-lg border border-[#DEE7E2]">
                           {apt.time}
                         </span>
+                        <VivansAvatar
+                          src={apt.patientAvatarUrl}
+                          name={apt.patient}
+                          initials={apt.initials}
+                          size="sm"
+                          className="border border-[#DEE7E2]"
+                        />
                         <div>
                           <strong className="text-sm font-bold text-[#112822] block">
                             {apt.patient}
@@ -870,7 +881,6 @@ export default function DoctorOverview() {
                       </div>
                       <StatusBadge tone={apt.statusTone}>{apt.status}</StatusBadge>
                     </div>
-
                     <p className="text-xs text-[#556D66] mb-3">
                       {apt.type} · <span className="italic font-medium">{apt.preVisit}</span>
                     </p>
@@ -991,19 +1001,17 @@ export default function DoctorOverview() {
             {/* Modal Header */}
             <div className="flex items-start justify-between border-b border-[#F3F7F5] pb-4">
               <div className="flex items-center gap-3">
-                <div
-                  className={`grid size-10 place-items-center rounded-2xl ${
-                    selectedAlert.tone === 'amber'
-                      ? 'bg-[#FEEED1] text-[#C57D19]'
-                      : selectedAlert.tone === 'rose'
-                        ? 'bg-[#FCF0EE] text-[#B3261E]'
-                        : selectedAlert.tone === 'green'
-                          ? 'bg-[#EAF3EF] text-[#097260]'
-                          : 'bg-[#EFF5FC] text-[#244C77]'
-                  }`}
-                >
-                  <selectedAlert.icon className="size-5" />
-                </div>
+                <VivansAvatar
+                  src={patients.find((p) => p.id === selectedAlert.patientId)?.avatarUrl}
+                  name={selectedAlert.patient}
+                  initials={selectedAlert.patient
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)}
+                  size="lg"
+                  className="border border-[#DEE7E2]"
+                />
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-serif text-lg font-bold text-[#112822]">

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -146,7 +147,14 @@ export default function DoctorAgenda() {
 
                     {/* Patient Context & Pre-Visit Synthesis */}
                     <div className="space-y-2 border-l border-[#edf2ef] pl-0 sm:pl-5">
-                      <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <VivansAvatar
+                          src={apt.patientAvatarUrl}
+                          name={apt.patient}
+                          initials={apt.initials}
+                          size="md"
+                          className="border border-[#dfe8e3]"
+                        />
                         <h3 className="font-serif text-lg font-bold text-[#17372f]">
                           {apt.patient}
                         </h3>

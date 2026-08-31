@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
+import { DOCTOR_PROFILE } from '@/data/mockData'
 import {
   Video,
   Mic,
@@ -196,14 +198,14 @@ export default function DoctorConsultationRoom() {
               )}
 
               {/* Doctor PiP preview */}
-              <div className="absolute top-3 right-3 w-28 h-20 rounded-xl border border-white/20 bg-[#0e2721] overflow-hidden shadow-md">
+              <div className="absolute top-3 right-3 w-28 h-20 rounded-xl border border-white/20 bg-[#0e2721] overflow-hidden shadow-md relative">
                 <img
-                  src="https://img.usecurling.com/ppl/256?gender=male&seed=15"
-                  alt="Dr. Guilherme Martins"
+                  src={DOCTOR_PROFILE.avatarUrl}
+                  alt={DOCTOR_PROFILE.name}
                   className="w-full h-full object-cover"
                 />
                 <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1 text-[9px] text-white">
-                  Você
+                  Você ({DOCTOR_PROFILE.name})
                 </span>
               </div>
             </div>

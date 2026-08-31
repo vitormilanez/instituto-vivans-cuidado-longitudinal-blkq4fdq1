@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import {
   Send,
   Bot,
@@ -98,8 +99,14 @@ export default function PatientMessages() {
               return (
                 <div key={msg.id} className="mx-auto w-full max-w-xl animate-fade-in my-2">
                   <div className="flex items-center justify-between gap-2 mb-1 px-1 text-[11px] text-[#698078]">
-                    <div className="flex items-center gap-1.5 font-bold text-[#0b7b68]">
-                      <HeartHandshake className="size-3.5 text-[#0b7b68]" />
+                    <div className="flex items-center gap-2 font-bold text-[#0b7b68]">
+                      <VivansAvatar
+                        src={msg.authorAvatarUrl}
+                        name={msg.author}
+                        initials="IV"
+                        size="sm"
+                        className="border border-[#9fc9bd]"
+                      />
                       <span>{msg.author}</span>
                     </div>
                     <span>{msg.time}</span>
@@ -224,9 +231,18 @@ export default function PatientMessages() {
             return (
               <div
                 key={msg.id}
-                className={`flex flex-col ${isPatient ? 'items-end' : 'items-start'}`}
+                className={`flex flex-col ${isPatient ? 'items-end' : 'items-start'} gap-1`}
               >
-                <div className="flex items-center gap-2 mb-1 px-1 text-[11px] text-[#698078]">
+                <div
+                  className={`flex items-center gap-2 px-1 text-[11px] text-[#698078] ${isPatient ? 'flex-row-reverse' : 'flex-row'}`}
+                >
+                  <VivansAvatar
+                    src={msg.authorAvatarUrl}
+                    name={msg.author}
+                    initials={isPatient ? 'MC' : 'GM'}
+                    size="sm"
+                    className="border border-[#dfe8e3]"
+                  />
                   <span className="font-medium">{msg.author}</span>
                   <span>•</span>
                   <span>{msg.time}</span>

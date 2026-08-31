@@ -178,6 +178,31 @@ export default function PatientPlan() {
     <div className="space-y-6">
       <SimulationDisclaimer text="Orientações Médicas e Ações de Cuidado · Instituto Vivans" />
 
+      {/* Quick Entry Banner to Prescriptions & Exams */}
+      <div className="rounded-2xl border border-[#bfe4d8] bg-gradient-to-r from-[#eaf3ef] via-[#f7faf8] to-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <div className="grid size-9 place-items-center rounded-xl bg-[#0b7b68] text-white shrink-0">
+            <Clock className="size-4" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-[#17372f]">
+              Precisa consultar suas receitas ativas ou laudos de exames?
+            </p>
+            <p className="text-[11px] text-[#556d66]">
+              Acesse as formulações vigentes de magnésio, CoQ10 e biomarcadores laboratoriais.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to="/paciente/receitas-exames"
+          className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-[#0b7b68] px-4 text-xs font-bold text-white hover:bg-[#096656] transition-all shadow-2xs shrink-0"
+        >
+          <span>Ver Receitas &amp; Exames</span>
+          <Check className="size-3.5" />
+        </Link>
+      </div>
+
       {/* Hero Header: Objetivo da Marina nas palavras dela */}
       <section className="overflow-hidden rounded-3xl border border-[#bfe4d8] bg-gradient-to-br from-[#ebf6f2] via-[#f7faf8] to-white p-5 sm:p-7 shadow-[0_8px_24px_rgba(11,123,104,0.06)]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

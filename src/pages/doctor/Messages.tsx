@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import {
   MessageSquare,
   Send,
@@ -25,10 +26,38 @@ export default function DoctorMessages() {
   }
 
   const patientThreads = [
-    { name: 'Marina Costa', unread: 0, tag: 'Sono / Pré-consulta', last: 'Hoje · 08:45' },
-    { name: 'Paulo Mendes', unread: 1, tag: 'Enjoo relatado', last: 'Hoje · 08:12' },
-    { name: 'Ana Ribeiro', unread: 0, tag: 'Relatório aprovado', last: 'Ontem · 18:40' },
-    { name: 'Rafael Lima', unread: 0, tag: 'Anamnese 68%', last: 'Ontem · 11:05' },
+    {
+      name: 'Marina Costa',
+      unread: 0,
+      tag: 'Sono / Pré-consulta',
+      last: 'Hoje · 08:45',
+      avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=88',
+      initials: 'MC',
+    },
+    {
+      name: 'Paulo Mendes',
+      unread: 1,
+      tag: 'Enjoo relatado',
+      last: 'Hoje · 08:12',
+      avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=33',
+      initials: 'PM',
+    },
+    {
+      name: 'Ana Ribeiro',
+      unread: 0,
+      tag: 'Relatório aprovado',
+      last: 'Ontem · 18:40',
+      avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=42',
+      initials: 'AR',
+    },
+    {
+      name: 'Rafael Lima',
+      unread: 0,
+      tag: 'Anamnese 68%',
+      last: 'Ontem · 11:05',
+      avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=54',
+      initials: 'RL',
+    },
   ]
 
   return (
@@ -68,17 +97,26 @@ export default function DoctorMessages() {
                   key={pt.name}
                   type="button"
                   onClick={() => setFilterPatient(pt.name)}
-                  className={`w-full rounded-2xl p-3 text-left transition-all ${
+                  className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all ${
                     isSelected
                       ? 'bg-[#e8f4f0] border border-[#b9d8cf] shadow-sm'
                       : 'border border-[#edf2ef] hover:bg-[#f8faf9]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <strong className="text-xs text-[#17372f]">{pt.name}</strong>
-                    <span className="text-[10px] text-[#698078]">{pt.last}</span>
+                  <VivansAvatar
+                    src={pt.avatarUrl}
+                    name={pt.name}
+                    initials={pt.initials}
+                    size="md"
+                    className="border border-[#b9d8cf] shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <strong className="text-xs text-[#17372f] truncate">{pt.name}</strong>
+                      <span className="text-[10px] text-[#698078] shrink-0">{pt.last}</span>
+                    </div>
+                    <p className="text-[11px] text-[#45655c] truncate">{pt.tag}</p>
                   </div>
-                  <p className="text-[11px] text-[#45655c] truncate">{pt.tag}</p>
                 </button>
               )
             })}
@@ -90,9 +128,20 @@ export default function DoctorMessages() {
           {/* Thread Header */}
           <div className="border-b border-[#edf2ef] bg-[#f8faf9] px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="grid size-9 place-items-center rounded-xl bg-[#0b7b68] text-white text-xs font-bold">
-                MC
-              </div>
+              <VivansAvatar
+                src={
+                  patientThreads.find((p) => p.name === filterPatient)?.avatarUrl ||
+                  'https://img.usecurling.com/ppl/512?gender=female&seed=88'
+                }
+                name={filterPatient}
+                initials={filterPatient
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')
+                  .slice(0, 2)}
+                size="md"
+                className="border border-[#b9d8cf]"
+              />
               <div>
                 <strong className="text-sm text-[#17372f] block">{filterPatient}</strong>
                 <span className="text-xs text-[#698078]">Em acompanhamento · Dia 29 de 90</span>
@@ -144,7 +193,16 @@ export default function DoctorMessages() {
                   key={msg.id}
                   className={`flex flex-col ${isDoctor ? 'items-end' : 'items-start'}`}
                 >
-                  <div className="flex items-center gap-2 mb-1 px-1 text-[11px] text-[#698078]">
+                  <div
+                    className={`flex items-center gap-2 mb-1 px-1 text-[11px] text-[#698078] ${isDoctor ? 'flex-row-reverse' : 'flex-row'}`}
+                  >
+                    <VivansAvatar
+                      src={msg.authorAvatarUrl}
+                      name={msg.author}
+                      initials={isDoctor ? 'GM' : 'MC'}
+                      size="sm"
+                      className="border border-[#dfe8e3]"
+                    />
                     <span>{msg.author}</span>
                     <span>•</span>
                     <span>{msg.time}</span>

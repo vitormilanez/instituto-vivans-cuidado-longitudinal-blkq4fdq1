@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { cn } from '@/lib/utils'
 import { QuickConsultationModal, QuickActionType } from '@/components/QuickConsultationModal'
+import { VivansAvatar } from '@/components/VivansAvatar'
+import { DOCTOR_PROFILE } from '@/data/mockData'
 import {
   Sparkles,
   LayoutDashboard,
@@ -98,8 +100,24 @@ export function NavigationHeader() {
             </button>
           </div>
 
-          <div className="hidden sm:grid size-10 place-items-center rounded-full bg-[#d9eee8] text-xs font-bold text-[#0b6a5b] border border-[#b9d8cf]">
-            {role === 'doctor' ? 'GM' : 'MC'}
+          <div className="hidden sm:flex items-center">
+            {role === 'doctor' ? (
+              <VivansAvatar
+                src={DOCTOR_PROFILE.avatarUrl}
+                name={DOCTOR_PROFILE.name}
+                initials={DOCTOR_PROFILE.initials}
+                size="md"
+                className="border-2 border-[#b9d8cf]"
+              />
+            ) : (
+              <VivansAvatar
+                src="https://img.usecurling.com/ppl/512?gender=female&seed=88"
+                name="Marina Costa"
+                initials="MC"
+                size="md"
+                className="border-2 border-[#b9d8cf]"
+              />
+            )}
           </div>
         </div>
       </div>
@@ -150,16 +168,20 @@ export function DoctorSidebar() {
         <div className="mb-5 rounded-[24px] bg-gradient-to-b from-[#111827] to-[#16202e] p-4 text-white shadow-[0_12px_28px_rgba(17,24,39,0.22)] border border-[#1f2937]">
           {/* Doctor Info Row */}
           <div className="flex items-start gap-3">
-            <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#1f2937] border border-white/10 text-[#b59e7f] shadow-inner">
-              <Check className="size-5 stroke-[2.5] text-[#b59e7f]" />
-            </div>
+            <VivansAvatar
+              src={DOCTOR_PROFILE.avatarUrl}
+              name={DOCTOR_PROFILE.name}
+              initials={DOCTOR_PROFILE.initials}
+              size="lg"
+              className="border border-[#b59e7f]/40 shadow-inner"
+            />
 
             <div className="min-w-0 flex-1">
               <h2 className="truncate font-serif text-sm font-bold text-white tracking-tight leading-tight">
-                Dr. Guilherme Martins
+                {DOCTOR_PROFILE.name}
               </h2>
               <p className="mt-0.5 text-[10px] font-mono tracking-wide text-[#b59e7f]">
-                CRM/SP 184.920
+                {DOCTOR_PROFILE.crm}
               </p>
               <div className="mt-1 flex items-center gap-1.5">
                 <span className="size-1.5 rounded-full bg-[#b59e7f]" />

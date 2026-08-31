@@ -11,6 +11,7 @@ import PatientEvolution from '@/pages/patient/Evolution'
 import PatientMessages from '@/pages/patient/Messages'
 import PatientAppointments from '@/pages/patient/Appointments'
 import PatientPreConsultation from '@/pages/patient/PreConsultation'
+import PatientPrescriptionsExams from '@/pages/patient/PrescriptionsExams'
 
 // Doctor Journey Pages
 import DoctorOverview from '@/pages/doctor/Overview'
@@ -45,6 +46,7 @@ export function App() {
         <Route path="/paciente/mensagens" element={<PatientMessages />} />
         <Route path="/paciente/consultas" element={<PatientAppointments />} />
         <Route path="/paciente/pre-consulta" element={<PatientPreConsultation />} />
+        <Route path="/paciente/receitas-exames" element={<PatientPrescriptionsExams />} />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFound />} />

@@ -8,6 +8,7 @@ import {
   SimulationDisclaimer,
   EvidenceModal,
 } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import { medicalEvidences } from '@/data/mockData'
 import {
   FileText,
@@ -54,6 +55,10 @@ export default function DoctorPatientDetail() {
     meals,
     messages,
     reports,
+    prescriptions,
+    medications,
+    exams,
+    suggestedProcedures,
     addPatientQuickNote,
     nudgeSinglePatient,
     nudgedPatientIds,
@@ -70,6 +75,7 @@ export default function DoctorPatientDetail() {
     | 'evolucao'
     | 'preconsulta'
     | 'plano'
+    | 'receitas_exames'
     | 'mensagens'
     | 'refeicoes'
     | 'linha_tempo'
@@ -192,17 +198,13 @@ export default function DoctorPatientDetail() {
       {/* Patient Header Card with Full Identity Summary */}
       <article className="rounded-[24px] border border-[#DEE7E2] bg-white p-6 sm:p-7 shadow-[0_2px_14px_rgba(17,40,34,0.04)]">
         <div className="grid gap-5 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-          <div
-            className={`grid size-16 shrink-0 place-items-center rounded-3xl text-2xl font-bold shadow-sm ${
-              isAttention
-                ? 'bg-[#FCF0EE] text-[#8E2E28] border border-[#F5C7C2]'
-                : isDelayed
-                  ? 'bg-[#FEF7E7] text-[#7D5308] border border-[#F8DEB0]'
-                  : 'bg-[#112822] text-white'
-            }`}
-          >
-            {patient.initials}
-          </div>
+          <VivansAvatar
+            src={patient.avatarUrl}
+            name={patient.name}
+            initials={patient.initials}
+            size="xl"
+            className="border-2 border-[#DEE7E2] shadow-sm shrink-0"
+          />
 
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2.5">
@@ -558,15 +560,16 @@ export default function DoctorPatientDetail() {
       <div className="flex overflow-x-auto gap-1.5 border-b border-[#DEE7E2] pb-2 text-xs scrollbar-thin">
         {[
           { id: 'dossie', label: 'Dossiê Multicamadas', icon: Sparkles },
+          { id: 'receitas_exames', label: 'Receitas & Exames', icon: Stethoscope },
           { id: 'cadastrais', label: 'Dados Pessoais & Clínicos', icon: User },
           { id: 'evolucao', label: 'Evolução & Biossinais', icon: TrendingDown },
           { id: 'preconsulta', label: 'Pré-Consulta Recebida', icon: FileText },
-          { id: 'plano', label: 'Plano & Prescrições', icon: CheckCircle2 },
+          { id: 'plano', label: 'Plano de Cuidados', icon: CheckCircle2 },
           { id: 'mensagens', label: 'Mensagens', icon: MessageSquare },
           { id: 'refeicoes', label: 'Diário & Refeições', icon: Camera },
           { id: 'linha_tempo', label: 'Linha do Tempo', icon: Layers },
           { id: 'retorno', label: 'Jornada de Retorno', icon: Clock },
-          { id: 'relatorios', label: 'Relatórios Clínicos', icon: Stethoscope },
+          { id: 'relatorios', label: 'Relatórios Clínicos', icon: FileText },
           { id: 'evidencias', label: 'Evidências Médicas', icon: BookOpen },
         ].map((tab) => {
           const Icon = tab.icon
@@ -1592,69 +1595,319 @@ export default function DoctorPatientDetail() {
         </section>
       )}
 
-      {/* TAB 3: PLANO & RECEITAS */}
+      {/* TAB: PLANO DE CUIDADO */}
       {activeTab === 'plano' && (
         <section className="space-y-5 animate-fade-in">
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Plan list */}
-            <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
-              <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                Plano de Cuidado Vigente
-              </h3>
-              <div className="space-y-2.5">
-                {[
-                  {
-                    action: 'Tomar 500ml de água antes do almoço e do jantar',
-                    category: 'Hábitos alimentares',
-                    status: 'Concluído hoje',
-                  },
-                  {
-                    action: 'Registrar foto do jantar para avaliar saciedade',
-                    category: 'Diário',
-                    status: 'Pendente',
-                  },
-                  {
-                    action: 'Começar a desacelerar às 22h (higiene do sono)',
-                    category: 'Sono',
-                    status: 'Pendente',
-                  },
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-2xl border border-[#edf2ef] p-3.5 text-xs flex justify-between items-center"
-                  >
-                    <div>
-                      <strong className="text-[#17372f] block">{item.action}</strong>
-                      <span className="text-[11px] text-[#698078]">{item.category}</span>
-                    </div>
-                    <StatusBadge tone={item.status.includes('Concluído') ? 'green' : 'gray'}>
-                      {item.status}
-                    </StatusBadge>
-                  </div>
-                ))}
+          <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-[#edf2ef] pb-3">
+              <div>
+                <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                  Orientações do Plano de Cuidado
+                </h3>
+                <p className="text-xs text-[#60766f]">
+                  Ações de estilo de vida, crononutrição e higiene do sono vinculadas ao paciente.
+                </p>
               </div>
+              <StatusBadge tone="green">{carePlans.length} ações mapeadas</StatusBadge>
             </div>
 
-            {/* Prescriptions */}
-            <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
-              <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                Documentos e Prescrições
-              </h3>
-              <div className="space-y-3">
-                <div className="rounded-2xl border border-[#dfe8e3] bg-[#f8faf9] p-4 text-xs space-y-1.5">
-                  <div className="flex justify-between items-center">
-                    <strong className="text-[#17372f]">Receita Digital #RX-1042</strong>
-                    <StatusBadge tone="green">Ativa (Validade 26 set)</StatusBadge>
+            <div className="space-y-2.5">
+              {carePlans.map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-[#edf2ef] p-4 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#fbfcfb] transition-colors"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <strong className="text-[#17372f] text-sm">{item.action}</strong>
+                      <span className="text-[10px] uppercase font-bold text-[#0b7b68] bg-[#eaf3ef] px-2 py-0.5 rounded-md">
+                        {item.period || 'Geral'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#698078]">
+                      {item.category} · {item.frequency || 'Diário'}
+                    </p>
+                    {item.doctorRationale && (
+                      <p className="text-[11px] text-[#075f50] italic">
+                        Racional: {item.doctorRationale}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-[#60766f]">
-                    1 item prescrito · Emitida na última consulta presencial.
-                  </p>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <StatusBadge tone={item.completed ? 'green' : 'gray'}>
+                      {item.completed ? 'Realizado hoje' : 'Pendente'}
+                    </StatusBadge>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
       )}
+
+      {/* TAB: RECEITAS, MEDICAMENTOS, EXAMES & PROCEDIMENTOS (Coerência com a visão da paciente) */}
+      {activeTab === 'receitas_exames' &&
+        (() => {
+          const patientPrescriptions = prescriptions.filter(
+            (p) =>
+              p.patientId === patient.id ||
+              (patient.id === 'marina-costa' && p.patientId === 'marina-costa'),
+          )
+          const patientMedications = medications.filter(
+            (m) =>
+              m.patientId === patient.id ||
+              (patient.id === 'marina-costa' && m.patientId === 'marina-costa'),
+          )
+          const patientExams = exams.filter(
+            (e) =>
+              e.patientId === patient.id ||
+              (patient.id === 'marina-costa' && e.patientId === 'marina-costa'),
+          )
+          const patientProcedures = suggestedProcedures.filter(
+            (p) =>
+              p.patientId === patient.id ||
+              (patient.id === 'marina-costa' && p.patientId === 'marina-costa'),
+          )
+
+          return (
+            <section className="space-y-6 animate-fade-in">
+              {/* Prescrições Médicas Ativas & Histórico */}
+              <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="grid size-8 place-items-center rounded-lg bg-[#0b7b68] text-white">
+                      <FileText className="size-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                        Prescrições Médicas Vinculadas ({patientPrescriptions.length})
+                      </h3>
+                      <p className="text-xs text-[#60766f]">
+                        Receituário digital oficial emitido para {patient.name}
+                      </p>
+                    </div>
+                  </div>
+                  <StatusBadge tone="green">Assinatura ICP-Brasil Ativa</StatusBadge>
+                </div>
+
+                <div className="space-y-3">
+                  {patientPrescriptions.map((rx) => (
+                    <div
+                      key={rx.id}
+                      className={`rounded-2xl border p-4 text-xs space-y-3 ${
+                        rx.status === 'ativa'
+                          ? 'border-[#0b7b68] bg-[#f8fcfb]'
+                          : 'border-[#dfe8e3] bg-white'
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <strong className="text-sm font-bold text-[#17372f]">{rx.title}</strong>
+                            <StatusBadge tone={rx.status === 'ativa' ? 'green' : 'gray'}>
+                              {rx.status === 'ativa'
+                                ? 'Ativa'
+                                : rx.status === 'renovada'
+                                  ? 'Renovada'
+                                  : 'Vencida'}
+                            </StatusBadge>
+                          </div>
+                          <p className="text-[11px] text-[#698078] mt-0.5">
+                            Emitida em {rx.issuedAt} · Validade: {rx.validUntil} · {rx.doctorName}
+                          </p>
+                        </div>
+                        <span className="font-mono text-xs font-bold text-[#17372f] bg-white px-2.5 py-1 rounded-lg border border-[#dfe8e3]">
+                          {rx.code}
+                        </span>
+                      </div>
+
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {rx.items.map((it, idx) => (
+                          <div
+                            key={idx}
+                            className="rounded-xl bg-white p-3 border border-[#dfe8e3] space-y-1"
+                          >
+                            <div className="flex items-center justify-between">
+                              <strong className="text-[#17372f]">{it.medication}</strong>
+                              <span className="font-mono text-[10px] text-[#0b7b68] font-bold">
+                                {it.dosage}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[#45655c]">{it.posology}</p>
+                            {it.notes && (
+                              <p className="text-[10px] text-[#698078] italic">{it.notes}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="pt-2 border-t border-[#edf2ef] flex flex-wrap items-center justify-between text-[11px] text-[#698078]">
+                        <span>Orientações: {rx.instructions}</span>
+                        <span className="font-mono text-[10px] text-[#556d66]">
+                          {rx.digitalSignatureId}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Medicamentos e Nutracêuticos em Uso */}
+              <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-[#edf2ef] pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="grid size-8 place-items-center rounded-lg bg-[#eaf3ef] text-[#075f50]">
+                      <HeartPulse className="size-4" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                      Medicamentos e Nutracêuticos em Uso ({patientMedications.length})
+                    </h3>
+                  </div>
+                  <span className="text-xs text-[#60766f]">Rotina ativa</span>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-3 text-xs">
+                  {patientMedications.map((med) => (
+                    <div
+                      key={med.id}
+                      className="rounded-2xl border border-[#bfe4d8] bg-[#fbfdfc] p-4 space-y-2 flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-start justify-between gap-1">
+                          <strong className="text-[#17372f] text-sm">{med.name}</strong>
+                          <span className="rounded-full bg-[#0b7b68] text-white px-2 py-0.5 text-[9px] font-bold">
+                            {med.timeSlots.join(', ')}
+                          </span>
+                        </div>
+                        <p className="font-mono text-[11px] font-bold text-[#0b7b68] mt-0.5">
+                          {med.dosage}
+                        </p>
+                        <p className="text-[11px] text-[#45655c] mt-1">{med.instructions}</p>
+                      </div>
+                      {med.purpose && (
+                        <p className="text-[10px] text-[#698078] pt-2 border-t border-[#edf2ef] italic">
+                          {med.purpose}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Exames Laboratoriais e Laudos */}
+              <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-[#edf2ef] pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="grid size-8 place-items-center rounded-lg bg-[#eaf3ef] text-[#075f50]">
+                      <Activity className="size-4" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                      Laudos &amp; Exames Anteriores ({patientExams.length})
+                    </h3>
+                  </div>
+                  <span className="text-xs text-[#60766f]">Resultados disponíveis</span>
+                </div>
+
+                <div className="space-y-3">
+                  {patientExams.map((exam) => (
+                    <div
+                      key={exam.id}
+                      className="rounded-2xl border border-[#dfe8e3] p-4 text-xs space-y-3 bg-white"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <strong className="text-sm font-bold text-[#17372f]">
+                              {exam.title}
+                            </strong>
+                            <span className="rounded-md bg-[#f4f7f5] text-[#556d66] px-2 py-0.5 text-[10px] font-semibold border border-[#dfe8e3]">
+                              {exam.category}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#698078] mt-0.5">
+                            {exam.performedAt} · {exam.laboratory}
+                          </p>
+                        </div>
+                        <StatusBadge tone="green">Laudado</StatusBadge>
+                      </div>
+
+                      <p className="text-xs text-[#45655c] bg-[#f8faf9] p-3 rounded-xl border border-[#edf2ef]">
+                        {exam.summary}
+                      </p>
+
+                      {exam.highlights && exam.highlights.length > 0 && (
+                        <div className="grid gap-2 sm:grid-cols-3">
+                          {exam.highlights.slice(0, 3).map((hl, i) => (
+                            <div
+                              key={i}
+                              className="rounded-xl border border-[#edf2ef] p-2.5 bg-white"
+                            >
+                              <span className="text-[10px] text-[#556d66] block">
+                                {hl.parameter}
+                              </span>
+                              <strong className="text-xs text-[#17372f]">{hl.value}</strong>
+                              <span className="text-[9px] text-[#8c9e97] block">
+                                Ref: {hl.reference}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Procedimentos Sugeridos pelo Médico */}
+              <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-[#edf2ef] pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="grid size-8 place-items-center rounded-lg bg-[#eaf3ef] text-[#075f50]">
+                      <Stethoscope className="size-4" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                      Procedimentos Sugeridos para o Ciclo ({patientProcedures.length})
+                    </h3>
+                  </div>
+                  <StatusBadge tone="amber">Decisão Médica</StatusBadge>
+                </div>
+
+                <div className="space-y-3">
+                  {patientProcedures.map((proc) => (
+                    <div
+                      key={proc.id}
+                      className="rounded-2xl border border-[#dfe8e3] p-4 text-xs space-y-2 bg-white"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <strong className="text-sm font-bold text-[#17372f]">
+                              {proc.title}
+                            </strong>
+                            <StatusBadge tone={proc.status === 'agendado' ? 'green' : 'amber'}>
+                              {proc.status === 'agendado'
+                                ? `Agendado (${proc.scheduledFor})`
+                                : 'Sugerido'}
+                            </StatusBadge>
+                          </div>
+                          <p className="text-[11px] text-[#698078] mt-0.5">
+                            Sugerido em {proc.suggestedAt} por {proc.suggestedBy} · Prioridade:{' '}
+                            {proc.priority}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-[#45655c]">
+                        <strong>Racional Clínico:</strong> {proc.clinicalRationale}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )
+        })()}
 
       {/* TAB 4: FOTOS E REFEIÇÕES */}
       {activeTab === 'refeicoes' && (

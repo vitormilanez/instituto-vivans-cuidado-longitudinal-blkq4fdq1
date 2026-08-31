@@ -281,6 +281,43 @@ export default function PatientToday() {
         </article>
       )}
 
+      {/* NOVO: CARD DE DESTAQUE "RECEITAS & EXAMES" (Acesso Rápido) */}
+      <article className="overflow-hidden rounded-3xl border border-[#bfe4d8] bg-gradient-to-r from-[#eaf3ef] via-white to-[#f4faf7] p-5 sm:p-6 shadow-sm hover:border-[#0b7b68]/40 transition-all">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="grid size-12 place-items-center rounded-2xl bg-[#0b7b68] text-white shadow-xs shrink-0">
+              <FileText className="size-6 text-[#9fe0ce]" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+                  Prescrições &amp; Laudos
+                </span>
+                <StatusBadge tone="green">1 Receita Ativa</StatusBadge>
+                <span className="text-[11px] text-[#556d66]">· 3 Exames com Laudo</span>
+              </div>
+              <h3 className="font-serif text-lg sm:text-xl font-bold text-[#17372f]">
+                Receita Ativa: Suporte Metabólico &amp; Sono
+              </h3>
+              <p className="text-xs sm:text-sm text-[#45655c]">
+                Magnésio Bisglicinato + Inositol e Coenzima Q10. Consulte posologias, exames
+                recentes e procedimentos sugeridos.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              to="/paciente/receitas-exames"
+              className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] transition-all shadow-sm active:scale-98"
+            >
+              <span>Acessar Receitas &amp; Exames</span>
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </div>
+      </article>
+
       {/* Pre-consultation Highlight Card */}
       <article className="overflow-hidden rounded-3xl border border-[#9fc9bd] bg-white shadow-[0_12px_34px_rgba(28,55,47,0.06)]">
         <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[auto_1fr_auto] lg:items-center">

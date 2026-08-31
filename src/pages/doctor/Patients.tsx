@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import {
   Users,
   Search,
@@ -200,19 +201,15 @@ export default function DoctorPatients() {
                 className="group relative cursor-pointer rounded-[22px] border border-[#DEE7E2] bg-white p-5 shadow-[0_2px_12px_rgba(17,40,34,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#097260]/60 hover:shadow-[0_8px_24px_rgba(17,40,34,0.08)]"
               >
                 <div className="grid gap-4 lg:grid-cols-[280px_1fr_auto] lg:items-center">
-                  {/* Left: Patient Initials + Identity + Clinical Focus */}
+                  {/* Left: Patient Avatar + Identity + Clinical Focus */}
                   <div className="flex items-center gap-3.5">
-                    <div
-                      className={`grid size-12 shrink-0 place-items-center rounded-2xl text-sm font-bold shadow-2xs ${
-                        isAttention
-                          ? 'bg-[#FCF0EE] text-[#8E2E28] border border-[#F5C7C2]'
-                          : isDelayed
-                            ? 'bg-[#FEF7E7] text-[#7D5308] border border-[#F8DEB0]'
-                            : 'bg-[#EAF3EF] text-[#075F50] border border-[#BFE4D8]'
-                      }`}
-                    >
-                      {p.initials}
-                    </div>
+                    <VivansAvatar
+                      src={p.avatarUrl}
+                      name={p.name}
+                      initials={p.initials}
+                      size="lg"
+                      className="border border-[#DEE7E2] shadow-2xs shrink-0"
+                    />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-serif text-base font-bold text-[#112822] group-hover:text-[#097260] transition-colors truncate">
