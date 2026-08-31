@@ -13,6 +13,10 @@ import {
   PreConsultationData,
   ScheduledCheckin,
   ReturnJourneyPlan,
+  PrescriptionRecord,
+  MedicationItem,
+  ExamRecord,
+  SuggestedProcedure,
   initialPatients,
   initialAppointments,
   initialCarePlans,
@@ -22,6 +26,10 @@ import {
   initialPreConsultation,
   initialScheduledCheckins,
   initialReturnJourney,
+  initialPrescriptions,
+  initialMedications,
+  initialExams,
+  initialSuggestedProcedures,
 } from '@/data/mockData'
 
 interface VivansContextType {
@@ -57,6 +65,12 @@ interface VivansContextType {
   returnJourney: ReturnJourneyPlan
   scheduledCheckins: ScheduledCheckin[]
   completeScheduledCheckin: (id: string, value?: string | number, notes?: string) => void
+  prescriptions: PrescriptionRecord[]
+  medications: MedicationItem[]
+  exams: ExamRecord[]
+  suggestedProcedures: SuggestedProcedure[]
+  requestPrescriptionRenewal: (prescriptionId: string) => void
+  confirmProcedureInterest: (procedureId: string) => void
   activeAttentionCount: number
   nudgeDelayedPatients: () => void
   nudgeAttentionPatients: () => void
@@ -84,6 +98,12 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
   const [returnJourney, setReturnJourney] = useState<ReturnJourneyPlan>(initialReturnJourney)
   const [scheduledCheckins, setScheduledCheckins] =
     useState<ScheduledCheckin[]>(initialScheduledCheckins)
+  const [prescriptions, setPrescriptions] = useState<PrescriptionRecord[]>(initialPrescriptions)
+  const [medications, setMedications] = useState<MedicationItem[]>(initialMedications)
+  const [exams, setExams] = useState<ExamRecord[]>(initialExams)
+  const [suggestedProcedures, setSuggestedProcedures] = useState<SuggestedProcedure[]>(
+    initialSuggestedProcedures,
+  )
   const [nudged, setNudged] = useState<boolean>(false)
   const [attentionNudged, setAttentionNudged] = useState<boolean>(false)
   const [nudgedPatientIds, setNudgedPatientIds] = useState<string[]>([])
@@ -267,6 +287,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
       id: slug,
       initials,
       name,
+      avatarUrl: `https://img.usecurling.com/ppl/512?gender=female&seed=${Date.now() % 100}`,
       email,
       focus: 'Avaliação inicial · Teleconsulta rápida',
       progress: 'Novo',
@@ -393,6 +414,22 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
     notify(`Simulação: Lembrete individual enviado com sucesso para ${patientName}.`)
   }
 
+  const requestPrescriptionRenewal = (prescriptionId: string) => {
+    const target = prescriptions.find((p) => p.id === prescriptionId)
+    notify(
+      `Solicitação de renovação simulada para "${target?.title || 'receita'}" enviada ao Dr. Guilherme Martins.`,
+    )
+  }
+
+  const confirmProcedureInterest = (procedureId: string) => {
+    setSuggestedProcedures((prev) =>
+      prev.map((proc) => (proc.id === procedureId ? { ...proc, status: 'agendado' } : proc)),
+    )
+    notify(
+      'Interesse registrado! A equipe do Instituto entrará em contato para alinhar o agendamento.',
+    )
+  }
+
   const activeAttentionCount = 3
 
   return (
@@ -426,6 +463,12 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         returnJourney,
         scheduledCheckins,
         completeScheduledCheckin,
+        prescriptions,
+        medications,
+        exams,
+        suggestedProcedures,
+        requestPrescriptionRenewal,
+        confirmProcedureInterest,
         activeAttentionCount,
         nudgeDelayedPatients,
         nudgeAttentionPatients,

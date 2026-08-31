@@ -19,10 +19,96 @@ export interface PatientEvolutionMetric {
   steps?: number // e.g. 6420
 }
 
+export interface DoctorProfile {
+  id: string
+  name: string
+  crm: string
+  specialty: string
+  avatarUrl: string
+  initials: string
+}
+
+export interface MedicationItem {
+  id: string
+  patientId: string
+  name: string
+  dosage: string
+  frequency: string
+  timeSlots: string[]
+  instructions: string
+  purpose: string
+  prescribedBy: string
+  prescribedAt: string
+  status: 'em_uso' | 'pausado' | 'concluido'
+  prescriptionId?: string
+}
+
+export interface PrescriptionRecord {
+  id: string
+  patientId: string
+  code: string
+  title: string
+  doctorName: string
+  doctorCrm: string
+  issuedAt: string
+  validUntil: string
+  status: 'ativa' | 'vencida' | 'renovada'
+  items: Array<{
+    medication: string
+    dosage: string
+    posology: string
+    quantity: string
+    notes?: string
+  }>
+  instructions: string
+  digitalSignatureId: string
+  isSimulated: boolean
+}
+
+export interface ExamRecord {
+  id: string
+  patientId: string
+  title: string
+  category: 'Laboratorial' | 'Imagem' | 'Cardiológico' | 'Metabólico' | 'Funcional'
+  performedAt: string
+  laboratory: string
+  doctorRequester: string
+  status: 'concluido' | 'aguardando_resultado'
+  summary: string
+  highlights: Array<{
+    parameter: string
+    value: string
+    reference: string
+    status: 'normal' | 'otimizado' | 'atencao'
+  }>
+  doctorObservations?: string
+  fileUrl?: string
+}
+
+export interface SuggestedProcedure {
+  id: string
+  patientId: string
+  title: string
+  category:
+    | 'Exame de Controle'
+    | 'Procedimento Clínico'
+    | 'Avaliação Especializada'
+    | 'Bioimpedância'
+  suggestedBy: string
+  suggestedAt: string
+  status: 'sugerido' | 'agendado' | 'realizado'
+  scheduledFor?: string
+  priority: 'alta' | 'media' | 'preventiva'
+  clinicalRationale: string
+  patientExplanation: string
+  nextStepPrompt: string
+}
+
 export interface PatientProfile {
   id: string
   initials: string
   name: string
+  avatarUrl: string
   email?: string
   phone?: string
   birthDate?: string
@@ -135,6 +221,7 @@ export interface Appointment {
   date?: string
   time: string
   patient: string
+  patientAvatarUrl?: string
   initials: string
   type: string
   modality?: 'Teleconsulta (Google Meet)' | 'Presencial (Instituto Vivans)' | 'Híbrida'
@@ -229,6 +316,7 @@ export interface MessageItem {
   id: string
   sender: 'doctor' | 'patient' | 'system' | 'ai_draft' | 'team_summary'
   author: string
+  authorAvatarUrl?: string
   time: string
   content: string
   isAiDraft?: boolean
@@ -276,11 +364,21 @@ export interface MedicalEvidence {
   relevance: string
 }
 
+export const DOCTOR_PROFILE: DoctorProfile = {
+  id: 'dr-guilherme-martins',
+  name: 'Dr. Guilherme Martins',
+  crm: 'CRM/SP 184.920',
+  specialty: 'Medicina Preventiva, Longevidade & Metabolismo',
+  avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=15',
+  initials: 'GM',
+}
+
 export const initialPatients: PatientProfile[] = [
   {
     id: 'marina-costa',
     initials: 'MC',
     name: 'Marina Costa',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=88',
     email: 'marina.costa@email.com',
     phone: '(11) 98765-4321',
     birthDate: '14/05/1988 (38 anos)',
@@ -372,6 +470,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'ana-ribeiro',
     initials: 'AR',
     name: 'Ana Ribeiro',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=42',
     email: 'ana.ribeiro@email.com',
     phone: '(11) 98111-2233',
     birthDate: '03/11/1979 (46 anos)',
@@ -458,6 +557,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'paulo-mendes',
     initials: 'PM',
     name: 'Paulo Mendes',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=33',
     email: 'paulo.mendes@email.com',
     phone: '(11) 97654-3210',
     birthDate: '22/09/1982 (43 anos)',
@@ -533,6 +633,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'rafael-lima',
     initials: 'RL',
     name: 'Rafael Lima',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=54',
     email: 'rafael.lima@email.com',
     phone: '(11) 99123-4567',
     birthDate: '10/03/1990 (36 anos)',
@@ -606,6 +707,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'lucia-barbosa',
     initials: 'LB',
     name: 'Lúcia Barbosa',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=12',
     email: 'lucia.barbosa@email.com',
     phone: '(11) 97234-5678',
     birthDate: '19/08/1965 (61 anos)',
@@ -692,6 +794,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'carlos-silva',
     initials: 'CS',
     name: 'Carlos Silva',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=71',
     email: 'carlos.silva@email.com',
     phone: '(11) 98765-1122',
     birthDate: '11/04/1980 (46 anos)',
@@ -762,6 +865,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'beatriz-melo',
     initials: 'BM',
     name: 'Beatriz Melo',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=64',
     email: 'beatriz.melo@email.com',
     focus: 'Reeducação e saúde intestinal',
     progress: '−1,1 kg',
@@ -808,6 +912,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'rodrigo-albuquerque',
     initials: 'RA',
     name: 'Rodrigo Albuquerque',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=48',
     email: 'rodrigo.alb@email.com',
     focus: 'Otimização metabólica · Resistência insulínica',
     progress: '−3,2 kg',
@@ -851,6 +956,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'juliana-martins',
     initials: 'JM',
     name: 'Juliana Martins',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=39',
     email: 'juliana.martins@email.com',
     focus: 'Longevidade feminina · Terapia hormonal',
     progress: 'Estável',
@@ -894,6 +1000,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'felipe-vasconcelos',
     initials: 'FV',
     name: 'Felipe Vasconcelos',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=82',
     email: 'felipe.vasc@email.com',
     focus: 'Performance cognitiva · Foco e sono',
     progress: '+15% energia',
@@ -937,6 +1044,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'camila-duarte',
     initials: 'CD',
     name: 'Camila Duarte',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=91',
     email: 'camila.duarte@email.com',
     focus: 'Emagrecimento pós-parto · Composição corporal',
     progress: '−4,1 kg',
@@ -980,6 +1088,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'marcelo-tavares',
     initials: 'MT',
     name: 'Marcelo Tavares',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=23',
     email: 'marcelo.tavares@email.com',
     focus: 'Cardioproteção · Lipoproteínas e inflamação',
     progress: '−15% ApoB',
@@ -1023,6 +1132,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'gabriela-souza',
     initials: 'GS',
     name: 'Gabriela Souza',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=57',
     email: 'gabriela.souza@email.com',
     focus: 'Saúde tireoidiana e disposição matinal',
     progress: 'TSH otimizado',
@@ -1066,6 +1176,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'lucas-ferreira',
     initials: 'LF',
     name: 'Lucas Ferreira',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=67',
     email: 'lucas.ferreira@email.com',
     focus: 'Hipertrofia e longevidade muscular',
     progress: '+2,1 kg massa magra',
@@ -1109,6 +1220,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'patricia-araujo',
     initials: 'PA',
     name: 'Patrícia Araújo',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=73',
     email: 'patricia.araujo@email.com',
     focus: 'Controle de esteatose hepática grau II',
     progress: '−5,4 kg',
@@ -1152,6 +1264,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'thiago-carvalho',
     initials: 'TC',
     name: 'Thiago Carvalho',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=89',
     email: 'thiago.carvalho@email.com',
     focus: 'Qualidade do sono profundo e recuperação HRV',
     progress: 'HRV +20ms',
@@ -1195,6 +1308,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'renata-bastos',
     initials: 'RB',
     name: 'Renata Bastos',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=45',
     email: 'renata.bastos@email.com',
     focus: 'Saúde articular e anti-inflamação sistêmica',
     progress: 'Sem dor articular',
@@ -1238,6 +1352,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'eduardo-pinheiro',
     initials: 'EP',
     name: 'Eduardo Pinheiro',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=31',
     email: 'eduardo.pinheiro@email.com',
     focus: 'Pressão arterial e rigidez vascular (PWV)',
     progress: 'PA 122/78 mmHg',
@@ -1281,6 +1396,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'larissa-nunes',
     initials: 'LN',
     name: 'Larissa Nunes',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=29',
     email: 'larissa.nunes@email.com',
     focus: 'Controle de compulsão alimentar e saciedade',
     progress: '0 episódios no ciclo',
@@ -1324,6 +1440,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'bruno-castro',
     initials: 'BC',
     name: 'Bruno Castro',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=94',
     email: 'bruno.castro@email.com',
     focus: 'Ácido úrico e prevenção de gota',
     progress: 'Ácido úrico 5.2 mg/dL',
@@ -1367,6 +1484,7 @@ export const initialPatients: PatientProfile[] = [
     id: 'vanessa-moraes',
     initials: 'VM',
     name: 'Vanessa Moraes',
+    avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=84',
     email: 'vanessa.moraes@email.com',
     focus: 'Saúde mitocondrial e fadiga crônica',
     progress: '+30% disposição',
@@ -1415,6 +1533,7 @@ export const initialAppointments: Appointment[] = [
     date: 'Hoje, 25 de Agosto de 2026',
     time: '09:00',
     patient: 'Lúcia Barbosa',
+    patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=12',
     initials: 'LB',
     type: 'Retorno longevidade · 30 min',
     modality: 'Teleconsulta (Google Meet)',
@@ -1445,6 +1564,7 @@ export const initialAppointments: Appointment[] = [
     date: 'Hoje, 25 de Agosto de 2026',
     time: '10:30',
     patient: 'Marina Costa',
+    patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=88',
     initials: 'MC',
     type: 'Retorno longevidade · 30 min',
     modality: 'Teleconsulta (Google Meet)',
@@ -1477,6 +1597,7 @@ export const initialAppointments: Appointment[] = [
     date: 'Hoje, 25 de Agosto de 2026',
     time: '11:30',
     patient: 'Rafael Lima',
+    patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=54',
     initials: 'RL',
     type: 'Primeira consulta · 50 min',
     modality: 'Teleconsulta (Google Meet)',
@@ -1503,6 +1624,7 @@ export const initialAppointments: Appointment[] = [
     date: 'Hoje, 25 de Agosto de 2026',
     time: '14:00',
     patient: 'Ana Ribeiro',
+    patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=42',
     initials: 'AR',
     type: 'Retorno força · 30 min',
     modality: 'Teleconsulta (Google Meet)',
@@ -1529,6 +1651,7 @@ export const initialAppointments: Appointment[] = [
     date: 'Hoje, 25 de Agosto de 2026',
     time: '16:30',
     patient: 'Paulo Mendes',
+    patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=33',
     initials: 'PM',
     type: 'Acompanhamento · 25 min',
     modality: 'Teleconsulta (Google Meet)',
@@ -1777,6 +1900,7 @@ export const initialMessages: MessageItem[] = [
     id: 'msg-team-summary',
     sender: 'team_summary',
     author: 'Equipe Instituto Vivans',
+    authorAvatarUrl: 'https://img.usecurling.com/i?q=hospital&color=0b7b68',
     time: 'Hoje · 08:00',
     content:
       'Olá, Marina! Preparamos o seu resumo semanal de adesão com muito carinho. Você concluiu 4 de 5 ações desta semana, mantendo uma excelente consistência de 82% (+6% vs. início). Nesta semana, que tal focar no lanche vespertino e na caminhada leve matinal? Seguimos juntos!',
@@ -1796,6 +1920,7 @@ export const initialMessages: MessageItem[] = [
     id: 'msg-1',
     sender: 'doctor',
     author: 'Dr. Guilherme Martins',
+    authorAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=15',
     time: 'Hoje · 08:30',
     content:
       'Bom dia, Marina. Recebi as informações da sua pré-consulta. Vamos dedicar atenção especial à qualidade do sono e ao horário das refeições na nossa consulta de hoje.',
@@ -1805,6 +1930,7 @@ export const initialMessages: MessageItem[] = [
     id: 'msg-2',
     sender: 'patient',
     author: 'Marina Costa',
+    authorAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=88',
     time: 'Hoje · 08:45',
     content:
       'Perfeito, Dr. Guilherme. Registrei também a percepção de saciedade após a alteração do jantar.',
@@ -1942,5 +2068,403 @@ export const medicalEvidences: MedicalEvidence[] = [
     summary:
       'Recomenda o acompanhamento longitudinal periódico de parâmetros de descanso, adesão a hábitos e funcionalidade física.',
     relevance: 'Alinhamento metodológico com o painel de acompanhamento longitudinal.',
+  },
+]
+
+/* Centralized Mock Datasets for Prescriptions, Medications, Previous Exams, and Suggested Procedures */
+
+export const initialPrescriptions: PrescriptionRecord[] = [
+  {
+    id: 'rx-marina-1042',
+    patientId: 'marina-costa',
+    code: 'RX-1042',
+    title: 'Prescrição de Suporte Metabólico & Sono',
+    doctorName: 'Dr. Guilherme Martins',
+    doctorCrm: 'CRM/SP 184.920',
+    issuedAt: '12 de agosto de 2026',
+    validUntil: '26 de setembro de 2026 (45 dias)',
+    status: 'ativa',
+    items: [
+      {
+        medication: 'Bisglicinato de Magnésio + Inositol',
+        dosage: 'Magnésio 250mg + Inositol 2g',
+        posology:
+          'Tomar 1 sachê diluído em 150ml de água morna às 21h30 (30-45 min antes de deitar)',
+        quantity: '45 sachês',
+        notes:
+          'Favorece o relaxamento muscular e aprofundamento do sono de ondas lentas sem sonolência residual matinal.',
+      },
+      {
+        medication: 'Complexo de Coenzima Q10 com Vitamina E',
+        dosage: 'CoQ10 100mg + D-Alfa-Tocoferol 100UI',
+        posology: 'Tomar 1 cápsula junto ao almoço',
+        quantity: '60 cápsulas',
+        notes: 'Suporte bioenergético mitocondrial para disposição vespertina.',
+      },
+    ],
+    instructions:
+      'Manter a hidratação diária de pelo menos 2,2 litros. Em caso de dúvidas sobre tolerância gástrica, registrar no diário do paciente.',
+    digitalSignatureId: 'VIVANS-SIG-84920-20260812-MC',
+    isSimulated: true,
+  },
+  {
+    id: 'rx-marina-1021',
+    patientId: 'marina-costa',
+    code: 'RX-1021',
+    title: 'Prescrição Inicial de Adequação Metabólica',
+    doctorName: 'Dr. Guilherme Martins',
+    doctorCrm: 'CRM/SP 184.920',
+    issuedAt: '14 de junho de 2026',
+    validUntil: '30 de julho de 2026',
+    status: 'renovada',
+    items: [
+      {
+        medication: 'Vitamina D3 + K2 (MK-7)',
+        dosage: 'Vitamina D3 2.000 UI + K2 50mcg',
+        posology: 'Tomar 1 cápsula pela manhã com o café',
+        quantity: '60 cápsulas',
+        notes: 'Otimização dos níveis séricos de 25-hidroxivitamina D.',
+      },
+      {
+        medication: 'Ômega 3 TG Ultra Puro (IFOS)',
+        dosage: 'EPA 500mg / DHA 400mg',
+        posology: 'Tomar 1 cápsula após o almoço',
+        quantity: '60 cápsulas',
+        notes: 'Ação anti-inflamatória endotelial e controle lipídico.',
+      },
+    ],
+    instructions: 'Receita renovada e substituída pela formulação RX-1042.',
+    digitalSignatureId: 'VIVANS-SIG-84920-20260614-MC',
+    isSimulated: true,
+  },
+  {
+    id: 'rx-paulo-1051',
+    patientId: 'paulo-mendes',
+    code: 'RX-1051',
+    title: 'Prescrição Metabólica com Suporte Gástrico',
+    doctorName: 'Dr. Guilherme Martins',
+    doctorCrm: 'CRM/SP 184.920',
+    issuedAt: '18 de agosto de 2026',
+    validUntil: '18 de outubro de 2026',
+    status: 'ativa',
+    items: [
+      {
+        medication: 'Berberina Fitossomal',
+        dosage: '500mg',
+        posology: '1 cápsula 15 minutos antes do almoço',
+        quantity: '60 cápsulas',
+        notes: 'Avaliar tolerância gástrica após relato recente.',
+      },
+    ],
+    instructions:
+      'Caso persista o desconforto matinal, suspender a tomada em jejum e aguardar retorno.',
+    digitalSignatureId: 'VIVANS-SIG-84920-20260818-PM',
+    isSimulated: true,
+  },
+]
+
+export const initialMedications: MedicationItem[] = [
+  {
+    id: 'med-marina-1',
+    patientId: 'marina-costa',
+    name: 'Bisglicinato de Magnésio + Inositol',
+    dosage: '250mg + 2g',
+    frequency: '1x ao dia (Noite)',
+    timeSlots: ['21:30'],
+    instructions:
+      'Diluir em 150ml de água morna cerca de 30 a 45 minutos antes de dormir. Não tomar com café ou estimulantes.',
+    purpose: 'Indução de relaxamento neuromuscular e estabilização dos ciclos de sono.',
+    prescribedBy: 'Dr. Guilherme Martins',
+    prescribedAt: '12 ago 2026',
+    status: 'em_uso',
+    prescriptionId: 'rx-marina-1042',
+  },
+  {
+    id: 'med-marina-2',
+    patientId: 'marina-costa',
+    name: 'Complexo CoQ10 + Vitamina E',
+    dosage: '100mg + 100UI',
+    frequency: '1x ao dia (Almoço)',
+    timeSlots: ['12:30'],
+    instructions:
+      'Ingerir com refeição contendo gorduras boas (azeite, abacate) para máxima biodisponibilidade.',
+    purpose: 'Suporte à função mitocondrial e energia celular vespertina.',
+    prescribedBy: 'Dr. Guilherme Martins',
+    prescribedAt: '12 ago 2026',
+    status: 'em_uso',
+    prescriptionId: 'rx-marina-1042',
+  },
+  {
+    id: 'med-marina-3',
+    patientId: 'marina-costa',
+    name: 'Ômega 3 TG Concentrado (IFOS)',
+    dosage: '1.000mg (EPA 500 / DHA 400)',
+    frequency: '1x ao dia (Almoço)',
+    timeSlots: ['12:30'],
+    instructions: 'Tomar junto ao almoço. Manter o frasco ao abrigo de calor e umidade.',
+    purpose: 'Modulação inflamatória basal e suporte cardiovascular.',
+    prescribedBy: 'Dr. Guilherme Martins',
+    prescribedAt: '14 jun 2026',
+    status: 'em_uso',
+    prescriptionId: 'rx-marina-1021',
+  },
+  {
+    id: 'med-paulo-1',
+    patientId: 'paulo-mendes',
+    name: 'Berberina Fitossomal',
+    dosage: '500mg',
+    frequency: '1x ao dia (Antes do almoço)',
+    timeSlots: ['12:00'],
+    instructions:
+      'Tomar com água antes da principal refeição. Se houver desconforto, transferir para após o almoço.',
+    purpose: 'Sensibilização insulínica e controle glicêmico.',
+    prescribedBy: 'Dr. Guilherme Martins',
+    prescribedAt: '18 ago 2026',
+    status: 'em_uso',
+    prescriptionId: 'rx-paulo-1051',
+  },
+]
+
+export const initialExams: ExamRecord[] = [
+  {
+    id: 'exam-marina-1',
+    patientId: 'marina-costa',
+    title: 'Painel Metabólico & Perfil Lipídico Avançado',
+    category: 'Laboratorial',
+    performedAt: '05 de agosto de 2026',
+    laboratory: 'Laboratório Fleury / Vivans Integrado',
+    doctorRequester: 'Dr. Guilherme Martins',
+    status: 'concluido',
+    summary:
+      'Excelente perfil de segurança. Glicemia de jejum e hemoglobina glicada dentro do alvo otimizado de longevidade. PCR ultrassensível indica baixo risco inflamatório.',
+    highlights: [
+      {
+        parameter: 'Glicemia de Jejum',
+        value: '88 mg/dL',
+        reference: '70 a 99 mg/dL',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'Hemoglobina Glicada (HbA1c)',
+        value: '5.2%',
+        reference: '< 5.7%',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'Insulina Basal',
+        value: '6.4 uUI/mL',
+        reference: '2.0 a 10.0 uUI/mL (otimizado)',
+        status: 'otimizado',
+      },
+      { parameter: 'HOMA-IR', value: '1.39', reference: '< 1.80', status: 'otimizado' },
+      {
+        parameter: 'Colesterol Total',
+        value: '182 mg/dL',
+        reference: '< 190 mg/dL',
+        status: 'normal',
+      },
+      {
+        parameter: 'HDL-Colesterol',
+        value: '58 mg/dL',
+        reference: '> 50 mg/dL',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'Triglicérides',
+        value: '96 mg/dL',
+        reference: '< 150 mg/dL',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'PCR Ultrassensível',
+        value: '0.4 mg/L',
+        reference: '< 1.0 mg/L',
+        status: 'otimizado',
+      },
+    ],
+    doctorObservations:
+      'Parâmetros basais de inflamação e metabolismo glicídico excelentes. Continuar o protocolo nutricional sem necessidade de medicação alopática.',
+  },
+  {
+    id: 'exam-marina-2',
+    patientId: 'marina-costa',
+    title: 'Painel Hormonal, Tireoidiano & Micronutrientes',
+    category: 'Metabólico',
+    performedAt: '05 de agosto de 2026',
+    laboratory: 'Laboratório Fleury / Vivans Integrado',
+    doctorRequester: 'Dr. Guilherme Martins',
+    status: 'concluido',
+    summary:
+      'Função tireoidiana preservada (TSH 1.82). 25-OH Vitamina D em nível satisfatório (46 ng/mL) e Ferritina adequada (78 ng/mL). Cortisol salivar noturno sugere leve ativação simpática tardia.',
+    highlights: [
+      {
+        parameter: 'TSH Ultrassensível',
+        value: '1.82 mUI/L',
+        reference: '0.4 a 4.0 mUI/L (alvo: 1.0-2.5)',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'T4 Livre',
+        value: '1.24 ng/dL',
+        reference: '0.8 a 1.8 ng/dL',
+        status: 'normal',
+      },
+      {
+        parameter: '25-OH Vitamina D',
+        value: '46 ng/mL',
+        reference: '30 a 60 ng/mL (longevidade)',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'Vitamina B12',
+        value: '620 pg/mL',
+        reference: '400 a 900 pg/mL',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'Ferritina Sérica',
+        value: '78 ng/mL',
+        reference: '50 a 150 ng/mL',
+        status: 'normal',
+      },
+      {
+        parameter: 'Cortisol Noturno (Salivar)',
+        value: '0.28 mcg/dL',
+        reference: '< 0.15 mcg/dL',
+        status: 'atencao',
+      },
+    ],
+    doctorObservations:
+      'A discreta elevação do cortisol noturno corrobora o relato de despertares às 3h. A antecipação do jantar e a higiene do sono foram priorizadas.',
+  },
+  {
+    id: 'exam-marina-3',
+    patientId: 'marina-costa',
+    title: 'Bioimpedância Segmentar InBody 770',
+    category: 'Funcional',
+    performedAt: '12 de agosto de 2026',
+    laboratory: 'Instituto Vivans · Avaliação Clínica',
+    doctorRequester: 'Dr. Guilherme Martins',
+    status: 'concluido',
+    summary:
+      'Massa muscular esquelética altamente preservada durante o déficit calórico gradual. Percentual de gordura em 28.4% com regressão favorável.',
+    highlights: [
+      {
+        parameter: 'Peso Corporal Total',
+        value: '79.6 kg',
+        reference: 'Início: 80.0 kg',
+        status: 'normal',
+      },
+      {
+        parameter: 'Massa Muscular Esquelética',
+        value: '26.8 kg',
+        reference: 'Alvo: > 25.0 kg',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'Percentual de Gordura Corporal',
+        value: '28.4%',
+        reference: 'Alvo: 22 - 25%',
+        status: 'normal',
+      },
+      {
+        parameter: 'Água Corporal Total',
+        value: '38.2 L',
+        reference: 'Adequada',
+        status: 'otimizado',
+      },
+      {
+        parameter: 'Nível de Gordura Visceral',
+        value: 'Grau 6',
+        reference: '< 9 (Seguro)',
+        status: 'otimizado',
+      },
+    ],
+    doctorObservations:
+      'Excelente preservação de massa magra. Demonstra eficácia do aporte proteico no jantar e nos lanches.',
+  },
+  {
+    id: 'exam-paulo-1',
+    patientId: 'paulo-mendes',
+    title: 'Painel Glicêmico & Perfil Hepático',
+    category: 'Laboratorial',
+    performedAt: '15 de agosto de 2026',
+    laboratory: 'Laboratório Dasa / Vivans',
+    doctorRequester: 'Dr. Guilherme Martins',
+    status: 'concluido',
+    summary: 'Curva glicêmica em acompanhamento. TGO/TGP discretamente limítrofes.',
+    highlights: [
+      {
+        parameter: 'Glicemia de Jejum',
+        value: '104 mg/dL',
+        reference: '< 100 mg/dL',
+        status: 'atencao',
+      },
+      { parameter: 'HbA1c', value: '5.8%', reference: '< 5.7%', status: 'atencao' },
+      { parameter: 'TGP (ALT)', value: '36 U/L', reference: '< 35 U/L', status: 'normal' },
+    ],
+  },
+]
+
+export const initialSuggestedProcedures: SuggestedProcedure[] = [
+  {
+    id: 'proc-marina-1',
+    patientId: 'marina-costa',
+    title: 'Reavaliação de Composição Corporal por Bioimpedância (InBody 770)',
+    category: 'Bioimpedância',
+    suggestedBy: 'Dr. Guilherme Martins',
+    suggestedAt: '12 de agosto de 2026',
+    status: 'agendado',
+    scheduledFor: '26 de setembro de 2026 · 10:00',
+    priority: 'alta',
+    clinicalRationale:
+      'Monitorar a taxa de preservação de massa muscular esquelética após 45 dias de crononutrição e readequação do sono.',
+    patientExplanation:
+      'Exame rápido e indolor feito no próprio Instituto Vivans para conferir como seu corpo está trocando gordura por saúde e firmeza muscular.',
+    nextStepPrompt: 'Agendamento já programado para o retorno de 45 dias no Instituto.',
+  },
+  {
+    id: 'proc-marina-2',
+    patientId: 'marina-costa',
+    title: 'Mapeamento de Actimetria / Sono Longitudinal (Wearable)',
+    category: 'Avaliação Especializada',
+    suggestedBy: 'Dr. Guilherme Martins',
+    suggestedAt: '25 de agosto de 2026',
+    status: 'sugerido',
+    priority: 'media',
+    clinicalRationale:
+      'Caso os despertares noturnos persistam por mais 14 dias após a troca do jantar para as 19h30, mapear a arquitetura do sono e microdespertares.',
+    patientExplanation:
+      'Sugestão médica para avaliação de sono com sensor leve no pulso, a ser decidida na próxima consulta se o sono ainda estiver fragmentado.',
+    nextStepPrompt:
+      'Sugestão médica em estudo. Será confirmada na consulta de retorno com o Dr. Guilherme.',
+  },
+  {
+    id: 'proc-marina-3',
+    patientId: 'marina-costa',
+    title: 'Painel Laboratorial de Controle Metabólico Trimestral',
+    category: 'Exame de Controle',
+    suggestedBy: 'Dr. Guilherme Martins',
+    suggestedAt: '12 de agosto de 2026',
+    status: 'sugerido',
+    priority: 'preventiva',
+    clinicalRationale:
+      'Acompanhar a evolução de HbA1c, HOMA-IR, perfil lipídico e cortisol salivar após o ciclo completo de 90 dias.',
+    patientExplanation:
+      'Exames de sangue simples para comparar seus resultados e celebrar sua evolução trimestral de saúde.',
+    nextStepPrompt: 'Recomendado para novembro de 2026 (fim do ciclo de 90 dias).',
+  },
+  {
+    id: 'proc-paulo-1',
+    patientId: 'paulo-mendes',
+    title: 'Ultrassonografia de Abdome Total com Doppler',
+    category: 'Exame de Controle',
+    suggestedBy: 'Dr. Guilherme Martins',
+    suggestedAt: '18 de agosto de 2026',
+    status: 'sugerido',
+    priority: 'alta',
+    clinicalRationale: 'Avaliação da esteatose hepática e vesícula biliar.',
+    patientExplanation: 'Exame de imagem simples para verificar a saúde do fígado.',
+    nextStepPrompt: 'Aguardando validação na consulta de hoje.',
   },
 ]
