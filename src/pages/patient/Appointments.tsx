@@ -101,7 +101,6 @@ export default function PatientAppointments() {
               <Video className="size-4" />
               <span>Entrar na Sala Virtual</span>
             </Link>
-
             <Link
               to="/paciente/pre-consulta"
               className="flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors"
@@ -109,10 +108,10 @@ export default function PatientAppointments() {
               <Sparkles className="size-4 text-[#0b7b68]" />
               <span>
                 {preConsultation.completed
-                  ? 'Ver Resumo da Pré-consulta'
-                  : 'Responder Pré-consulta Agora'}
+                  ? 'Ver Resumo da Pré-Consulta'
+                  : 'Fazer Pré-Consulta Estruturada'}
               </span>
-            </Link>
+            </Link>{' '}
           </div>
         </div>
       </article>

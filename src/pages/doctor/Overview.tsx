@@ -23,7 +23,15 @@ import {
 } from 'lucide-react'
 
 export default function DoctorOverview() {
-  const { patients, appointments, reports, nudged, nudgeDelayedPatients, notify } = useVivans()
+  const {
+    patients,
+    appointments,
+    reports,
+    scheduledCheckins,
+    nudged,
+    nudgeDelayedPatients,
+    notify,
+  } = useVivans()
   const navigate = useNavigate()
 
   const [selectedAlert, setSelectedAlert] = useState<{
@@ -37,26 +45,26 @@ export default function DoctorOverview() {
   const alerts = [
     {
       patient: 'Marina Costa',
-      title: 'Sono abaixo do padrão por 4 noites',
+      title: 'Padrão de sono compilado para observação médica',
       context:
-        'Média de 5h42 com despertares entre 3h e 4h. Pré-consulta correlaciona com horário do jantar.',
-      tag: 'Revisar hoje (10:30)',
+        'Média de 5h42 com despertares por volta das 3h. Pré-consulta indica correlação a ser avaliada com horário do jantar.',
+      tag: 'Revisar no retorno (10:30)',
       tone: 'amber' as const,
     },
     {
       patient: 'Paulo Mendes',
-      title: 'Relatou enjoo após atualização do plano',
+      title: 'Registro de desconforto gástrico leve',
       context:
-        'Novo sintoma informado no check-in das 08:12. Avaliar tolerância e conduta na consulta das 16:30.',
-      tag: 'Novo sintoma',
+        'Sintoma informado no check-in matinal. Dados compilados para avaliação de tolerância pelo médico.',
+      tag: 'Observação clínica',
       tone: 'rose' as const,
     },
     {
       patient: 'Ana Ribeiro',
-      title: 'Relatório mensal pronto para validação',
+      title: 'Relatório longitudinal compilado para validação',
       context:
-        'Adesão de 88% e ganho de 12% na força funcional. Síntese preparada pela IA aguardando assinatura.',
-      tag: 'Relatório mensal',
+        'Adesão de 88% e ganho de 12% na força funcional. Rascunho estruturado aguardando assinatura médica.',
+      tag: 'Revisão médica',
       tone: 'blue' as const,
     },
   ]
@@ -92,7 +100,9 @@ export default function DoctorOverview() {
                 : 'bg-[#17372f] text-white hover:bg-[#0e2721]'
             }`}
           >
-            {nudged ? 'Lembrete enviado aos 5 atrasados' : 'Dar um cutucão nos 5 atrasados'}
+            {nudged
+              ? 'Lembrete clínico enviado aos 5 atrasados'
+              : 'Enviar lembrete aos 5 atrasados'}
           </button>
         </div>
       </section>
@@ -183,11 +193,13 @@ export default function DoctorOverview() {
           {/* AI Copilot Badge */}
           <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4 text-xs text-[#0b6a5b] flex items-start gap-2.5">
             <Sparkles className="size-4 shrink-0 mt-0.5" />
-            <p className="leading-relaxed">
-              <strong>Triagem Inteligente Segura:</strong> O sistema correlaciona biossinais e
-              relatos para destacar exceções. Nenhuma conduta clínica ou diagnóstico é emitido
-              autonomamente.
-            </p>
+            <div className="space-y-1">
+              <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
+              <p className="leading-relaxed text-[#3b534b]">
+                O sistema compila biossinais e relatos para destacar pontos de observação à equipe
+                clínica, sem emissão autônoma de diagnóstico, prescrição ou conduta.
+              </p>
+            </div>
           </div>
         </section>
 

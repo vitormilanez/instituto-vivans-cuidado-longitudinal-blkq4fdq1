@@ -16,9 +16,8 @@ import {
 } from 'lucide-react'
 
 export default function Index() {
-  const { setRole, notify } = useVivans()
+  const { role, setRole, scheduledCheckins, notify } = useVivans()
   const navigate = useNavigate()
-
   const handleSelectRole = (selectedRole: 'doctor' | 'patient') => {
     setRole(selectedRole)
     if (selectedRole === 'doctor') {
@@ -82,7 +81,7 @@ export default function Index() {
             <div className="space-y-2 text-xs text-[#45655c]">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="size-4 text-[#0b7b68]" />
-                <span>Hoje: Próximas ações e check-in sem complicação</span>
+                <span>Hoje: Plano pós-consulta ativo com check-ins programados</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="size-4 text-[#0b7b68]" />
@@ -156,9 +155,9 @@ export default function Index() {
 
         <div className="grid gap-4 sm:grid-cols-3 text-xs text-[#526a62] leading-relaxed">
           <div className="rounded-2xl bg-white p-4 border border-[#dfe8e3]">
-            <strong className="text-[#17372f] block mb-1">IA como Copiloto:</strong>
-            Organiza resumos, notas estruturadas e transcrições. Nunca prescreve, diagnostica ou
-            altera conduta de forma autônoma.
+            <strong className="text-[#17372f] block mb-1">Apoio Clínico Estruturado:</strong>
+            Organiza resumos, notas estruturadas e transcrições sob o rótulo de rascunho com
+            validação médica obrigatória.
           </div>
           <div className="rounded-2xl bg-white p-4 border border-[#dfe8e3]">
             <strong className="text-[#17372f] block mb-1">Privacidade &amp; LGPD:</strong>

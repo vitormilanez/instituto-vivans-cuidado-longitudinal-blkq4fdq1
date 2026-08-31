@@ -116,10 +116,7 @@ export default function DoctorMessages() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Sparkles className="size-4 text-[#0b7b68]" />
-                        <span className="text-xs font-bold text-[#0b6a5b]">
-                          Rascunho Sugerido pelo Copiloto IA (Apenas você vê)
-                        </span>
+                        <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
                       </div>
                       <StatusBadge tone="amber">Aguardando Validação</StatusBadge>
                     </div>

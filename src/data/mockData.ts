@@ -68,6 +68,37 @@ export interface CarePlanItem {
   type: 'medical' | 'ai_suggestion'
   completed: boolean
   notes?: string
+  frequency?: string
+  targetDays?: number
+}
+
+export type CheckinType = 'peso' | 'humor' | 'adesao' | 'diario'
+export type CheckinStatus = 'concluido' | 'pendente' | 'atrasado'
+
+export interface ScheduledCheckin {
+  id: string
+  patientId: string
+  title: string
+  type: CheckinType
+  scheduledDate: string
+  scheduledTime?: string
+  dayOffset: number // ex: Dia 1, Dia 3, Dia 7, Dia 14
+  status: CheckinStatus
+  completedAt?: string
+  value?: string | number
+  notes?: string
+}
+
+export interface ReturnJourneyPlan {
+  id: string
+  patientId: string
+  title: string
+  status: 'ativo' | 'concluido' | 'em_revisao'
+  activatedAt: string
+  approvedBy: string
+  nextReviewDate: string
+  summary: string
+  checkins: ScheduledCheckin[]
 }
 
 export interface MealRecord {
@@ -140,53 +171,54 @@ export const initialPatients: PatientProfile[] = [
     id: 'marina-costa',
     initials: 'MC',
     name: 'Marina Costa',
-    focus: 'Emagrecimento · sono',
+    focus: 'Emagrecimento longitudinal · sono e ritmo circadiano',
     progress: '−1,8 kg',
-    attention: 'Sono',
+    attention: 'Sono fora do padrão',
     tone: 'amber',
     reportCount: '2',
     prescriptionCount: '1 ativa',
-    cycle: 'Dia 29 de 90',
+    cycle: 'Dia 29 de 90 · Plano pós-consulta ativo',
     lastContact: 'Hoje · 09:18',
-    nextConsultation: 'Hoje · 10:30',
+    nextConsultation: 'Hoje · 10:30 (Retorno agendado)',
     adherence: '82%',
     weightLoss: '−1,8 kg',
     currentWeight: 78.2,
     targetWeight: 72.0,
     startWeight: 80.0,
     report: {
-      title: 'Relatório quinzenal',
+      title: 'Relatório clínico quinzenal',
       period: '11–25 de agosto',
       status: 'Revisado em 24 ago',
       summary:
-        'Evolução consistente de peso e boa adesão. O sono permaneceu abaixo do padrão pessoal em quatro noites.',
+        'Evolução ponderal progressiva com redução de 1,8 kg e adesão de 82%. Ponto de observação: média de 5h42 de sono em quatro noites consecutivas.',
       metrics: [
-        ['Peso', '−1,8 kg'],
-        ['Adesão', '82%'],
-        ['Sono médio', '6h12'],
+        ['Variação ponderal', '−1,8 kg'],
+        ['Adesão média', '82%'],
+        ['Sono médio', '5h42'],
       ],
     },
     prescription: {
       title: 'Receita digital #RX-1042',
       status: 'Ativa',
       detail: '1 item prescrito · validade até 26 de setembro',
-      note: 'Emitida na última consulta e disponibilizada à paciente.',
+      note: 'Emitida em consulta anterior e disponibilizada à paciente.',
     },
     insight: {
-      title: 'Priorizar sono antes de ampliar metas',
-      detail: 'Quatro noites abaixo de seis horas coincidem com menor energia nos check-ins.',
-      basis: 'Baseado em 14 dias de dados demonstrativos.',
+      title: 'Observação de ritmo circadiano',
+      detail:
+        'Média de descanso abaixo de seis horas correlacionada a queixa de menor energia vespertina.',
+      basis: 'Compilação de registros de 14 dias para apreciação médica.',
     },
     activity: [
-      ['Hoje · 09:18', 'Pré-consulta por voz concluída'],
-      ['Ontem · 20:08', 'Jantar e saciedade registrados'],
-      ['24 ago · 16:42', 'Relatório quinzenal revisado'],
+      ['Hoje · 09:18', 'Pré-consulta concluída e vinculada'],
+      ['Ontem · 20:08', 'Registro noturno com notas de saciedade'],
+      ['24 ago · 16:42', 'Relatório quinzenal revisado pelo médico'],
       ['12 ago · 11:14', 'Primeira consulta realizada'],
     ],
     nextSteps: [
-      'Investigar despertares noturnos',
-      'Confirmar tolerância ao plano atual',
-      'Definir meta da próxima quinzena',
+      'Avaliar intervalo do jantar e repouso',
+      'Confirmar tolerância ao plano aprovado',
+      'Acompanhar check-ins programados de retorno',
     ],
   },
   {
@@ -405,22 +437,21 @@ export const initialAppointments: Appointment[] = [
     statusTone: 'gray',
     preVisit: 'Pré-consulta revisada',
     preVisitTone: 'green',
-    objective: '“Quero manter minha energia ao longo do dia e recuperar segurança nos exercícios.”',
-    reported: 'Boa disposição pela manhã, uma queda de energia à tarde e nenhum sintoma novo.',
-    aiFocus:
-      'Revisar distribuição das atividades e percepção de esforço, sem ampliar metas automaticamente.',
+    objective: '“Manutenção da disposição ao longo do dia e consolidação da rotina de exercícios.”',
+    reported:
+      'Disposição preservada pela manhã, leve declínio de energia às 16h; sem intercorrências agudas.',
+    aiFocus: 'Contextualização de rotina de esforço e repouso, sem inferência de conduta.',
     metrics: [
-      ['Energia', '4 de 5', '+1 ponto'],
-      ['Passos', '7.280', '+6%'],
-      ['Sono', '7h04', 'regular'],
+      ['Disposição matinal', '4 de 5', 'Estável'],
+      ['Passos diários', '7.280', '+6%'],
+      ['Sono médio', '7h04', 'Regular'],
     ],
-    attentionTitle: 'Sem alerta clínico novo',
-    attentionDetail:
-      'A variação de energia foi registrada para contextualização médica, sem inferência diagnóstica.',
+    attentionTitle: 'Sem intercorrências registradas',
+    attentionDetail: 'Variações registradas para contextualização médica no prontuário.',
     checklist: [
-      'Validar energia à tarde',
+      'Avaliar disposição vespertina',
       'Revisar percepção de esforço',
-      'Definir próximo acompanhamento',
+      'Definir acompanhamento pós-consulta',
     ],
   },
   {
@@ -428,23 +459,29 @@ export const initialAppointments: Appointment[] = [
     time: '10:30',
     patient: 'Marina Costa',
     initials: 'MC',
-    type: 'Retorno · 30 min',
+    type: 'Retorno longevidade · 30 min',
     status: 'Próxima',
     statusTone: 'green',
-    preVisit: 'Voz concluída · resumo pronto',
+    preVisit: 'Pré-consulta estruturada · Resumo pronto',
     preVisitTone: 'green',
-    objective: '“Quero continuar perdendo peso sem ficar cansada e voltar a dormir melhor.”',
-    reported: 'Mais saciedade, sono pior nesta semana e nenhum sintoma novo.',
-    aiFocus: 'Priorizar sono e energia antes de ampliar metas.',
+    objective:
+      '“Manter a perda ponderal gradual com preservação de energia e recuperação do sono.”',
+    reported:
+      'Adesão estável ao plano alimentar, melhora de saciedade noturna e queixa de despertares por volta das 3h.',
+    aiFocus: 'Estruturação de dados de sono e intervalo de refeições para análise médica.',
     metrics: [
-      ['Peso', '78,2 kg', '−1,8 kg'],
-      ['Adesão', '82%', '+6 p.p.'],
-      ['Sono', '5h42', 'abaixo do padrão'],
+      ['Peso atual', '78,2 kg', '−1,8 kg'],
+      ['Adesão ao plano', '82%', '+6 p.p.'],
+      ['Sono médio', '5h42', 'Abaixo do padrão'],
     ],
-    attentionTitle: 'Sono fora do padrão pessoal',
+    attentionTitle: 'Padrão de repouso para avaliação médica',
     attentionDetail:
-      'Quatro noites abaixo de seis horas. Dados do relógio são demonstrativos e não equivalem a diagnóstico.',
-    checklist: ['Validar sono', 'Confirmar tolerância', 'Decidir próximo passo'],
+      'Média de 5h42 de descanso em quatro noites consecutivas compilada para contextualização.',
+    checklist: [
+      'Avaliar crononutrição',
+      'Confirmar tolerância digestiva',
+      'Ativar plano de check-ins de retorno',
+    ],
   },
   {
     id: 'apt-rafael',
@@ -521,35 +558,122 @@ export const initialAppointments: Appointment[] = [
   },
 ]
 
+export const initialScheduledCheckins: ScheduledCheckin[] = [
+  {
+    id: 'chk-1',
+    patientId: 'marina-costa',
+    title: 'Check-in de Peso e Saciedade Matinal',
+    type: 'peso',
+    scheduledDate: 'Hoje · 08:00',
+    dayOffset: 1,
+    status: 'concluido',
+    completedAt: 'Hoje · 08:14',
+    value: '78,2 kg',
+    notes: 'Registrado em jejum, sem queixas digestivas.',
+  },
+  {
+    id: 'chk-2',
+    patientId: 'marina-costa',
+    title: 'Registro de Saciedade e Conforto no Jantar',
+    type: 'diario',
+    scheduledDate: 'Hoje · 20:30',
+    dayOffset: 1,
+    status: 'pendente',
+    notes: 'Foto com notas de saciedade (1 a 5).',
+  },
+  {
+    id: 'chk-3',
+    patientId: 'marina-costa',
+    title: 'Check-in de Humor, Energia e Despertares',
+    type: 'humor',
+    scheduledDate: 'Amanhã · 08:30',
+    dayOffset: 2,
+    status: 'pendente',
+    notes: 'Avaliação da percepção de descanso e fadiga vespertina.',
+  },
+  {
+    id: 'chk-4',
+    patientId: 'marina-costa',
+    title: 'Aferição de Peso e Balanço Hídrico',
+    type: 'peso',
+    scheduledDate: '28 de agosto · 08:00',
+    dayOffset: 4,
+    status: 'pendente',
+  },
+  {
+    id: 'chk-5',
+    patientId: 'marina-costa',
+    title: 'Revisão Semanal de Adesão e Higiene do Sono',
+    type: 'adesao',
+    scheduledDate: '01 de setembro · 19:00',
+    dayOffset: 7,
+    status: 'pendente',
+  },
+  {
+    id: 'chk-6',
+    patientId: 'marina-costa',
+    title: 'Síntese Quinzenal de Evolução Pós-Consulta',
+    type: 'adesao',
+    scheduledDate: '08 de setembro · 10:00',
+    dayOffset: 14,
+    status: 'pendente',
+  },
+]
+
+export const initialReturnJourney: ReturnJourneyPlan = {
+  id: 'journey-marina-retorno',
+  patientId: 'marina-costa',
+  title: 'Plano Pós-Consulta de Retorno e Adaptação do Sono',
+  status: 'ativo',
+  activatedAt: '25 ago 2026 · Aprovado em consulta',
+  approvedBy: 'Dr. Guilherme Martins',
+  nextReviewDate: '08 de setembro de 2026 (14 dias)',
+  summary:
+    'Foco no reajuste crononutricional do jantar para as 19h30 e monitoramento longitudinal de sono e saciedade.',
+  checkins: initialScheduledCheckins,
+}
+
 export const initialCarePlans: CarePlanItem[] = [
   {
     id: 'plan-1',
-    action: 'Tomar 500ml de água antes do almoço e do jantar',
-    category: 'Hábitos alimentares',
+    action: 'Ingerir 500 ml de água antes do almoço e do jantar',
+    category: 'Hábitos alimentares e hidratação',
     type: 'medical',
     completed: true,
+    frequency: 'Diário',
   },
   {
     id: 'plan-2',
-    action: 'Registrar uma foto do jantar para avaliar saciedade',
-    category: 'Diário · até 21h',
+    action: 'Antecipar o horário do jantar para as 19h30',
+    category: 'Crononutrição · Ajuste pós-consulta',
     type: 'medical',
     completed: false,
+    frequency: 'Diário',
   },
   {
     id: 'plan-3',
-    action: 'Começar a desacelerar às 22h (higiene do sono sem telas)',
-    category: 'Sono e recuperação',
+    action: 'Registrar imagem do prato noturno com notas de saciedade',
+    category: 'Diário de acompanhamento · até 21h',
     type: 'medical',
     completed: false,
+    frequency: 'Diário',
   },
   {
     id: 'plan-4',
-    action: 'Caminhada leve de 15 minutos ao ar livre pela manhã',
-    category: 'Atividade física',
+    action: 'Iniciar rotina de higiene do sono sem telas às 22h',
+    category: 'Sono e recuperação',
+    type: 'medical',
+    completed: false,
+    frequency: 'Diário',
+  },
+  {
+    id: 'plan-5',
+    action: 'Caminhada leve matinal de 15 minutos em luz natural',
+    category: 'Atividade física e ritmo circadiano',
     type: 'ai_suggestion',
     completed: false,
-    notes: 'Sugestão do Copiloto IA para discussão na consulta de hoje.',
+    notes: 'Rascunho organizado pelo Copiloto para avaliação médica.',
+    frequency: 'Sugestão em análise',
   },
 ]
 
@@ -606,7 +730,7 @@ export const initialMessages: MessageItem[] = [
     author: 'Dr. Guilherme Martins',
     time: 'Hoje · 08:30',
     content:
-      'Bom dia, Marina! Vi suas respostas da pré-consulta. Vamos focar nos despertares noturnos na nossa consulta das 10:30.',
+      'Bom dia, Marina. Recebi as informações da sua pré-consulta. Vamos dedicar atenção especial à qualidade do sono e ao horário das refeições na nossa consulta de hoje.',
     status: 'enviada',
   },
   {
@@ -615,16 +739,16 @@ export const initialMessages: MessageItem[] = [
     author: 'Marina Costa',
     time: 'Hoje · 08:45',
     content:
-      'Perfeito, Dr. Guilherme! Anotei aqui também o que senti com a mudança de horário do jantar.',
+      'Perfeito, Dr. Guilherme. Registrei também a percepção de saciedade após a alteração do jantar.',
     status: 'enviada',
   },
   {
     id: 'msg-3',
     sender: 'ai_draft',
-    author: 'Copiloto Vivans (Rascunho Sugerido)',
+    author: 'Copiloto Clínico (Rascunho para validação)',
     time: 'Hoje · 09:19',
     content:
-      'Sugestão de resposta pós-consulta: "Marina, seu plano atualizado de sono já está disponível na aba Plano. Lembre-se de desligar as telas às 22h."',
+      'Marina, seu plano de acompanhamento pós-consulta está ativo na aba Plano, com os check-ins programados para os próximos 14 dias. Mantenha os registros de saciedade e o repouso conforme alinhado.',
     isAiDraft: true,
     status: 'aguardando_aprovacao',
   },
@@ -634,58 +758,59 @@ export const initialReports: ClinicalReport[] = [
   {
     id: 'rep-ana-monthly',
     patientName: 'Ana Ribeiro',
-    title: 'Relatório Mensal de Força e Longevidade',
+    title: 'Relatório Mensal de Funcionalidade e Longevidade',
     period: '25 jul – 25 ago 2026',
     status: 'em_revisao',
     summary:
-      'Aumento de 12% na força funcional, melhora de 8 p.p. na adesão diária e estabilidade de peso.',
+      'Evolução favorável com incremento de 12% nos registros de força funcional, estabilidade de peso e adesão global de 88% no período.',
     metrics: [
-      ['Adesão', '88%'],
-      ['Força', '+12%'],
-      ['Passos Médios', '7.140'],
+      ['Adesão global', '88%'],
+      ['Força funcional', '+12%'],
+      ['Média de passos', '7.140/dia'],
     ],
   },
   {
     id: 'rep-marina-biweekly',
     patientName: 'Marina Costa',
-    title: 'Relatório de Evolução Quinzenal',
+    title: 'Relatório Clínico de Evolução Quinzenal',
     period: '11 – 25 de agosto 2026',
     status: 'em_revisao',
     summary:
-      'Evolução consistente com perda de 1,8 kg de gordura preservando massa magra. Ponto de atenção: 4 noites com sono < 6h.',
+      'Redução ponderal de 1,8 kg com boa tolerância geral e 82% de adesão ao plano de cuidado. Registrada redução no tempo total de sono (média de 5h42 em 4 noites consecutivas) aguardando correlação clínica com crononutrição.',
     metrics: [
-      ['Peso', '−1,8 kg'],
-      ['Adesão', '82%'],
-      ['Sono Médio', '5h42'],
+      ['Variação de peso', '−1,8 kg'],
+      ['Adesão ao plano', '82%'],
+      ['Sono médio', '5h42'],
     ],
   },
   {
     id: 'rep-marina-first',
     patientName: 'Marina Costa',
-    title: 'Síntese da Primeira Consulta',
+    title: 'Síntese Clínica da Primeira Consulta',
     period: '12 de agosto 2026',
     status: 'aprovado',
     approvedBy: 'Dr. Guilherme Martins',
     approvedAt: '12 ago 2026 11:30',
     summary:
-      'Definição do objetivo longitudinal: perda ponderal sustentável com saúde metabólica e preservação da qualidade de vida.',
+      'Definição de acompanhamento longitudinal com metas graduais de estilo de vida, saciedade noturna e rastreio de biossinais.',
     metrics: [
-      ['Peso Inicial', '80,0 kg'],
-      ['Meta Proposta', '72,0 kg'],
-      ['Adesão Inicial', '100%'],
+      ['Peso inicial', '80,0 kg'],
+      ['Meta inicial', '72,0 kg'],
+      ['Adesão inicial', '100%'],
     ],
   },
   {
     id: 'rep-paulo-weekly',
     patientName: 'Paulo Mendes',
-    title: 'Relatório Semanal de Adaptação',
+    title: 'Relatório Semanal de Adaptação Clínica',
     period: '18 – 25 de agosto 2026',
     status: 'rascunho',
-    summary: 'Adesão de 72% no período. Registro de enjoo leve matinal aguardando ajuste médico.',
+    summary:
+      'Adesão de 72% no período. Registro de queixa de enjoo leve matinal compilado para avaliação médica na consulta.',
     metrics: [
-      ['Adesão', '72%'],
-      ['Peso', '−0,6 kg'],
-      ['Check-ins', '5 de 7'],
+      ['Adesão média', '72%'],
+      ['Variação ponderal', '−0,6 kg'],
+      ['Check-ins realizados', '5 de 7'],
     ],
   },
 ]
@@ -694,19 +819,20 @@ export const initialPreConsultation: PreConsultationData = {
   completed: true,
   consentGiven: true,
   mode: 'voice',
-  objective: 'Quero continuar perdendo peso sem ficar cansada e voltar a dormir melhor.',
+  objective:
+    'Manter a redução ponderal gradual com preservação de disposição e regularização do sono.',
   energyRating: 3,
   sleepRating: 2,
-  digestiveStatus: 'Boa digestão geral, sem queixas gástricas agudas.',
+  digestiveStatus: 'Tolerância digestiva preservada, sem queixas gástricas agudas relatadas.',
   questionsForDoctor:
-    'Quero saber se o horário que janto (por volta de 20h) está atrapalhando meu sono.',
+    'Avaliar se o horário do jantar habitual (20h30) pode ter correlação com os despertares noturnos.',
   audioDurationSeconds: 184,
-  transcript: `Marina: "Oi Dr. Guilherme! Tudo bem? Na última quinzena eu consegui manter a hidratação e o prato do jantar bem certinho como combinamos. Notei que a minha saciedade melhorou muito e não sinto mais aquela vontade louca de doce de noite. A balança baixou quase dois quilos, o que me deixou muito animada! O problema é que nesta última semana eu comecei a acordar às 3h da manhã sem motivo e demoro pra dormir de novo. Fico com uma média de 5h40 por noite e acordo cansada. Quero ver com o senhor se mudar o horário do jantar ou alguma vitamina pode me ajudar a regular isso."`,
-  aiSynthesis: `• Objetivo principal: Perda de peso sustentada com resolução de insônia de manutenção.\n• Evolução positiva: Saciedade controlada, redução de compulsão noturna, perda ponderal de 1,8 kg.\n• Ponto de atenção clínica: Despertares noturnos com média de 5h42 de sono nas últimas 4 noites.\n• Hipótese contextualizada: Não há sinais de refluxo ou sintomas digestivos relatados; avaliar crononutrição e higiene do sono.`,
+  transcript: `Marina: "Bom dia, Dr. Guilherme. Ao longo dos últimos 14 dias mantive a hidratação e a composição do jantar conforme combinado. Observei melhora evidente na saciedade noturna e redução de 1,8 kg na pesagem. Contudo, nos últimos quatro dias passei a acordar por volta das 3h da manhã, demorando a retomar o sono e registrando cerca de 5h40 de descanso por noite. Gostaria de avaliar se o intervalo entre o jantar e o repouso precisa de adequação."`,
+  aiSynthesis: `• Relato principal: Continuidade do plano com redução ponderal de 1,8 kg e saciedade referida adequada.\n• Ponto de atenção: Despertares noturnos (média de 5h42 de sono em 4 noites consecutivas).\n• Sintomas associados: Sem relato de pirose, refluxo ou desconforto epigástrico.\n• Tópicos para avaliação médica: Intervalo entre refeição noturna e repouso, rotina de desaceleração e exposição à luz.`,
   suggestedQuestions: [
-    'Qual tem sido o intervalo entre o término do jantar e o momento de deitar?',
-    'Houve aumento no consumo de cafeína ou estimulantes após as 14h?',
-    'Como está a exposição à luz solar matinal e o nível de estresse no trabalho?',
+    'Qual tem sido o intervalo médio entre o término do jantar e o repouso?',
+    'Houve consumo de bebidas estimulantes ou cafeína no período vespertino?',
+    'Como tem sido a exposição à luz natural pela manhã e a rotina de desaceleração?',
   ],
   submittedAt: 'Hoje · 09:18',
 }
@@ -721,8 +847,9 @@ export const medicalEvidences: MedicalEvidence[] = [
     confidence: 'Alta',
     url: 'https://pubmed.ncbi.nlm.nih.gov/example-vivans-1',
     summary:
-      'Estudo demonstra que encerrar o consumo calórico 3 horas antes de dormir melhora em 22% a eficiência do sono REM em adultos sob restrição calórica moderada.',
-    relevance: 'Diretamente aplicável à queixa de despertares noturnos de Marina Costa.',
+      'Evidência indicando que o encerramento do consumo calórico cerca de 3 horas antes do repouso noturno associa-se a menor fragmentação do sono em adultos em acompanhamento ponderal.',
+    relevance:
+      'Contextualização demonstrativa para avaliação do intervalo entre jantar e repouso de Marina Costa.',
   },
   {
     id: 'ev-2',
@@ -733,19 +860,19 @@ export const medicalEvidences: MedicalEvidence[] = [
     confidence: 'Alta',
     url: 'https://cochranelibrary.com/example-vivans-2',
     summary:
-      'A distribuição de pelo menos 25g de proteína no jantar diminui episódios de fome noturna e melhora a regulação de grelina matinal.',
-    relevance: 'Valida a recomendação atual do plano alimentar implementado pelo Dr. Guilherme.',
+      'Aporte proteico adequado distribuído na última refeição favorece a estabilidade dos índices de saciedade e a redução da ingestão alimentar noturna.',
+    relevance: 'Embasamento conceitual para a composição nutricional alinhada pelo médico.',
   },
   {
     id: 'ev-3',
-    title: 'Diretriz de Cuidado Integrado do Envelhecimento Ativo',
+    title: 'Diretriz de Cuidado Integrado do Envelhecimento Ativo e Longevidade',
     source: 'Conitec',
     year: '2025',
     evidenceType: 'Diretriz Clínica Nacional',
     confidence: 'Moderada',
     url: 'https://conitec.gov.br/example-vivans-3',
     summary:
-      'Recomenda monitoramento longitudinal de sono e massa magra como preditores de longevidade e funcionalidade metabólica.',
-    relevance: 'Embasamento para o painel de atenção e acompanhamento longitudinal.',
+      'Recomenda o acompanhamento longitudinal periódico de parâmetros de descanso, adesão a hábitos e funcionalidade física.',
+    relevance: 'Alinhamento metodológico com o painel de acompanhamento longitudinal.',
   },
 ]

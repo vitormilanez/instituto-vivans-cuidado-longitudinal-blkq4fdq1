@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 export default function DoctorReports() {
-  const { reports, approveReport, notify } = useVivans()
+  const { reports, approveReport, scheduledCheckins, notify } = useVivans()
   const [selectedReportId, setSelectedReportId] = useState<string>('rep-marina-biweekly')
   const [statusFilter, setStatusFilter] = useState<'todos' | 'em_revisao' | 'aprovado'>('todos')
   const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false)
@@ -152,7 +152,20 @@ export default function DoctorReports() {
           </div>
 
           {/* AI Banner */}
-          <AiDraftBadge status="Estruturado com assistência de IA a partir de 14 dias de registros" />
+          <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
+
+          {/* Alignment with return journey for Marina */}
+          {selectedReport.patientName === 'Marina Costa' && (
+            <div className="rounded-2xl border border-[#dfe8e3] bg-[#f8faf9] p-4 text-xs text-[#45655c] space-y-1">
+              <span className="font-bold uppercase tracking-wider text-[#0b7b68] text-[11px]">
+                Status dos Check-ins de Retorno Pós-Consulta:
+              </span>
+              <p>
+                {scheduledCheckins.filter((c) => c.status === 'concluido').length} de{' '}
+                {scheduledCheckins.length} check-ins concluídos na quinzena em curso.
+              </p>
+            </div>
+          )}
 
           {/* Report body */}
           <div className="space-y-4 text-xs leading-relaxed text-[#45655c]">

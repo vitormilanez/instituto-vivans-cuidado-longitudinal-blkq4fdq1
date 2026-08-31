@@ -12,11 +12,11 @@ export function StatusBadge({
   className?: string
 }) {
   const tones = {
-    green: 'bg-[#e8f4f0] text-[#0b6a5b] border-[#c2e2d8]',
-    amber: 'bg-[#fff4d8] text-[#825b0b] border-[#fde2a4]',
-    rose: 'bg-[#fdecea] text-[#9c453f] border-[#f9c7c2]',
-    blue: 'bg-[#edf3fb] text-[#456b9c] border-[#cde0f7]',
-    gray: 'bg-[#f1f5f3] text-[#526a62] border-[#dfe8e3]',
+    green: 'bg-[#ebf6f2] text-[#075f50] border-[#bfe4d8]',
+    amber: 'bg-[#fef7e7] text-[#7d5308] border-[#f8deb0]',
+    rose: 'bg-[#fcf0ee] text-[#933933] border-[#f5c7c2]',
+    blue: 'bg-[#eff5fc] text-[#355b88] border-[#cbe0f6]',
+    gray: 'bg-[#f2f6f4] text-[#4a635b] border-[#dbe6e0]',
   }
   return (
     <span
@@ -41,11 +41,11 @@ export function AiDraftBadge({
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-2 rounded-xl border border-[#b9d8cf] bg-[#edf7f4] px-3 py-1.5 text-xs font-medium text-[#0b6a5b] shadow-sm',
+        'inline-flex items-center gap-1.5 rounded-xl border border-[#b8dcce] bg-[#edf7f3] px-3 py-1 text-xs font-semibold text-[#086353] shadow-xs',
         className,
       )}
     >
-      <Sparkles className="size-3.5 shrink-0 text-[#0b7b68]" />
+      <Sparkles className="size-3.5 shrink-0 text-[#097260]" />
       <span>{status}</span>
     </div>
   )
@@ -206,26 +206,26 @@ export function ConsentModal({
 
         <div className="mt-4 space-y-3 text-xs leading-relaxed text-[#526a62]">
           <p>
-            Para que o <strong>Dr. Guilherme Martins</strong> possa preparar seu atendimento com
-            mais qualidade, suas respostas da pré-consulta serão transcritas e organizadas pelo
-            Copiloto IA do Instituto Vivans.
+            Para que o <strong>Dr. Guilherme Martins</strong> disponha dos dados organizados antes
+            da sua consulta, suas respostas da pré-consulta serão compiladas em síntese estruturada
+            de apoio.
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-[#3b534b]">
             <li>
-              <strong>Descarte de áudio:</strong> O áudio é utilizado unicamente para transcrição e
-              descartado por padrão após o processamento.
+              <strong>Descarte de áudio:</strong> O áudio demonstrativo é utilizado exclusivamente
+              para transcrição no momento da consulta.
             </li>
             <li>
-              <strong>Revisão prévia:</strong> Você poderá revisar e editar todo o texto antes de
-              enviá-lo ao médico.
+              <strong>Revisão prévia:</strong> Você poderá revisar e editar todas as respostas antes
+              do envio ao médico.
             </li>
             <li>
-              <strong>Não-compartilhamento:</strong> Seus dados de saúde não são utilizados para
-              treinamento público de IA e não são transferidos a terceiros.
+              <strong>Sigilo e governança:</strong> Os dados clínicos não alimentam modelos públicos
+              de terceiros.
             </li>
             <li>
-              <strong>Separação de papéis:</strong> A IA apenas organiza seu relato; ela não toma
-              decisões clínicas.
+              <strong>Separação de papéis:</strong> O sistema atua exclusivamente na compilação de
+              dados e não toma decisões clínicas, não prescreve nem define diagnósticos.
             </li>
           </ul>
           <div className="rounded-xl border border-[#dfe8e3] bg-[#f8faf9] p-3 text-[11px] text-[#698078]">

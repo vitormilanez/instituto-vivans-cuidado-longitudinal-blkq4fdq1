@@ -154,11 +154,11 @@ export default function DoctorAgenda() {
                       </div>
 
                       <p className="text-xs text-[#45655c] leading-relaxed">
-                        <strong>Objetivo:</strong> {apt.objective}
+                        <strong>Objetivo relatado:</strong> {apt.objective}
                       </p>
 
                       <div className="flex flex-wrap gap-2 text-[11px] text-[#698078]">
-                        <span className="rounded-md bg-[#f4f7f5] px-2 py-0.5 font-medium text-[#17372f]">
+                        <span className="rounded-md bg-[#ebf6f2] px-2 py-0.5 font-semibold text-[#075f50]">
                           Foco Clínico: {apt.aiFocus}
                         </span>
                         {apt.metrics.map(([label, val, trend]) => (

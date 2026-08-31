@@ -30,31 +30,32 @@ export default function DoctorConsultationRoom() {
 
   // Clinical notes state
   const [freeNotes, setFreeNotes] = useState(
-    'Paciente relata boa adesão ao prato noturno com aumento de saciedade. Queixa central de sono interrompido às 3h com sensação de fadiga às 16h.',
+    'Paciente relata boa adesão à rotina alimentar com aumento de saciedade. Registrada queixa de despertares noturnos por volta das 3h da manhã e leve cansaço vespertino.',
   )
   const [structuredCopilot, setStructuredCopilot] = useState(
-    '• Diagnóstico longitudinal: Emagrecimento em curso com preservação muscular.\n• Hipótese de sono: Crononutrição desajustada (jantar tardio às 20h30 gerando pico glicêmico tardio).\n• Conduta proposta: Antecipar jantar para 19h30, infusão de camomila e desligamento de telas às 22h.',
+    '• Síntese dos relatos: Redução de 1,8 kg em 29 dias com saciedade noturna referida como adequada.\n• Observação de repouso: Média de 5h42 de sono em 4 noites; último registro com jantar às 20h30.\n• Tópicos para deliberação médica: Ajuste de crononutrição (antecipação do jantar), higiene do sono às 22h e ativação de check-ins programados.',
   )
 
   // New action form for care plan
-  const [newAction, setNewAction] = useState('Antecipar horário do jantar para as 19h30')
+  const [newAction, setNewAction] = useState('Antecipar o horário do jantar para as 19h30')
   const [savedPlanDraft, setSavedPlanDraft] = useState(false)
   const [approvedAndSent, setApprovedAndSent] = useState(false)
 
   const handleSaveDraft = () => {
     setSavedPlanDraft(true)
-    notify('Rascunho da consulta salvo no prontuário interno.')
+    notify('Rascunho clínico da consulta salvo no prontuário interno.')
   }
 
   const handleApproveAndPublishToPatient = () => {
     addCarePlanItem({
       action: newAction,
-      category: 'Hábitos alimentares · Ajuste pós-consulta',
+      category: 'Crononutrição · Ajuste pós-consulta',
       type: 'medical',
       completed: false,
+      frequency: 'Diário',
     })
     setApprovedAndSent(true)
-    notify('Plano aprovado e sincronizado na aba Plano da paciente Marina Costa!')
+    notify('Plano pós-consulta aprovado e jornada de check-ins ativada para Marina Costa.')
   }
 
   return (
@@ -188,16 +189,16 @@ export default function DoctorConsultationRoom() {
               <div className="flex items-center gap-2">
                 <Sparkles className="size-4 text-[#0b7b68]" />
                 <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                  Copiloto e Registro Clínico
+                  Registro Clínico e Síntese de Apoio
                 </h3>
               </div>
-              <AiDraftBadge status="Copiloto Estruturador" />
+              <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
             </div>
 
             {/* Notes Section 1: Free Notes by Doctor */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-[#17372f]">
-                Anotações Livres do Médico durante o atendimento:
+                Anotações clínicas do médico durante o atendimento:
               </label>
               <textarea
                 rows={3}
@@ -211,9 +212,9 @@ export default function DoctorConsultationRoom() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold text-[#0b6a5b]">
-                  Síntese Estruturada Organizada pela IA:
+                  Estruturação de dados para apoio à tomada de decisão:
                 </label>
-                <span className="text-[10px] text-[#698078]">Revisável</span>
+                <span className="text-[10px] text-[#698078]">Texto editável pelo médico</span>
               </div>
               <textarea
                 rows={4}
@@ -223,18 +224,18 @@ export default function DoctorConsultationRoom() {
               />
             </div>
 
-            {/* Plan Builder: Adjust Care Plan directly for Marina */}
-            <div className="rounded-2xl border border-[#dfe8e3] bg-[#fdfbf7] p-4 space-y-3">
+            {/* Plan Builder: Adjust Care Plan & Activate Return Journey directly for Marina */}
+            <div className="rounded-2xl border border-[#bfe4d8] bg-[#f8fcfb] p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#17372f]">
-                  Atualização do Plano de Cuidado do Paciente
+                  Ativação do Plano de Retorno & Check-ins
                 </p>
-                <StatusBadge tone="amber">Requer Aprovação Médica</StatusBadge>
+                <StatusBadge tone="amber">Requer Validação Médica</StatusBadge>
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-[#60766f] mb-1">
-                  Nova orientação para o dia a dia da Marina:
+                  Orientação acordada para a jornada de retorno:
                 </label>
                 <input
                   type="text"
@@ -250,13 +251,13 @@ export default function DoctorConsultationRoom() {
                   onClick={handleSaveDraft}
                   className="min-h-10 rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
                 >
-                  Salvar Rascunho
+                  Salvar Rascunho Clínico
                 </button>
 
                 {approvedAndSent ? (
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#0b6a5b] py-2">
                     <CheckCircle2 className="size-4" />
-                    <span>Plano Aprovado e Publicado!</span>
+                    <span>Plano de Retorno Ativado no App da Paciente!</span>
                   </div>
                 ) : (
                   <button
@@ -265,7 +266,7 @@ export default function DoctorConsultationRoom() {
                     className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm flex items-center gap-1.5"
                   >
                     <CheckCircle2 className="size-3.5" />
-                    <span>Aprovar e Enviar ao Paciente</span>
+                    <span>Aprovar & Ativar Check-ins de Retorno</span>
                   </button>
                 )}
               </div>
@@ -273,8 +274,9 @@ export default function DoctorConsultationRoom() {
 
             {/* Safety rule message */}
             <div className="rounded-xl border border-[#dfe8e3] bg-[#f8faf9] p-3 text-[11px] text-[#698078]">
-              <strong>Controle Clínico Rigoroso:</strong> Nenhuma alteração é visível no aplicativo
-              da paciente antes de sua aprovação expressa.
+              <strong>Governança Clínica:</strong> Toda síntese gerada por IA funciona como rascunho
+              de apoio documental; o plano e as orientações só entram em vigor após deliberação e
+              validação médica.
             </div>
           </article>
         </div>

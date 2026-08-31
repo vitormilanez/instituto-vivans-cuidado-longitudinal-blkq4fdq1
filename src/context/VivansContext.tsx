@@ -10,6 +10,8 @@ import {
   MessageItem,
   ClinicalReport,
   PreConsultationData,
+  ScheduledCheckin,
+  ReturnJourneyPlan,
   initialPatients,
   initialAppointments,
   initialCarePlans,
@@ -17,6 +19,8 @@ import {
   initialMessages,
   initialReports,
   initialPreConsultation,
+  initialScheduledCheckins,
+  initialReturnJourney,
 } from '@/data/mockData'
 
 interface VivansContextType {
@@ -41,6 +45,9 @@ interface VivansContextType {
   preConsultation: PreConsultationData
   updatePreConsultation: (data: Partial<PreConsultationData>) => void
   submitPreConsultation: () => void
+  returnJourney: ReturnJourneyPlan
+  scheduledCheckins: ScheduledCheckin[]
+  completeScheduledCheckin: (id: string, value?: string | number, notes?: string) => void
   activeAttentionCount: number
   nudgeDelayedPatients: () => void
   nudged: boolean
@@ -61,6 +68,9 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
   const [reports, setReports] = useState<ClinicalReport[]>(initialReports)
   const [preConsultation, setPreConsultation] =
     useState<PreConsultationData>(initialPreConsultation)
+  const [returnJourney, setReturnJourney] = useState<ReturnJourneyPlan>(initialReturnJourney)
+  const [scheduledCheckins, setScheduledCheckins] =
+    useState<ScheduledCheckin[]>(initialScheduledCheckins)
   const [nudged, setNudged] = useState<boolean>(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
@@ -170,6 +180,25 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
     notify('Pré-consulta revisada e enviada ao Dr. Guilherme.')
   }
 
+  const completeScheduledCheckin = (id: string, value?: string | number, notes?: string) => {
+    const timeStr =
+      'Hoje · ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    setScheduledCheckins((prev) =>
+      prev.map((chk) =>
+        chk.id === id
+          ? {
+              ...chk,
+              status: 'concluido',
+              completedAt: timeStr,
+              value: value ?? chk.value ?? 'Concluído',
+              notes: notes ?? chk.notes,
+            }
+          : chk,
+      ),
+    )
+    notify('Check-in programado de retorno registrado com sucesso!')
+  }
+
   const nudgeDelayedPatients = () => {
     setNudged(true)
     notify('Lembrete (cutucão) enviado com sucesso para 5 pacientes.')
@@ -201,6 +230,9 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         preConsultation,
         updatePreConsultation,
         submitPreConsultation,
+        returnJourney,
+        scheduledCheckins,
+        completeScheduledCheckin,
         activeAttentionCount,
         nudgeDelayedPatients,
         nudged,

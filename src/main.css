@@ -6,49 +6,50 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%; /* #FDFBF7 Sand warm */
-    --foreground: 137 26% 15%; /* #17372F Forest Deep */
+    /* Natural warm sand background & deep forest green typography */
+    --background: 42 35% 98%; /* #FDFCFA Warm sand */
+    --foreground: 165 42% 12%; /* #112822 Deep Forest */
 
     --card: 0 0% 100%;
-    --card-foreground: 137 26% 15%;
+    --card-foreground: 165 42% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 137 26% 15%;
+    --popover-foreground: 165 42% 12%;
 
-    --primary: 170 83% 27%; /* #0B7B68 Vivans Sage/Emerald */
+    --primary: 168 76% 24%; /* #097260 Instituto Vivans Deep Emerald / Natural Sage */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 154 27% 93%; /* #E8F4F0 Soft Sage */
-    --secondary-foreground: 170 83% 20%;
+    --secondary: 152 28% 94%; /* #EAF3EF Soft natural mist */
+    --secondary-foreground: 168 76% 18%;
 
-    --muted: 150 14% 94%; /* #F4F7F5 */
-    --muted-foreground: 161 11% 42%; /* #60766F */
+    --muted: 148 16% 95%; /* #F3F7F5 */
+    --muted-foreground: 162 14% 38%; /* #556D66 Crisp readable body slate */
 
-    --accent: 154 27% 93%;
-    --accent-foreground: 170 83% 20%;
+    --accent: 152 28% 94%;
+    --accent-foreground: 168 76% 18%;
 
-    --destructive: 5 69% 58%; /* #E67E76 Coral/Rose alert */
+    --destructive: 6 62% 52%; /* #CF4B42 Soft muted terracotta alert */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 147 14% 88%; /* #DFE8E3 */
-    --input: 147 14% 88%;
-    --ring: 170 83% 27%;
+    --border: 150 14% 89%; /* #DEE7E2 Soft crisp border */
+    --input: 150 14% 89%;
+    --ring: 168 76% 24%;
 
-    --radius: 1rem;
+    --radius: 1.125rem;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 137 26% 15%;
-    --sidebar-primary: 170 83% 27%;
+    --sidebar-foreground: 165 42% 12%;
+    --sidebar-primary: 168 76% 24%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 154 27% 93%;
-    --sidebar-accent-foreground: 170 83% 20%;
-    --sidebar-border: 147 14% 88%;
-    --sidebar-ring: 170 83% 27%;
+    --sidebar-accent: 152 28% 94%;
+    --sidebar-accent-foreground: 168 76% 18%;
+    --sidebar-border: 150 14% 89%;
+    --sidebar-ring: 168 76% 24%;
   }
 
   body {
-    background-color: #f4f7f5;
-    color: #17372f;
+    background-color: #f5f8f6;
+    color: #112822;
     font-family:
       'Plus Jakarta Sans',
       -apple-system,
@@ -57,6 +58,7 @@
       Roboto,
       sans-serif;
     -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
   }
 
   h1,
@@ -64,6 +66,7 @@
   h3,
   .font-serif {
     font-family: 'Lora', Georgia, serif;
+    letter-spacing: -0.015em;
   }
 
   section[aria-label='Notifications alt+T'] {

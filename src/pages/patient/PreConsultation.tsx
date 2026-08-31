@@ -82,7 +82,7 @@ export default function PatientPreConsultation() {
     setIsRecording(true)
     setTimeout(() => {
       setIsRecording(false)
-      notify('Áudio recebido e transcrito com sucesso pelo Copiloto Vivans.')
+      notify('Áudio gravado e estruturado para apreciação médica.')
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex((prev) => prev + 1)
       } else {
@@ -156,8 +156,8 @@ export default function PatientPreConsultation() {
             </p>
             <p>
               Você responderá a 4 perguntas curtas por <strong>voz simulada</strong> ou{' '}
-              <strong>texto</strong>. A IA transcreverá suas falas e montará um resumo prévio para o
-              médico, economizando tempo clínico para conversas mais profundas.
+              <strong>texto</strong>. O sistema compilará seus relatos para organização prévia da
+              consulta com o médico, otimizando o tempo clínico para conversas mais profundas.
             </p>
           </div>
 
@@ -272,7 +272,7 @@ export default function PatientPreConsultation() {
               <div>
                 <p className="text-xs font-bold text-[#17372f]">
                   {isRecording
-                    ? 'Ouvindo e transcrevendo com IA...'
+                    ? 'Gravando e compilando relato...'
                     : 'Clique no microfone para falar seu relato'}
                 </p>
                 <p className="text-[11px] text-[#698078] mt-1">

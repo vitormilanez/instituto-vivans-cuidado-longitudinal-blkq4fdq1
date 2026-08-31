@@ -4,7 +4,15 @@ import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/Co
 import { CheckCircle2, Clock, Sparkles, Shield, AlertCircle, Plus } from 'lucide-react'
 
 export default function PatientPlan() {
-  const { carePlans, toggleCarePlan, addCarePlanItem, notify } = useVivans()
+  const {
+    carePlans,
+    toggleCarePlan,
+    addCarePlanItem,
+    returnJourney,
+    scheduledCheckins,
+    completeScheduledCheckin,
+    notify,
+  } = useVivans()
   const [newActionText, setNewActionText] = useState('')
   const [newActionCategory, setNewActionCategory] = useState('Hábitos alimentares')
   const [isAdding, setIsAdding] = useState(false)
@@ -12,6 +20,9 @@ export default function PatientPlan() {
   const completedCount = carePlans.filter((p) => p.completed).length
   const totalCount = carePlans.length
   const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
+
+  const completedCheckins = scheduledCheckins.filter((c) => c.status === 'concluido').length
+  const totalCheckins = scheduledCheckins.length
 
   const medicalActions = carePlans.filter((p) => p.type === 'medical')
   const aiSuggestedActions = carePlans.filter((p) => p.type === 'ai_suggestion')
@@ -95,6 +106,65 @@ export default function PatientPlan() {
           </div>
         </form>
       )}
+
+      {/* Active Return Journey Header Card */}
+      <article className="rounded-3xl border border-[#bfe4d8] bg-[#ebf6f2] p-6 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#cfe6dc] pb-3">
+          <div className="flex items-center gap-2">
+            <span className="size-2 rounded-full bg-[#0b7b68] animate-pulse" />
+            <h2 className="font-serif text-lg font-bold text-[#17372f]">{returnJourney.title}</h2>
+          </div>
+          <StatusBadge tone="green">Plano Ativo · Validação Médica OK</StatusBadge>
+        </div>
+
+        <p className="text-xs text-[#3b534b] leading-relaxed">{returnJourney.summary}</p>
+
+        {/* Check-ins timeline track */}
+        <div className="rounded-2xl bg-white p-4 border border-[#dfe8e3] space-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-bold text-[#17372f] uppercase tracking-wider">
+              Check-ins Programados do Retorno ({completedCheckins}/{totalCheckins})
+            </span>
+            <span className="text-[#0b7b68] font-semibold">
+              Revisão Médica: {returnJourney.nextReviewDate}
+            </span>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-3">
+            {scheduledCheckins.map((chk) => (
+              <div
+                key={chk.id}
+                className={`rounded-xl border p-2.5 text-xs flex flex-col justify-between ${
+                  chk.status === 'concluido'
+                    ? 'border-[#bfe4d8] bg-[#f8fcfb]'
+                    : 'border-[#dfe8e3] bg-white'
+                }`}
+              >
+                <div>
+                  <div className="flex justify-between items-center text-[11px] mb-1">
+                    <span className="font-bold text-[#0b7b68]">Dia {chk.dayOffset}</span>
+                    <StatusBadge tone={chk.status === 'concluido' ? 'green' : 'amber'}>
+                      {chk.status === 'concluido' ? 'Feito' : 'Pendente'}
+                    </StatusBadge>
+                  </div>
+                  <strong className="block text-[11px] text-[#17372f] leading-snug">
+                    {chk.title}
+                  </strong>
+                </div>
+                {chk.status !== 'concluido' && (
+                  <button
+                    type="button"
+                    onClick={() => completeScheduledCheckin(chk.id, 'Feito', 'Registro pontual')}
+                    className="mt-2 rounded-lg bg-[#0b7b68] py-1 text-[10px] font-bold text-white hover:bg-[#086555]"
+                  >
+                    Registrar Agora
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </article>
 
       {/* Progress & Grid Layout */}
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
@@ -197,15 +267,15 @@ export default function PatientPlan() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <AiDraftBadge status="Sugestão do Copiloto" />
+                          <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
                         </div>
                         <p className="text-sm font-medium text-[#70480e]">{item.action}</p>
                         {item.notes && (
                           <p className="mt-1 text-xs text-[#825b0b] italic">{item.notes}</p>
                         )}
                         <p className="mt-2 text-[11px] text-[#a07425]">
-                          Esta sugestão será discutida na próxima consulta antes de virar meta
-                          oficial.
+                          Esta sugestão permanece como rascunho até validação e assinatura pelo Dr.
+                          Guilherme Martins.
                         </p>
                       </div>
                     </div>

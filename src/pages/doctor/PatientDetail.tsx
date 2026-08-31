@@ -34,8 +34,10 @@ export default function DoctorPatientDetail() {
   // Find patient by ID or fallback to Marina Costa
   const patient = patients.find((p) => p.id === id) || patients[0]
 
+  const { scheduledCheckins, returnJourney } = useVivans()
+
   const [activeTab, setActiveTab] = useState<
-    'dossie' | 'preconsulta' | 'plano' | 'refeicoes' | 'linha_tempo' | 'evidencias'
+    'dossie' | 'retorno' | 'preconsulta' | 'plano' | 'refeicoes' | 'linha_tempo' | 'evidencias'
   >('dossie')
   const [selectedEvidence, setSelectedEvidence] = useState<(typeof medicalEvidences)[0] | null>(
     null,
@@ -101,11 +103,12 @@ export default function DoctorPatientDetail() {
       <div className="flex overflow-x-auto gap-2 border-b border-[#dfe8e3] pb-2">
         {[
           { id: 'dossie', label: 'Dossiê Longitudinal (IA)', icon: Sparkles },
+          { id: 'retorno', label: 'Jornada de Retorno & Check-ins', icon: Clock },
           { id: 'preconsulta', label: 'Pré-Consulta Recebida', icon: FileText },
           { id: 'plano', label: 'Plano de Cuidado & Prescrições', icon: CheckCircle2 },
-          { id: 'refeicoes', label: 'Diário & Fotos de Refeições', icon: Camera },
-          { id: 'linha_tempo', label: 'Linha do Tempo', icon: Clock },
-          { id: 'evidencias', label: 'Evidências Médicas (Mock)', icon: BookOpen },
+          { id: 'refeicoes', label: 'Diário & Fotos', icon: Camera },
+          { id: 'linha_tempo', label: 'Linha do Tempo', icon: Layers },
+          { id: 'evidencias', label: 'Evidências Médicas', icon: BookOpen },
         ].map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -127,6 +130,77 @@ export default function DoctorPatientDetail() {
         })}
       </div>
 
+      {/* TAB: JORNADA DE RETORNO & CHECK-INS PROGRAMADOS */}
+      {activeTab === 'retorno' && (
+        <section className="space-y-5 animate-fade-in">
+          <div className="rounded-3xl border border-[#bfe4d8] bg-white p-6 shadow-sm space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf2ef] pb-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="size-2 rounded-full bg-[#0b7b68]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+                    Acompanhamento Pós-Consulta · Plano Ativado
+                  </span>
+                  <StatusBadge tone="green">Plano Ativo</StatusBadge>
+                </div>
+                <h3 className="font-serif text-xl font-bold text-[#17372f]">
+                  {returnJourney.title}
+                </h3>
+              </div>
+              <div className="text-right text-xs">
+                <p className="font-bold text-[#17372f]">
+                  Status da Coorte: 1 Realizado · 5 Pendentes
+                </p>
+                <p className="text-[#60766f]">Revisão prevista: {returnJourney.nextReviewDate}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-[#f8faf9] p-4 text-xs text-[#45655c] leading-relaxed">
+              <strong>Síntese médica do retorno:</strong> {returnJourney.summary}
+            </div>
+
+            {/* Structured Table of Check-ins */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#17372f]">
+                Grade de Check-ins Programados:
+              </h4>
+
+              <div className="space-y-2.5">
+                {scheduledCheckins.map((chk) => (
+                  <div
+                    key={chk.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#edf2ef] p-4 text-xs transition-colors hover:bg-[#fbfcfb]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono font-bold text-xs bg-[#e8f4f0] text-[#0b7b68] px-2.5 py-1 rounded-lg">
+                        Dia {chk.dayOffset}
+                      </span>
+                      <div>
+                        <strong className="text-[#17372f] block">{chk.title}</strong>
+                        <span className="text-[11px] text-[#698078]">{chk.scheduledDate}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {chk.value && (
+                        <span className="font-semibold text-[#0b7b68] bg-[#edf7f4] px-2.5 py-1 rounded-lg text-xs">
+                          {chk.value}
+                        </span>
+                      )}
+                      <StatusBadge tone={chk.status === 'concluido' ? 'green' : 'amber'}>
+                        {chk.status === 'concluido'
+                          ? `Realizado (${chk.completedAt})`
+                          : 'Programado'}
+                      </StatusBadge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* TAB 1: DOSSIÊ LONGITUDINAL (AI ASSISTED) */}
       {activeTab === 'dossie' && (
         <section className="space-y-5 animate-fade-in">
@@ -145,19 +219,19 @@ export default function DoctorPatientDetail() {
 
               <div className="rounded-2xl bg-[#f8faf9] p-4 text-xs leading-relaxed text-[#45655c] space-y-2">
                 <p>
-                  <strong>Progresso Geral:</strong> Marina apresenta perda de peso consistente (−1,8
-                  kg em 29 dias) com boa adesão às metas de saciedade no jantar e hidratação diária
-                  (82% de conclusão de plano).
+                  <strong>Evolução longitudinal:</strong> Redução ponderal gradual de 1,8 kg em 29
+                  dias com adesão registrada de 82% às orientações acordadas e saciedade noturna
+                  referida satisfatória.
                 </p>
                 <p>
-                  <strong>Ponto de Atenção em Destaque:</strong> Identificada queixa recente de
-                  despertares noturnos por volta das 3h da manhã, resultando em média de 5h42 de
-                  sono nas últimas 4 noites. Não há sintomas gastrointestinais de refluxo relatados.
+                  <strong>Registro para observação clínica:</strong> Queixa de despertares noturnos
+                  recorrentes (média de 5h42 de repouso em quatro noites consecutivas). Não há
+                  relato de sintomas dispépticos ou refluxo associados.
                 </p>
                 <p>
-                  <strong>Sugestão do Copiloto:</strong> Recomenda-se antecipar o horário do jantar
-                  em 1h e incluir protocolo de desaceleração noturna às 22h antes de alterar
-                  qualquer recomendação calórica.
+                  <strong>Contexto compilado para o médico:</strong> Avaliar adequação do intervalo
+                  entre o jantar (atualmente às 20h30) e o repouso noturno, além da rotina de
+                  desaceleração às 22h, antes de alterações nutricionais adicionais.
                 </p>
               </div>
 
@@ -233,9 +307,9 @@ export default function DoctorPatientDetail() {
             <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#0b6a5b] uppercase tracking-wider">
-                  Síntese Estruturada para a Consulta
+                  Síntese de Apoio para a Consulta
                 </span>
-                <AiDraftBadge status="Copiloto IA" />
+                <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
               </div>
               <div className="text-xs text-[#3b534b] leading-relaxed whitespace-pre-line bg-white p-4 rounded-xl border border-[#b9d8cf]">
                 {preConsultation.aiSynthesis}
@@ -243,7 +317,7 @@ export default function DoctorPatientDetail() {
 
               <div>
                 <p className="text-xs font-bold text-[#0b7b68] mb-1">
-                  Perguntas Sugeridas para o Dr. Guilherme considerar:
+                  Tópicos de contextualização sugeridos para a consulta:
                 </p>
                 <ul className="list-disc pl-5 text-xs text-[#45655c] space-y-1">
                   {preConsultation.suggestedQuestions.map((q, i) => (

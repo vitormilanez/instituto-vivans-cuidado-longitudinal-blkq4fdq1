@@ -180,12 +180,9 @@ export default function PatientDiary() {
           {analysisResult && (
             <div className="mt-5 space-y-3 animate-fade-in">
               <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#0b7b68]">
-                    <Sparkles className="size-3.5" />
-                    <span>Visão Assistida por IA</span>
-                  </div>
-                  <StatusBadge tone="green">Compatível com o Plano</StatusBadge>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
+                  <StatusBadge tone="green">Registro Arquivado</StatusBadge>
                 </div>
                 <p className="text-xs text-[#3b534b] leading-relaxed">{analysisResult}</p>
               </div>

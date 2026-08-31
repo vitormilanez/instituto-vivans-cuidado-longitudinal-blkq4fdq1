@@ -19,13 +19,24 @@ import {
 } from 'lucide-react'
 
 export default function PatientToday() {
-  const { carePlans, toggleCarePlan, preConsultation, notify } = useVivans()
+  const {
+    carePlans,
+    toggleCarePlan,
+    preConsultation,
+    returnJourney,
+    scheduledCheckins,
+    completeScheduledCheckin,
+    notify,
+  } = useVivans()
   const navigate = useNavigate()
 
   const [checkinOpen, setCheckinOpen] = useState(false)
-  const [checkinCompleted, setCheckinCompleted] = useState(false)
+  const [activeCheckinItem, setActiveCheckinItem] = useState<(typeof scheduledCheckins)[0] | null>(
+    null,
+  )
   const [checkinWeight, setCheckinWeight] = useState('78.2')
   const [checkinMood, setCheckinMood] = useState<'bem' | 'moderado' | 'cansada'>('bem')
+  const [checkinNote, setCheckinNote] = useState('')
   const [watchConnected, setWatchConnected] = useState(false)
 
   const completedPlansCount = carePlans.filter((p) => p.completed).length
@@ -33,11 +44,29 @@ export default function PatientToday() {
   const planProgressPct =
     totalPlansCount > 0 ? Math.round((completedPlansCount / totalPlansCount) * 100) : 0
 
+  const completedCheckinsCount = scheduledCheckins.filter((c) => c.status === 'concluido').length
+  const totalScheduledCheckins = scheduledCheckins.length
+  const nextPendingCheckin = scheduledCheckins.find((c) => c.status !== 'concluido')
+
+  const handleOpenCheckinModal = (chk?: (typeof scheduledCheckins)[0]) => {
+    setActiveCheckinItem(chk || nextPendingCheckin || scheduledCheckins[0])
+    setCheckinOpen(true)
+  }
+
   const handleCompleteCheckin = (e: React.FormEvent) => {
     e.preventDefault()
-    setCheckinCompleted(true)
+    if (activeCheckinItem) {
+      const val =
+        activeCheckinItem.type === 'peso'
+          ? `${checkinWeight} kg`
+          : activeCheckinItem.type === 'humor'
+            ? `Disposição: ${checkinMood === 'bem' ? 'Disposta' : checkinMood === 'moderado' ? 'Moderada' : 'Cansada'}`
+            : 'Concluído'
+      completeScheduledCheckin(activeCheckinItem.id, val, checkinNote || undefined)
+    }
     setCheckinOpen(false)
-    notify('Check-in diário registrado com sucesso. Bom progresso, Marina!')
+    setCheckinNote('')
+    notify('Check-in registrado com sucesso. Bom progresso, Marina!')
   }
 
   return (
@@ -61,20 +90,18 @@ export default function PatientToday() {
         </div>
 
         <div>
-          {checkinCompleted ? (
-            <div className="flex items-center gap-2 rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] px-4 py-2.5 text-xs font-bold text-[#0b6a5b]">
-              <CheckCircle2 className="size-4" />
-              <span>Check-in de hoje concluído (78,2 kg)</span>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setCheckinOpen(true)}
-              className="min-h-12 w-full sm:w-auto cursor-pointer rounded-2xl bg-[#0b7b68] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(11,123,104,0.22)] transition-all hover:bg-[#086555] active:scale-95"
-            >
-              Fazer Check-in Diário
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => handleOpenCheckinModal()}
+            className="min-h-12 w-full sm:w-auto cursor-pointer rounded-2xl bg-[#0b7b68] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(11,123,104,0.22)] transition-all hover:bg-[#086555] active:scale-95 flex items-center justify-center gap-2"
+          >
+            <Activity className="size-4" />
+            <span>
+              {nextPendingCheckin
+                ? `Fazer Próximo Check-in (${nextPendingCheckin.dayOffset}º dia)`
+                : 'Todos os Check-ins em Dia'}
+            </span>
+          </button>
         </div>
       </section>
 
@@ -118,6 +145,93 @@ export default function PatientToday() {
           <span className="hidden sm:inline font-bold text-[#0b7b68]">
             LGPD Compliant (Simulado)
           </span>
+        </div>
+      </article>
+
+      {/* Retorno Pós-Consulta: Jornada com Plano Ativado e Check-ins Programados */}
+      <article className="rounded-3xl border border-[#bfe4d8] bg-gradient-to-br from-[#ebf6f2] to-[#ffffff] p-6 sm:p-7 shadow-sm space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#d8ebe3] pb-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="size-2.5 rounded-full bg-[#0b7b68] animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+                Jornada de Retorno Pós-Consulta · Plano Ativo
+              </span>
+              <StatusBadge tone="green">Aprovado pelo Dr. Guilherme</StatusBadge>
+            </div>
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#17372f]">
+              {returnJourney.title}
+            </h2>
+            <p className="text-xs text-[#556d66] leading-relaxed max-w-2xl">
+              {returnJourney.summary}
+            </p>
+          </div>
+
+          <div className="flex flex-col items-end text-xs">
+            <span className="font-bold text-[#17372f]">
+              {completedCheckinsCount} de {totalScheduledCheckins} check-ins concluídos
+            </span>
+            <span className="text-[11px] text-[#60766f]">
+              Próxima revisão: {returnJourney.nextReviewDate}
+            </span>
+          </div>
+        </div>
+
+        {/* Timeline of Scheduled Check-ins */}
+        <div className="space-y-2.5">
+          <p className="text-xs font-bold text-[#17372f] uppercase tracking-wider">
+            Linha de Check-ins Programados:
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {scheduledCheckins.map((chk) => {
+              const isDone = chk.status === 'concluido'
+              return (
+                <div
+                  key={chk.id}
+                  className={`rounded-2xl border p-4 transition-all flex flex-col justify-between ${
+                    isDone
+                      ? 'border-[#bfe4d8] bg-white'
+                      : 'border-[#dfe8e3] bg-white hover:border-[#0b7b68]'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between text-xs mb-1.5">
+                      <span className="font-bold text-[#0b7b68]">Dia {chk.dayOffset}</span>
+                      <StatusBadge tone={isDone ? 'green' : 'amber'}>
+                        {isDone ? 'Concluído' : 'Agendado'}
+                      </StatusBadge>
+                    </div>
+                    <h4 className="font-serif text-xs font-bold text-[#17372f] leading-snug">
+                      {chk.title}
+                    </h4>
+                    <p className="text-[11px] text-[#60766f] mt-1">{chk.scheduledDate}</p>
+                    {chk.value && (
+                      <div className="mt-2 rounded-lg bg-[#edf7f4] px-2.5 py-1 text-[11px] font-bold text-[#0b6a5b]">
+                        Registro: {chk.value}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-3 pt-2 border-t border-[#edf2ef]">
+                    {isDone ? (
+                      <div className="flex items-center gap-1 text-[11px] font-semibold text-[#0b7b68]">
+                        <CheckCircle2 className="size-3.5" />
+                        <span>Realizado ({chk.completedAt})</span>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenCheckinModal(chk)}
+                        className="w-full rounded-xl bg-[#0b7b68] py-1.5 text-xs font-bold text-white hover:bg-[#086555] transition-colors"
+                      >
+                        Concluir este check-in
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </article>
 
@@ -353,10 +467,14 @@ export default function PatientToday() {
           >
             <div className="flex items-center justify-between border-b border-[#edf2ef] pb-4">
               <div>
+                <span className="text-xs font-bold text-[#0b7b68] uppercase tracking-wider">
+                  {activeCheckinItem
+                    ? `Dia ${activeCheckinItem.dayOffset} do Plano Pós-Consulta`
+                    : 'Check-in'}
+                </span>
                 <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                  Check-in Diário · Marina Costa
+                  {activeCheckinItem?.title || 'Check-in de Acompanhamento'}
                 </h3>
-                <p className="text-xs text-[#698078]">25 de agosto de 2026</p>
               </div>
               <button
                 type="button"
@@ -368,26 +486,28 @@ export default function PatientToday() {
             </div>
 
             <div className="mt-4 space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-[#17372f] mb-1">
-                  Peso de hoje pela manhã (kg)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={checkinWeight}
-                  onChange={(e) => setCheckinWeight(e.target.value)}
-                  className="w-full rounded-xl border border-[#dfe8e3] px-3.5 py-2.5 text-sm font-bold text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
-                  required
-                />
-                <p className="mt-1 text-[11px] text-[#698078]">
-                  Último registro: 78,4 kg (−0,2 kg de variação)
-                </p>
-              </div>
+              {activeCheckinItem?.type === 'peso' && (
+                <div>
+                  <label className="block text-xs font-bold text-[#17372f] mb-1">
+                    Peso aferido pela manhã em jejum (kg):
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={checkinWeight}
+                    onChange={(e) => setCheckinWeight(e.target.value)}
+                    className="w-full rounded-xl border border-[#dfe8e3] px-3.5 py-2.5 text-sm font-bold text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+                    required
+                  />
+                  <p className="mt-1 text-[11px] text-[#698078]">
+                    Último registro compilado: 78,2 kg (−1,8 kg acumulado)
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-[#17372f] mb-2">
-                  Como está sua energia e disposição geral?
+                  Percepção de disposição e recuperação:
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
@@ -412,10 +532,23 @@ export default function PatientToday() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-xs font-bold text-[#17372f] mb-1">
+                  Notas adicionais para a equipe médica:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Jantar antecipado às 19h30, sono sem intercorrências..."
+                  value={checkinNote}
+                  onChange={(e) => setCheckinNote(e.target.value)}
+                  className="w-full rounded-xl border border-[#dfe8e3] px-3 py-2 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+                />
+              </div>
+
               <div className="rounded-2xl bg-[#f4f7f5] p-3 text-xs text-[#526a62]">
-                <p className="font-semibold text-[#17372f] mb-1">Acompanhamento contínuo:</p>
-                O Dr. Guilherme acompanha suas variações para entender o impacto do plano no seu
-                metabolismo e no sono.
+                <p className="font-semibold text-[#17372f] mb-0.5">Acompanhamento longitudinal:</p>
+                Os check-ins alimentam a linha de evolução do Dr. Guilherme sem necessidade de
+                consultas desnecessárias.
               </div>
             </div>
 

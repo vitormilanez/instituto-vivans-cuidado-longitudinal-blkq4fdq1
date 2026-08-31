@@ -4,7 +4,7 @@ import { StatusBadge, SimulationDisclaimer, UrgentCareWarning } from '@/componen
 import { TrendingDown, Moon, Activity, Footprints, Target, ChevronDown } from 'lucide-react'
 
 export default function PatientEvolution() {
-  const { selectedPatient } = useVivans()
+  const { selectedPatient, returnJourney, scheduledCheckins } = useVivans()
   const [selectedPeriod, setSelectedPeriod] = useState<'4 semanas' | '8 semanas' | '12 semanas'>(
     '4 semanas',
   )
@@ -63,6 +63,55 @@ export default function PatientEvolution() {
           ))}
         </div>
       </section>
+
+      {/* Return Journey Check-in Progress Timeline */}
+      <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-7 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+              Acompanhamento Pós-Consulta · Retorno Ativo
+            </span>
+            <h3 className="font-serif text-xl font-bold text-[#17372f]">
+              Evolução dos Check-ins Programados
+            </h3>
+          </div>
+          <StatusBadge tone="green">
+            {scheduledCheckins.filter((c) => c.status === 'concluido').length} de{' '}
+            {scheduledCheckins.length} Concluídos
+          </StatusBadge>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {scheduledCheckins.map((chk) => (
+            <div
+              key={chk.id}
+              className={`rounded-2xl border p-3.5 text-xs flex flex-col justify-between ${
+                chk.status === 'concluido'
+                  ? 'border-[#bfe4d8] bg-[#ebf6f2]'
+                  : 'border-[#dfe8e3] bg-[#fdfdfd]'
+              }`}
+            >
+              <div>
+                <div className="flex justify-between items-center text-[11px] mb-1">
+                  <strong className="text-[#0b7b68]">Dia {chk.dayOffset}</strong>
+                  <span className="text-[#60766f]">{chk.scheduledDate}</span>
+                </div>
+                <p className="font-semibold text-[#17372f]">{chk.title}</p>
+                {chk.value && (
+                  <p className="mt-1 text-[11px] text-[#0b6a5b] font-bold">
+                    Resultado: {chk.value}
+                  </p>
+                )}
+              </div>
+              <div className="mt-2 pt-1.5 border-t border-black/5 text-[10px] text-[#698078]">
+                {chk.status === 'concluido'
+                  ? `✓ Realizado (${chk.completedAt})`
+                  : '• Aguardando data'}
+              </div>
+            </div>
+          ))}
+        </div>
+      </article>
 
       {/* Goal Progress Hero Gauge: "Quanto falta para meu objetivo?" */}
       <article className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#17372f] to-[#0e2721] p-6 sm:p-8 text-white shadow-[0_16px_40px_rgba(23,55,47,0.18)]">

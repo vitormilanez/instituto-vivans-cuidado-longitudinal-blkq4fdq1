@@ -145,7 +145,6 @@ export function DoctorSidebar() {
           )
         })}
       </nav>
-
       {/* Cohort status box */}
       <div className="mt-8 rounded-3xl bg-[#17372f] p-4 text-white shadow-[0_12px_28px_rgba(23,55,47,0.18)]">
         <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#9cc7ba]">
@@ -177,19 +176,19 @@ export function DoctorSidebar() {
               : 'bg-white text-[#17372f] hover:bg-[#edf7f4] shadow-sm',
           )}
         >
-          {nudged ? 'Lembrete enviado (5)' : 'Dar um cutucão nos 5'}
+          {nudged ? 'Lembrete enviado (5)' : 'Enviar lembrete aos 5'}
         </button>
       </div>
-
-      <div className="mt-5 rounded-2xl border border-[#dfe8e3] bg-[#f8faf9] p-3.5 text-xs">
-        <div className="flex items-center gap-1.5 text-[#0b7b68] font-bold mb-1">
-          <Sparkles className="size-3.5" />
-          <span>Copiloto Seguro</span>
+      <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-3 text-xs text-[#0b6a5b] space-y-1">
+        <div className="flex items-center gap-1.5 font-bold">
+          <Sparkles className="size-3.5 text-[#0b7b68]" />
+          <span>Apoio Clínico Estruturado</span>
         </div>
-        <p className="text-[11px] text-[#698078] leading-normal">
-          A IA apoia a triagem e estruturação. Nenhuma recomendação é enviada sem seu aval.
+        <p className="text-[11px] leading-relaxed text-[#3b534b]">
+          Rascunhos de apoio documental para o médico. Nenhuma conduta ou diagnóstico é emitido de
+          forma autônoma.
         </p>
-      </div>
+      </div>{' '}
     </aside>
   )
 }

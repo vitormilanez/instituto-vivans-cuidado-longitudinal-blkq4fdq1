@@ -52,8 +52,9 @@ export default function DoctorPatients() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-[#dfe8e3] bg-white px-4 py-2.5 text-xs text-[#17372f]">
-          Total na Coorte: <strong>22 Pacientes</strong> (17 Regulares · 5 Atrasados)
+        <div className="rounded-2xl border border-[#bfe4d8] bg-[#ebf6f2] px-4 py-2.5 text-xs text-[#075f50]">
+          Total na Coorte: <strong>22 Pacientes Ativos</strong> (17 Regulares · 5 com Check-in
+          Pendente)
         </div>
       </section>
 
