@@ -22,6 +22,7 @@ import {
   HelpCircle,
   X,
   Plus,
+  FileText,
 } from 'lucide-react'
 
 export default function PatientToday() {

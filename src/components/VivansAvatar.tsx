@@ -4,7 +4,8 @@ import { cn } from '@/lib/utils'
 
 interface VivansAvatarProps {
   src?: string | null
-  alt: string
+  alt?: string
+  name?: string
   initials: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
   className?: string
@@ -24,6 +25,7 @@ const sizeClasses = {
 export function VivansAvatar({
   src,
   alt,
+  name,
   initials,
   size = 'md',
   className,
@@ -33,6 +35,7 @@ export function VivansAvatar({
   const [hasError, setHasError] = useState(false)
 
   const sizeClass = sizeClasses[size] || sizeClasses.md
+  const computedAlt = alt || name || initials || 'Avatar'
 
   return (
     <Avatar
@@ -46,7 +49,7 @@ export function VivansAvatar({
       {src && !hasError && (
         <AvatarImage
           src={src}
-          alt={alt}
+          alt={computedAlt}
           onError={() => setHasError(true)}
           className="aspect-square size-full object-cover"
         />

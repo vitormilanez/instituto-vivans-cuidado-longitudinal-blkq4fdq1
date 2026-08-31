@@ -774,7 +774,7 @@ export default function PatientPrescriptionsExams() {
 
       {/* Footer Navigation & Safety */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <Link to="/paciente/hoje" className="text-xs font-bold text-[#0b7b68] hover:underline">
+        <Link to="/paciente" className="text-xs font-bold text-[#0b7b68] hover:underline">
           &larr; Voltar para a Visão de Hoje
         </Link>
         <Link to="/paciente/plano" className="text-xs font-bold text-[#0b7b68] hover:underline">
