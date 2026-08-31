@@ -131,10 +131,13 @@ export const cohortWeeklyAdherence: WeeklyAdherenceTrendPoint[] = [
 
 export interface Appointment {
   id: string
+  patientId?: string
+  date?: string
   time: string
   patient: string
   initials: string
   type: string
+  modality?: 'Teleconsulta (Google Meet)' | 'Presencial (Instituto Vivans)' | 'Híbrida'
   status: string
   statusTone: 'green' | 'amber' | 'rose' | 'blue' | 'gray'
   preVisit: string
@@ -279,6 +282,7 @@ export const initialPatients: PatientProfile[] = [
         'Média de 5h42 de sono em 4 noites consecutivas, correlacionada a jantar tardio às 20h30.',
     },
     evolutionHistory: [
+      { date: '28 jul', adherence: 74, weight: 80.5, sleepHours: 6.3, steps: 5600 },
       { date: '01 ago', adherence: 76, weight: 80.0, sleepHours: 6.2, steps: 5800 },
       { date: '08 ago', adherence: 79, weight: 79.4, sleepHours: 6.0, steps: 6100 },
       { date: '15 ago', adherence: 82, weight: 78.8, sleepHours: 6.1, steps: 6350 },
@@ -348,6 +352,13 @@ export const initialPatients: PatientProfile[] = [
     id: 'ana-ribeiro',
     initials: 'AR',
     name: 'Ana Ribeiro',
+    email: 'ana.ribeiro@email.com',
+    phone: '(11) 98111-2233',
+    birthDate: '03/11/1979 (46 anos)',
+    cpf: '123.***.***-45',
+    gender: 'Feminino',
+    clinicalSummary:
+      'Protocolo de longevidade, preservação de força funcional e manutenção de densidade muscular e óssea.',
     focus: 'Longevidade · força',
     progress: '+8% adesão',
     attention: 'Metas em dia',
@@ -356,12 +367,39 @@ export const initialPatients: PatientProfile[] = [
     prescriptionCount: 'Nenhuma',
     cycle: 'Dia 61 de 90',
     lastContact: 'Ontem · 18:40',
-    nextConsultation: 'Hoje · 14:00',
+    nextConsultation: 'Hoje · 14:00 (Retorno de força)',
     adherence: '88%',
-    weightLoss: '0,0 kg',
+    weightLoss: '−0,5 kg',
     currentWeight: 64.5,
     targetWeight: 64.0,
     startWeight: 65.0,
+    preConsultationSymptoms: {
+      symptom: 'Estabilidade física e boa resposta ao treino matinal',
+      reportedAt: 'Ontem · 18:40',
+      severity: 'leve',
+      patientWords:
+        'Treinar às 7h facilitou muito a minha semana. Não sinto mais aquela quebra de disposição às 16h.',
+      aiSummary:
+        'Relato de excelente adaptação aos exercícios matinais com adesão de 88% e melhora subjetiva de energia.',
+    },
+    evolutionHistory: [
+      { date: '01 ago', adherence: 80, weight: 65.0, sleepHours: 6.8, steps: 6600 },
+      { date: '08 ago', adherence: 83, weight: 64.8, sleepHours: 7.0, steps: 6850 },
+      { date: '15 ago', adherence: 85, weight: 64.6, sleepHours: 7.1, steps: 7000 },
+      { date: '22 ago', adherence: 87, weight: 64.5, sleepHours: 7.2, steps: 7100 },
+      { date: '25 ago', adherence: 88, weight: 64.5, sleepHours: 7.2, steps: 7140 },
+    ],
+    quickNotes: [
+      {
+        id: 'qn-ar-1',
+        patientId: 'ana-ribeiro',
+        content:
+          'Paciente mantendo rotina de treinos de força às terças e quintas sem desconfortos.',
+        createdAt: 'Ontem · 18:45',
+        author: 'Dr. Guilherme Martins',
+        category: 'evolucao',
+      },
+    ],
     report: {
       title: 'Relatório mensal',
       period: '25 jul–25 ago',
@@ -421,6 +459,7 @@ export const initialPatients: PatientProfile[] = [
         'Relato de queixa gástrica matinal após atualização da prescrição #RX-1051. Sugerido avaliar tomada pós-prandial.',
     },
     evolutionHistory: [
+      { date: '28 jul', adherence: 88, weight: 93.4, sleepHours: 7.0, steps: 5600 },
       { date: '01 ago', adherence: 85, weight: 93.0, sleepHours: 6.8, steps: 5400 },
       { date: '08 ago', adherence: 82, weight: 92.8, sleepHours: 6.6, steps: 5200 },
       { date: '15 ago', adherence: 78, weight: 92.6, sleepHours: 6.5, steps: 4900 },
@@ -495,6 +534,10 @@ export const initialPatients: PatientProfile[] = [
         'Anamnese 68% preenchida com queixa de fadiga vespertina e sono não restaurador. 2 exames prévios anexados.',
     },
     evolutionHistory: [
+      { date: '01 ago', adherence: 45, weight: 89.2, sleepHours: 5.8, steps: 3600 },
+      { date: '08 ago', adherence: 50, weight: 88.9, sleepHours: 6.0, steps: 3900 },
+      { date: '15 ago', adherence: 55, weight: 88.5, sleepHours: 6.1, steps: 4050 },
+      { date: '22 ago', adherence: 58, weight: 88.2, sleepHours: 6.2, steps: 4100 },
       { date: '25 ago', adherence: 60, weight: 88.0, sleepHours: 6.3, steps: 4200 },
     ],
     reportCount: '0',
@@ -543,6 +586,13 @@ export const initialPatients: PatientProfile[] = [
     id: 'lucia-barbosa',
     initials: 'LB',
     name: 'Lúcia Barbosa',
+    email: 'lucia.barbosa@email.com',
+    phone: '(11) 97234-5678',
+    birthDate: '19/08/1965 (61 anos)',
+    cpf: '654.***.***-31',
+    gender: 'Feminino',
+    clinicalSummary:
+      'Programa de longevidade ativa, mobilidade articular e prevenção cardiovascular integrada.',
     focus: 'Retorno longevidade · energia e mobilidade',
     progress: '+6% passos',
     attention: 'Estável',
@@ -557,6 +607,33 @@ export const initialPatients: PatientProfile[] = [
     currentWeight: 59.8,
     targetWeight: 58.0,
     startWeight: 61.0,
+    preConsultationSymptoms: {
+      symptom: 'Mobilidade preservada e disposição satisfatória',
+      reportedAt: 'Ontem · 17:40',
+      severity: 'leve',
+      patientWords:
+        'Caminhadas diárias mantidas pela manhã. Pequeno cansaço apenas no fim da tarde em dias de calor.',
+      aiSummary:
+        'Adesão consistente de 91%, média de 7.280 passos e sono de 7h04. Sem novos relatos agudos.',
+    },
+    evolutionHistory: [
+      { date: '01 ago', adherence: 88, weight: 61.0, sleepHours: 6.9, steps: 6800 },
+      { date: '08 ago', adherence: 89, weight: 60.6, sleepHours: 7.0, steps: 6950 },
+      { date: '15 ago', adherence: 90, weight: 60.2, sleepHours: 7.0, steps: 7100 },
+      { date: '22 ago', adherence: 91, weight: 60.0, sleepHours: 7.1, steps: 7220 },
+      { date: '25 ago', adherence: 91, weight: 59.8, sleepHours: 7.1, steps: 7280 },
+    ],
+    quickNotes: [
+      {
+        id: 'qn-lb-1',
+        patientId: 'lucia-barbosa',
+        content:
+          'Consulta de retorno concluída às 09:30. Paciente orientada a manter hidratação vespertina.',
+        createdAt: 'Hoje · 09:35',
+        author: 'Dr. Guilherme Martins',
+        category: 'evolucao',
+      },
+    ],
     report: {
       title: 'Resumo de retorno',
       period: 'Jul–Ago 2026',
@@ -595,6 +672,13 @@ export const initialPatients: PatientProfile[] = [
     id: 'carlos-silva',
     initials: 'CS',
     name: 'Carlos Silva',
+    email: 'carlos.silva@email.com',
+    phone: '(11) 98765-1122',
+    birthDate: '11/04/1980 (46 anos)',
+    cpf: '876.***.***-54',
+    gender: 'Masculino',
+    clinicalSummary:
+      'Acompanhamento de metabolismo lipídico, triglicérides e esteatose. Requer incentivo ao diário contínuo.',
     focus: 'Metabolismo e perfil lipídico',
     progress: '−2,4 kg',
     attention: '> 48h sem diário',
@@ -603,12 +687,30 @@ export const initialPatients: PatientProfile[] = [
     prescriptionCount: '1 ativa',
     cycle: 'Dia 42 de 90',
     lastContact: '22 ago · 14:10',
-    nextConsultation: 'Amanhã · 09:30',
+    nextConsultation: 'Amanhã · 09:30 (Retorno semestral)',
     adherence: '74%',
     weightLoss: '−2,4 kg',
     currentWeight: 84.6,
     targetWeight: 78.0,
     startWeight: 87.0,
+    evolutionHistory: [
+      { date: '01 ago', adherence: 80, weight: 87.0, sleepHours: 6.5, steps: 5600 },
+      { date: '08 ago', adherence: 78, weight: 86.2, sleepHours: 6.3, steps: 5300 },
+      { date: '15 ago', adherence: 76, weight: 85.4, sleepHours: 6.2, steps: 5100 },
+      { date: '22 ago', adherence: 74, weight: 84.8, sleepHours: 6.0, steps: 4800 },
+      { date: '25 ago', adherence: 74, weight: 84.6, sleepHours: 6.0, steps: 4750 },
+    ],
+    quickNotes: [
+      {
+        id: 'qn-cs-1',
+        patientId: 'carlos-silva',
+        content:
+          'Paciente solicitou reagendamento e foi lembrado da importância do envio do diário prévio.',
+        createdAt: '22 ago · 14:15',
+        author: 'Dr. Guilherme Martins',
+        category: 'observacao',
+      },
+    ],
     report: {
       title: 'Relatório quinzenal',
       period: '01–15 de agosto',
@@ -1289,10 +1391,13 @@ export const initialPatients: PatientProfile[] = [
 export const initialAppointments: Appointment[] = [
   {
     id: 'apt-lucia',
+    patientId: 'lucia-barbosa',
+    date: 'Hoje, 25 de Agosto de 2026',
     time: '09:00',
     patient: 'Lúcia Barbosa',
     initials: 'LB',
     type: 'Retorno longevidade · 30 min',
+    modality: 'Teleconsulta (Google Meet)',
     status: 'Concluída',
     statusTone: 'gray',
     preVisit: 'Pré-consulta revisada',
@@ -1316,10 +1421,13 @@ export const initialAppointments: Appointment[] = [
   },
   {
     id: 'apt-marina',
+    patientId: 'marina-costa',
+    date: 'Hoje, 25 de Agosto de 2026',
     time: '10:30',
     patient: 'Marina Costa',
     initials: 'MC',
     type: 'Retorno longevidade · 30 min',
+    modality: 'Teleconsulta (Google Meet)',
     status: 'Próxima',
     statusTone: 'green',
     preVisit: 'Pré-consulta estruturada · Resumo pronto',
@@ -1345,10 +1453,13 @@ export const initialAppointments: Appointment[] = [
   },
   {
     id: 'apt-rafael',
+    patientId: 'rafael-lima',
+    date: 'Hoje, 25 de Agosto de 2026',
     time: '11:30',
     patient: 'Rafael Lima',
     initials: 'RL',
     type: 'Primeira consulta · 50 min',
+    modality: 'Teleconsulta (Google Meet)',
     status: 'Confirmada',
     statusTone: 'green',
     preVisit: 'Anamnese 68% concluída',
@@ -1368,10 +1479,13 @@ export const initialAppointments: Appointment[] = [
   },
   {
     id: 'apt-ana',
+    patientId: 'ana-ribeiro',
+    date: 'Hoje, 25 de Agosto de 2026',
     time: '14:00',
     patient: 'Ana Ribeiro',
     initials: 'AR',
     type: 'Retorno força · 30 min',
+    modality: 'Teleconsulta (Google Meet)',
     status: 'Confirmada',
     statusTone: 'green',
     preVisit: 'Voz concluída · relatório pronto',
@@ -1391,10 +1505,13 @@ export const initialAppointments: Appointment[] = [
   },
   {
     id: 'apt-paulo',
+    patientId: 'paulo-mendes',
+    date: 'Hoje, 25 de Agosto de 2026',
     time: '16:30',
     patient: 'Paulo Mendes',
     initials: 'PM',
     type: 'Acompanhamento · 25 min',
+    modality: 'Teleconsulta (Google Meet)',
     status: 'A confirmar',
     statusTone: 'amber',
     preVisit: 'Novo sintoma no check-in',
