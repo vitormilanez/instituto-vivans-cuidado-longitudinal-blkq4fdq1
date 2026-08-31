@@ -334,7 +334,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
 
   const nudgeDelayedPatients = () => {
     setNudged(true)
-    notify('Lembrete (cutucão) enviado com sucesso para 5 pacientes.')
+    notify('Lembrete (cutucão) enviado com sucesso para 4 pacientes com check-ins pendentes.')
   }
 
   const activeAttentionCount = 3

@@ -19,7 +19,9 @@ export default function DoctorPatients() {
   const navigate = useNavigate()
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterAttention, setFilterAttention] = useState<'todos' | 'atencao' | 'regulares'>('todos')
+  const [filterAttention, setFilterAttention] = useState<
+    'todos' | 'regulares' | 'atrasados' | 'atencao'
+  >('todos')
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 4
 
@@ -31,8 +33,9 @@ export default function DoctorPatients() {
 
     if (!matchesSearch) return false
     if (filterAttention === 'todos') return true
-    if (filterAttention === 'atencao') return p.tone === 'amber' || p.tone === 'rose'
-    if (filterAttention === 'regulares') return p.tone === 'green' || p.tone === 'blue'
+    if (filterAttention === 'regulares') return p.tone === 'green'
+    if (filterAttention === 'atrasados') return p.tone === 'amber'
+    if (filterAttention === 'atencao') return p.tone === 'rose'
     return true
   })
 
@@ -73,8 +76,8 @@ export default function DoctorPatients() {
         </div>
 
         <div className="rounded-2xl border border-[#bfe4d8] bg-[#ebf6f2] px-4 py-2.5 text-xs text-[#075f50]">
-          Total na Coorte: <strong>22 Pacientes Ativos</strong> (17 Regulares · 5 com Check-in
-          Pendente)
+          Total na Coorte: <strong>{patients.length} Pacientes em ciclo</strong> (15 Regulares · 4
+          Atrasados · 3 Atenção)
         </div>
       </section>
 
@@ -95,8 +98,9 @@ export default function DoctorPatients() {
           <span className="text-xs font-bold text-[#60766f] mr-1">Filtrar:</span>
           {[
             { id: 'todos', label: `Todos (${patients.length})` },
-            { id: 'atencao', label: 'Requerem Atenção' },
-            { id: 'regulares', label: 'Regulares' },
+            { id: 'regulares', label: 'Regulares (15)' },
+            { id: 'atrasados', label: 'Atrasados (4)' },
+            { id: 'atencao', label: 'Atenção (3)' },
           ].map((f) => (
             <button
               key={f.id}

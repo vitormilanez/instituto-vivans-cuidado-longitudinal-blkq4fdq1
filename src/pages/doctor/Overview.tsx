@@ -12,6 +12,7 @@ import {
   Sparkles,
   Send,
   CheckCircle2,
+  CheckCircle,
   Bell,
   Activity,
   Check,
@@ -22,6 +23,7 @@ import {
   Flame,
   Moon,
   HeartPulse,
+  Users,
 } from 'lucide-react'
 
 interface AlertItem {
@@ -30,7 +32,7 @@ interface AlertItem {
   title: string
   context: string
   tag: string
-  tone: 'amber' | 'rose' | 'blue'
+  tone: 'amber' | 'rose' | 'blue' | 'green'
   category: string
   icon: typeof AlertTriangle
   suggestedAction: string
@@ -42,8 +44,20 @@ export default function DoctorOverview() {
   const { patients, appointments, reports, nudged, nudgeDelayedPatients, notify } = useVivans()
   const navigate = useNavigate()
 
+  // Active status filter controlled by quick status cards
+  const [activeStatusFilter, setActiveStatusFilter] = useState<
+    'all' | 'regulares' | 'atrasados' | 'atencao'
+  >('all')
+
   const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null)
   const [filterTag, setFilterTag] = useState<'all' | 'priority' | 'symptom' | 'report'>('all')
+
+  // Derive counts from actual mock data
+  const totalCount = patients.length // 22
+  const regularesCount = patients.filter((p) => p.tone === 'green').length // 15
+  const atrasadosCount = patients.filter((p) => p.tone === 'amber').length // 4
+  const atencaoCount = patients.filter((p) => p.tone === 'rose').length // 3
+  const relatoriosCount = reports.length // 4
 
   const alerts: AlertItem[] = [
     {
@@ -53,7 +67,7 @@ export default function DoctorOverview() {
       context:
         'Média de 5h42 com despertares às 3h. Pré-consulta vinculada indica correlação a ser avaliada com crononutrição do jantar (20h30).',
       tag: 'Revisar no retorno (10:30)',
-      tone: 'amber',
+      tone: 'rose',
       category: 'Sono & Crononutrição',
       icon: Moon,
       suggestedAction: 'Abrir sala de consulta às 10:30 e revisar crononutrição.',
@@ -75,26 +89,130 @@ export default function DoctorOverview() {
       keyMetric: { label: 'Queixa', val: 'Enjoo matinal' },
     },
     {
+      patient: 'Rafael Lima',
+      patientId: 'rafael-lima',
+      title: 'Anamnese pendente e lacunas de histórico pré-consulta',
+      context:
+        'Faltam histórico familiar e uso atual de suplementos para avaliação inicial das 11:30.',
+      tag: 'Anamnese pendente',
+      tone: 'rose',
+      category: 'Avaliação Inicial',
+      icon: AlertTriangle,
+      suggestedAction: 'Revisar exames anexados e completar histórico durante a consulta inicial.',
+      timeAgo: 'Ontem · 11:05',
+      keyMetric: { label: 'Preenchimento', val: '68% concluído' },
+    },
+    {
+      patient: 'Carlos Silva',
+      patientId: 'carlos-silva',
+      title: 'Sem diário alimentar ou check-in há mais de 48 horas',
+      context: 'Último contato em 22 ago (há 3 dias). Pendência de registro alimentar quinzenal.',
+      tag: '> 48h sem diário',
+      tone: 'amber',
+      category: 'Diário & Adesão',
+      icon: Clock,
+      suggestedAction: 'Enviar lembrete amigável ou abordar na consulta de amanhã.',
+      timeAgo: '22 ago · 14:10',
+      keyMetric: { label: 'Atraso', val: '> 72h sem registro' },
+    },
+    {
+      patient: 'Felipe Vasconcelos',
+      patientId: 'felipe-vasconcelos',
+      title: '3 dias consecutivos sem registro de diário de biohacking',
+      context: 'Oscilação no registro diário por motivo de viagens frequentes.',
+      tag: '> 48h sem diário',
+      tone: 'amber',
+      category: 'Diário & Adesão',
+      icon: Clock,
+      suggestedAction: 'Disparar cutucão automático ou alinhar flexibilidade de diário.',
+      timeAgo: '3 dias atrás',
+      keyMetric: { label: 'Adesão', val: '68% (meta: 80%)' },
+    },
+    {
+      patient: 'Marcelo Tavares',
+      patientId: 'marcelo-tavares',
+      title: '4 dias sem envio de diário ou confirmação de dose',
+      context: 'Adesão à rosuvastatina registrada pela última vez há 4 dias.',
+      tag: '> 48h sem diário',
+      tone: 'amber',
+      category: 'Diário & Adesão',
+      icon: Clock,
+      suggestedAction: 'Verificar tolerância medicamentosa e renovar engajamento.',
+      timeAgo: '4 dias atrás',
+      keyMetric: { label: 'Sem registro', val: '4 dias' },
+    },
+    {
+      patient: 'Thiago Carvalho',
+      patientId: 'thiago-carvalho',
+      title: '2 dias sem sincronização de dados de sono e HRV',
+      context: 'Check-in pendente desde 23 de agosto.',
+      tag: '> 48h sem diário',
+      tone: 'amber',
+      category: 'Diário & Adesão',
+      icon: Clock,
+      suggestedAction: 'Notificar sobre o registro noturno antes da consulta de 05 set.',
+      timeAgo: '2 dias atrás',
+      keyMetric: { label: 'HRV', val: 'Sem sync' },
+    },
+    {
+      patient: 'Lúcia Barbosa',
+      patientId: 'lucia-barbosa',
+      title: 'Metas em dia: 91% de adesão e energia 4/5 preservada',
+      context:
+        'Excelente disposição matinal, estabilidade funcional e 7.280 passos diários médios.',
+      tag: 'Metas em dia',
+      tone: 'green',
+      category: 'Longevidade & Adesão',
+      icon: CheckCircle2,
+      suggestedAction: 'Manter rotina e reforçar retorno em 60 dias.',
+      timeAgo: 'Hoje · 09:30',
+      keyMetric: { label: 'Adesão', val: '91%' },
+    },
+    {
       patient: 'Ana Ribeiro',
       patientId: 'ana-ribeiro',
-      title: 'Relatório longitudinal compilado aguardando validação',
-      context:
-        'Adesão de 88% e ganho de 12% na força funcional. Síntese estruturada aguardando assinatura médica para envio.',
-      tag: 'Aprovação de relatório',
-      tone: 'blue',
-      category: 'Documento Clínico',
-      icon: FileText,
-      suggestedAction: 'Aprovar relatório mensal na central de relatórios.',
+      title: 'Metas em dia: 88% de adesão e ganho de 12% na força funcional',
+      context: 'Adesão consistente após migração dos treinos de força para a manhã.',
+      tag: 'Metas em dia',
+      tone: 'green',
+      category: 'Força & Hábitos',
+      icon: CheckCircle2,
+      suggestedAction: 'Aprovar relatório mensal na consulta das 14:00.',
       timeAgo: 'Ontem · 18:40',
       keyMetric: { label: 'Adesão / Força', val: '88% · +12%' },
     },
+    {
+      patient: 'Rodrigo Albuquerque',
+      patientId: 'rodrigo-albuquerque',
+      title: 'Metas em dia: 94% de adesão e glicemia de jejum 92 mg/dL',
+      context: 'Excelente resposta à restrição de ultraprocessados com perda de 3,2 kg.',
+      tag: 'Metas em dia',
+      tone: 'green',
+      category: 'Metabolismo & Glicemia',
+      icon: CheckCircle2,
+      suggestedAction: 'Manter posologia de metformina de liberação lenta.',
+      timeAgo: 'Hoje · 07:45',
+      keyMetric: { label: 'HOMA-IR', val: '1.8 (otimizado)' },
+    },
   ]
 
+  // Filter alerts according to both the quick cards filter and local filterTag
   const filteredAlerts = alerts.filter((a) => {
+    if (activeStatusFilter === 'regulares') {
+      return a.tone === 'green'
+    }
+    if (activeStatusFilter === 'atrasados') {
+      return a.tone === 'amber'
+    }
+    if (activeStatusFilter === 'atencao') {
+      return a.tone === 'rose'
+    }
+
+    // Default 'all' view shows active exception cases
     if (filterTag === 'priority') return a.tone === 'amber'
     if (filterTag === 'symptom') return a.tone === 'rose'
-    if (filterTag === 'report') return a.tone === 'blue'
-    return true
+    if (filterTag === 'report') return a.tone === 'blue' || a.category.includes('Documento')
+    return a.tone === 'rose' || a.tone === 'amber'
   })
 
   return (
@@ -147,12 +265,12 @@ export default function DoctorOverview() {
               {nudged ? (
                 <>
                   <Check className="size-4 text-[#9fe0ce]" />
-                  <span>Lembrete enviado aos 5 atrasados</span>
+                  <span>Lembrete enviado aos 4 atrasados</span>
                 </>
               ) : (
                 <>
                   <Send className="size-4 text-[#0d2a23] transition-transform group-hover:translate-x-0.5" />
-                  <span>Enviar lembrete aos 5 atrasados</span>
+                  <span>Enviar lembrete aos 4 atrasados</span>
                 </>
               )}
             </button>
@@ -160,80 +278,160 @@ export default function DoctorOverview() {
         </div>
       </section>
 
-      {/* 2. Executive Summary / Modern KPI Cards */}
-      <section className="grid gap-4 sm:grid-cols-3">
-        {/* Card 1: Agenda */}
-        <div
-          onClick={() => navigate('/medico/agenda')}
-          className="group relative cursor-pointer overflow-hidden rounded-[20px] border border-[#DEE7E2] bg-white p-5 sm:p-6 shadow-[0_4px_16px_rgba(17,40,34,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#097260]/40 hover:shadow-[0_12px_24px_rgba(9,114,96,0.08)]"
+      {/* 2. 5 Cards de Status Rápido (Design Fiel à Imagem) */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
+        {/* Card 1: TOTAL CARTEIRA */}
+        <button
+          type="button"
+          onClick={() => navigate('/medico/pacientes')}
+          className={`group flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(17,40,34,0.08)] ${
+            activeStatusFilter === 'all'
+              ? 'border-[#DEE7E2] hover:border-[#097260]/50'
+              : 'border-[#DEE7E2] opacity-85 hover:opacity-100 hover:border-[#097260]/50'
+          }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#556D66]">
-              Agenda do Dia
-            </span>
-            <div className="grid size-9 place-items-center rounded-xl bg-[#EAF3EF] text-[#097260] transition-colors group-hover:bg-[#097260] group-hover:text-white">
-              <Calendar className="size-4" />
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold tracking-[0.06em] text-[#556D66] uppercase">
+                TOTAL CARTEIRA
+              </span>
+              <Users className="size-4 text-[#8C9E97] transition-colors group-hover:text-[#097260]" />
+            </div>
+            <div className="mt-2.5">
+              <span className="font-serif text-[38px] font-bold leading-none text-[#112822]">
+                {totalCount}
+              </span>
             </div>
           </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-serif text-3xl sm:text-4xl font-bold text-[#112822]">5</span>
-            <span className="text-xs text-[#556D66]">atendimentos</span>
+          <div className="mt-4 flex items-center justify-between border-t border-transparent pt-1 text-[13px] text-[#556D66]">
+            <span>Pacientes em ciclo</span>
+            <ChevronRight className="size-4 text-[#8C9E97] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#097260]" />
           </div>
-          <div className="mt-3 flex items-center justify-between border-t border-[#F3F7F5] pt-3 text-xs">
-            <span className="text-[#556D66]">
-              Próxima às <strong className="text-[#112822] font-semibold">10:30</strong> (Marina C.)
-            </span>
-            <ChevronRight className="size-3.5 text-[#556D66] transition-transform group-hover:translate-x-1 group-hover:text-[#097260]" />
-          </div>
-        </div>
+        </button>
 
-        {/* Card 2: Caixa de Atenção */}
-        <div
+        {/* Card 2: REGULARES */}
+        <button
+          type="button"
           onClick={() => {
+            const nextFilter = activeStatusFilter === 'regulares' ? 'all' : 'regulares'
+            setActiveStatusFilter(nextFilter)
             document.getElementById('atencao-box')?.scrollIntoView({ behavior: 'smooth' })
           }}
-          className="group relative cursor-pointer overflow-hidden rounded-[20px] border border-[#F8DEB0] bg-[#FEFBF5] p-5 sm:p-6 shadow-[0_4px_16px_rgba(125,83,8,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#C57D19]/60 hover:shadow-[0_12px_24px_rgba(197,125,25,0.12)]"
+          className={`group flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(9,114,96,0.1)] ${
+            activeStatusFilter === 'regulares'
+              ? 'border-[#097260] ring-2 ring-[#097260]/20'
+              : 'border-[#DEE7E2] hover:border-[#097260]/50'
+          }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A5B0B]">
-              Caixa de Atenção
-            </span>
-            <div className="grid size-9 place-items-center rounded-xl bg-[#FEEED1] text-[#C57D19] transition-colors group-hover:bg-[#C57D19] group-hover:text-white">
-              <AlertTriangle className="size-4" />
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold tracking-[0.06em] text-[#097260] uppercase">
+                REGULARES
+              </span>
+              <CheckCircle className="size-4 text-[#097260]" />
+            </div>
+            <div className="mt-2.5">
+              <span className="font-serif text-[38px] font-bold leading-none text-[#097260]">
+                {regularesCount}
+              </span>
             </div>
           </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-serif text-3xl sm:text-4xl font-bold text-[#7D5308]">3</span>
-            <span className="text-xs text-[#8A5B0B]">casos por exceção</span>
+          <div className="mt-4 flex items-center justify-between border-t border-transparent pt-1 text-[13px] text-[#556D66]">
+            <span>Metas em dia</span>
+            <ChevronRight className="size-4 text-[#097260] transition-transform duration-200 group-hover:translate-x-0.5" />
           </div>
-          <div className="mt-3 flex items-center justify-between border-t border-[#F8DEB0]/50 pt-3 text-xs">
-            <span className="text-[#8A5B0B] truncate">1 novo sintoma + 2 desvios de sono</span>
-            <ChevronRight className="size-3.5 text-[#8A5B0B] transition-transform group-hover:translate-x-1 group-hover:text-[#7D5308]" />
-          </div>
-        </div>
+        </button>
 
-        {/* Card 3: Relatórios */}
-        <div
-          onClick={() => navigate('/medico/relatorios')}
-          className="group relative cursor-pointer overflow-hidden rounded-[20px] border border-[#DEE7E2] bg-white p-5 sm:p-6 shadow-[0_4px_16px_rgba(17,40,34,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#355B88]/40 hover:shadow-[0_12px_24px_rgba(53,91,136,0.08)]"
+        {/* Card 3: ATRASADOS */}
+        <button
+          type="button"
+          onClick={() => {
+            const nextFilter = activeStatusFilter === 'atrasados' ? 'all' : 'atrasados'
+            setActiveStatusFilter(nextFilter)
+            document.getElementById('atencao-box')?.scrollIntoView({ behavior: 'smooth' })
+          }}
+          className={`group flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(197,125,25,0.12)] ${
+            activeStatusFilter === 'atrasados'
+              ? 'border-[#C57D19] ring-2 ring-[#C57D19]/20'
+              : 'border-[#DEE7E2] hover:border-[#C57D19]/50'
+          }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#556D66]">
-              Relatórios na Fila
-            </span>
-            <div className="grid size-9 place-items-center rounded-xl bg-[#EFF5FC] text-[#355B88] transition-colors group-hover:bg-[#355B88] group-hover:text-white">
-              <FileText className="size-4" />
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold tracking-[0.06em] text-[#C57D19] uppercase">
+                ATRASADOS
+              </span>
+              <Clock className="size-4 text-[#C57D19]" />
+            </div>
+            <div className="mt-2.5">
+              <span className="font-serif text-[38px] font-bold leading-none text-[#C57D19]">
+                {atrasadosCount}
+              </span>
             </div>
           </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-serif text-3xl sm:text-4xl font-bold text-[#112822]">4</span>
-            <span className="text-xs text-[#556D66]">em acompanhamento</span>
+          <div className="mt-4 flex items-center justify-between border-t border-transparent pt-1 text-[13px] text-[#556D66]">
+            <span>&gt; 48h sem diário</span>
+            <ChevronRight className="size-4 text-[#C57D19] transition-transform duration-200 group-hover:translate-x-0.5" />
           </div>
-          <div className="mt-3 flex items-center justify-between border-t border-[#F3F7F5] pt-3 text-xs">
-            <span className="text-[#556D66]">2 prontos para validação</span>
-            <ChevronRight className="size-3.5 text-[#556D66] transition-transform group-hover:translate-x-1 group-hover:text-[#355B88]" />
+        </button>
+
+        {/* Card 4: ATENÇÃO */}
+        <button
+          type="button"
+          onClick={() => {
+            const nextFilter = activeStatusFilter === 'atencao' ? 'all' : 'atencao'
+            setActiveStatusFilter(nextFilter)
+            document.getElementById('atencao-box')?.scrollIntoView({ behavior: 'smooth' })
+          }}
+          className={`group flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(179,38,30,0.12)] ${
+            activeStatusFilter === 'atencao'
+              ? 'border-[#B3261E] ring-2 ring-[#B3261E]/20'
+              : 'border-[#DEE7E2] hover:border-[#B3261E]/50'
+          }`}
+        >
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold tracking-[0.06em] text-[#9A221A] uppercase">
+                ATENÇÃO
+              </span>
+              <AlertTriangle className="size-4 text-[#B3261E]" />
+            </div>
+            <div className="mt-2.5">
+              <span className="font-serif text-[38px] font-bold leading-none text-[#9A221A]">
+                {atencaoCount}
+              </span>
+            </div>
           </div>
-        </div>
+          <div className="mt-4 flex items-center justify-between border-t border-transparent pt-1 text-[13px] text-[#556D66]">
+            <span>Sintomas/adesão</span>
+            <ChevronRight className="size-4 text-[#9A221A] transition-transform duration-200 group-hover:translate-x-0.5" />
+          </div>
+        </button>
+
+        {/* Card 5: RELATÓRIOS */}
+        <button
+          type="button"
+          onClick={() => navigate('/medico/relatorios')}
+          className="group flex flex-col justify-between rounded-[22px] border border-[#DEE7E2] bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#097260]/50 hover:shadow-[0_8px_24px_rgba(9,114,96,0.1)]"
+        >
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold tracking-[0.06em] text-[#097260] uppercase">
+                RELATÓRIOS
+              </span>
+              <FileText className="size-4 text-[#097260]" />
+            </div>
+            <div className="mt-2.5">
+              <span className="font-serif text-[38px] font-bold leading-none text-[#112822]">
+                {relatoriosCount}
+              </span>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between border-t border-transparent pt-1 text-[13px] text-[#556D66]">
+            <span>Evolução da carteira</span>
+            <ChevronRight className="size-4 text-[#097260] transition-transform duration-200 group-hover:translate-x-0.5" />
+          </div>
+        </button>
       </section>
 
       {/* 3. Main Two-Column Layout: Attention Box (Primary) & Today's Timeline */}
@@ -257,36 +455,56 @@ export default function DoctorOverview() {
             <div className="flex items-center gap-1 rounded-xl bg-[#EAF3EF]/70 p-1 text-xs">
               <button
                 type="button"
-                onClick={() => setFilterTag('all')}
+                onClick={() => {
+                  setActiveStatusFilter('all')
+                  setFilterTag('all')
+                }}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition-all ${
-                  filterTag === 'all'
+                  activeStatusFilter === 'all' && filterTag === 'all'
                     ? 'bg-white text-[#112822] shadow-2xs'
                     : 'text-[#556D66] hover:text-[#112822]'
                 }`}
               >
-                Todos (3)
+                Todos
               </button>
               <button
                 type="button"
-                onClick={() => setFilterTag('priority')}
+                onClick={() => {
+                  setActiveStatusFilter('regulares')
+                }}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition-all ${
-                  filterTag === 'priority'
+                  activeStatusFilter === 'regulares'
+                    ? 'bg-white text-[#097260] shadow-2xs'
+                    : 'text-[#556D66] hover:text-[#112822]'
+                }`}
+              >
+                Regulares (15)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveStatusFilter('atrasados')
+                }}
+                className={`rounded-lg px-2.5 py-1 font-semibold transition-all ${
+                  activeStatusFilter === 'atrasados'
                     ? 'bg-white text-[#7D5308] shadow-2xs'
                     : 'text-[#556D66] hover:text-[#112822]'
                 }`}
               >
-                Prioritários
+                Atrasados (4)
               </button>
               <button
                 type="button"
-                onClick={() => setFilterTag('symptom')}
+                onClick={() => {
+                  setActiveStatusFilter('atencao')
+                }}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition-all ${
-                  filterTag === 'symptom'
+                  activeStatusFilter === 'atencao'
                     ? 'bg-white text-[#8E2E28] shadow-2xs'
                     : 'text-[#556D66] hover:text-[#112822]'
                 }`}
               >
-                Sintomas
+                Atenção (3)
               </button>
             </div>
           </div>
@@ -312,10 +530,12 @@ export default function DoctorOverview() {
                       <div
                         className={`grid size-9 place-items-center rounded-xl text-xs font-bold ${
                           al.tone === 'amber'
-                            ? 'bg-[#FEEED1] text-[#7D5308]'
+                            ? 'bg-[#FEEED1] text-[#C57D19]'
                             : al.tone === 'rose'
-                              ? 'bg-[#FCF0EE] text-[#8E2E28]'
-                              : 'bg-[#EFF5FC] text-[#244C77]'
+                              ? 'bg-[#FCF0EE] text-[#B3261E]'
+                              : al.tone === 'green'
+                                ? 'bg-[#EAF3EF] text-[#097260]'
+                                : 'bg-[#EFF5FC] text-[#244C77]'
                         }`}
                       >
                         <IconComponent className="size-4" />
@@ -505,10 +725,12 @@ export default function DoctorOverview() {
                 <div
                   className={`grid size-10 place-items-center rounded-2xl ${
                     selectedAlert.tone === 'amber'
-                      ? 'bg-[#FEEED1] text-[#7D5308]'
+                      ? 'bg-[#FEEED1] text-[#C57D19]'
                       : selectedAlert.tone === 'rose'
-                        ? 'bg-[#FCF0EE] text-[#8E2E28]'
-                        : 'bg-[#EFF5FC] text-[#244C77]'
+                        ? 'bg-[#FCF0EE] text-[#B3261E]'
+                        : selectedAlert.tone === 'green'
+                          ? 'bg-[#EAF3EF] text-[#097260]'
+                          : 'bg-[#EFF5FC] text-[#244C77]'
                   }`}
                 >
                   <selectedAlert.icon className="size-5" />
