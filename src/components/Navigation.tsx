@@ -145,23 +145,27 @@ export function DoctorSidebar() {
           )
         })}
       </nav>
-      {/* Cohort status box */}
-      <div className="mt-8 rounded-3xl bg-[#17372f] p-4 text-white shadow-[0_12px_28px_rgba(23,55,47,0.18)]">
-        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#9cc7ba]">
-          Painel de Coorte
-        </p>
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center justify-between rounded-xl bg-white/10 px-3 py-2 text-xs">
-            <span className="text-[#c7ddd6]">Ativos</span>
-            <strong className="text-base font-bold">22</strong>
+      {/* Cohort status box - Light, Clean & Modern */}
+      <div className="mt-8 rounded-[20px] border border-[#DEE7E2] bg-[#FDFCFA] p-4 text-[#112822] shadow-[0_4px_16px_rgba(17,40,34,0.03)]">
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#556D66]">
+            Painel de Coorte
+          </p>
+          <span className="size-2 rounded-full bg-[#097260]" />
+        </div>
+
+        <div className="mt-3 space-y-1.5">
+          <div className="flex items-center justify-between rounded-[14px] bg-[#F5F8F6] px-3 py-2 text-xs">
+            <span className="text-[#556D66]">Ativos</span>
+            <strong className="text-sm font-bold text-[#112822]">22</strong>
           </div>
-          <div className="flex items-center justify-between rounded-xl bg-white/10 px-3 py-2 text-xs">
-            <span className="text-[#c7ddd6]">Regulares</span>
-            <strong className="text-base font-bold text-[#9fe0ce]">17</strong>
+          <div className="flex items-center justify-between rounded-[14px] bg-[#EAF3EF]/60 px-3 py-2 text-xs">
+            <span className="text-[#097260] font-medium">Regulares</span>
+            <strong className="text-sm font-bold text-[#097260]">17</strong>
           </div>
-          <div className="flex items-center justify-between rounded-xl bg-[#fff3df] px-3 py-2 text-xs text-[#70480e]">
-            <span className="font-bold">Atrasados</span>
-            <strong className="text-base font-bold">5</strong>
+          <div className="flex items-center justify-between rounded-[14px] bg-[#FEF7E7] px-3 py-2 text-xs text-[#7D5308]">
+            <span className="font-semibold">Atrasados</span>
+            <strong className="text-sm font-bold text-[#7D5308]">5</strong>
           </div>
         </div>
 
@@ -170,25 +174,26 @@ export function DoctorSidebar() {
           disabled={nudged}
           onClick={nudgeDelayedPatients}
           className={cn(
-            'mt-3.5 min-h-10 w-full rounded-xl px-3 text-xs font-bold transition-all',
+            'mt-3 min-h-9 w-full rounded-[14px] px-3 text-xs font-bold transition-all',
             nudged
-              ? 'bg-[#b9d0c9] text-[#17372f] cursor-default'
-              : 'bg-white text-[#17372f] hover:bg-[#edf7f4] shadow-sm',
+              ? 'bg-[#DEE7E2] text-[#556D66] cursor-default'
+              : 'bg-[#112822] text-white hover:bg-[#1e483e] shadow-2xs active:scale-[0.98]',
           )}
         >
-          {nudged ? 'Lembrete enviado (5)' : 'Enviar lembrete aos 5'}
+          {nudged ? 'Lembrete enviado (5)' : 'Enviar lembrete (5)'}
         </button>
       </div>
-      <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-3 text-xs text-[#0b6a5b] space-y-1">
-        <div className="flex items-center gap-1.5 font-bold">
-          <Sparkles className="size-3.5 text-[#0b7b68]" />
-          <span>Apoio Clínico Estruturado</span>
+
+      {/* AI Structured Support - Secondary Notice */}
+      <div className="mt-4 rounded-[16px] border border-[#DEE7E2] bg-[#F5F8F6]/80 p-3 text-xs text-[#556D66] space-y-1">
+        <div className="flex items-center gap-1.5 font-bold text-[#097260]">
+          <Sparkles className="size-3.5 shrink-0" />
+          <span className="text-[11px]">Apoio Clínico Estruturado</span>
         </div>
-        <p className="text-[11px] leading-relaxed text-[#3b534b]">
-          Rascunhos de apoio documental para o médico. Nenhuma conduta ou diagnóstico é emitido de
-          forma autônoma.
+        <p className="text-[10px] leading-relaxed text-[#556D66]">
+          Rascunhos documentais para validação médica. Sem emissão autônoma de diagnóstico.
         </p>
-      </div>{' '}
+      </div>
     </aside>
   )
 }
