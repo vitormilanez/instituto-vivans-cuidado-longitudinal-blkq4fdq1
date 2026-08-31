@@ -11,11 +11,24 @@ export interface QuickNote {
   category?: 'evolucao' | 'observacao' | 'medicacao' | 'geral'
 }
 
+export interface PatientEvolutionMetric {
+  date: string
+  adherence: number // 0-100%
+  weight?: number // kg
+  sleepHours?: number // hours, e.g. 5.7
+  steps?: number // e.g. 6420
+}
+
 export interface PatientProfile {
   id: string
   initials: string
   name: string
   email?: string
+  phone?: string
+  birthDate?: string
+  cpf?: string
+  clinicalSummary?: string
+  gender?: 'Feminino' | 'Masculino' | 'Outro'
   focus: string
   progress: string
   attention: string
@@ -33,6 +46,14 @@ export interface PatientProfile {
   isTemporary?: boolean
   isOnlineInWaitingRoom?: boolean
   waitingSince?: string
+  preConsultationSymptoms?: {
+    symptom: string
+    reportedAt: string
+    severity: 'leve' | 'moderada' | 'alta'
+    patientWords: string
+    aiSummary: string
+  }
+  evolutionHistory?: PatientEvolutionMetric[]
   quickNotes?: QuickNote[]
   report: {
     title: string
@@ -55,6 +76,58 @@ export interface PatientProfile {
   activity: Array<[string, string]>
   nextSteps: string[]
 }
+
+export interface WeeklyAdherenceTrendPoint {
+  week: string
+  label: string
+  adherence: number // %
+  regularCount: number
+  delayedCount: number
+  attentionCount: number
+}
+
+export const cohortWeeklyAdherence: WeeklyAdherenceTrendPoint[] = [
+  {
+    week: 'Sem 1',
+    label: '28 Jul–03 Ago',
+    adherence: 79,
+    regularCount: 13,
+    delayedCount: 6,
+    attentionCount: 3,
+  },
+  {
+    week: 'Sem 2',
+    label: '04–10 Ago',
+    adherence: 81,
+    regularCount: 14,
+    delayedCount: 5,
+    attentionCount: 3,
+  },
+  {
+    week: 'Sem 3',
+    label: '11–17 Ago',
+    adherence: 84,
+    regularCount: 15,
+    delayedCount: 4,
+    attentionCount: 3,
+  },
+  {
+    week: 'Sem 4',
+    label: '18–24 Ago',
+    adherence: 86,
+    regularCount: 15,
+    delayedCount: 4,
+    attentionCount: 3,
+  },
+  {
+    week: 'Sem 5',
+    label: 'Atual (25 Ago)',
+    adherence: 87,
+    regularCount: 15,
+    delayedCount: 4,
+    attentionCount: 3,
+  },
+]
 
 export interface Appointment {
   id: string
@@ -185,10 +258,33 @@ export const initialPatients: PatientProfile[] = [
     id: 'marina-costa',
     initials: 'MC',
     name: 'Marina Costa',
+    email: 'marina.costa@email.com',
+    phone: '(11) 98765-4321',
+    birthDate: '14/05/1988 (38 anos)',
+    cpf: '321.***.***-09',
+    gender: 'Feminino',
+    clinicalSummary:
+      'Emagrecimento sustentável com foco em preservação de massa magra, crononutrição e readequação do sono.',
     focus: 'Emagrecimento longitudinal · sono e ritmo circadiano',
     progress: '−1,8 kg',
-    attention: 'Sono fora do padrão',
+    attention: 'Sono curto (5h42) · Despertares 3h',
     tone: 'amber',
+    preConsultationSymptoms: {
+      symptom: 'Despertares noturnos às 3h e sono curto (5h42)',
+      reportedAt: 'Hoje · 09:18',
+      severity: 'moderada',
+      patientWords:
+        'Nos últimos quatro dias passei a acordar às 3h da manhã com sono fragmentado. Quero avaliar o horário do jantar.',
+      aiSummary:
+        'Média de 5h42 de sono em 4 noites consecutivas, correlacionada a jantar tardio às 20h30.',
+    },
+    evolutionHistory: [
+      { date: '01 ago', adherence: 76, weight: 80.0, sleepHours: 6.2, steps: 5800 },
+      { date: '08 ago', adherence: 79, weight: 79.4, sleepHours: 6.0, steps: 6100 },
+      { date: '15 ago', adherence: 82, weight: 78.8, sleepHours: 6.1, steps: 6350 },
+      { date: '22 ago', adherence: 80, weight: 78.4, sleepHours: 5.7, steps: 6400 },
+      { date: '25 ago', adherence: 82, weight: 78.2, sleepHours: 5.7, steps: 6420 },
+    ],
     reportCount: '2',
     prescriptionCount: '1 ativa',
     cycle: 'Dia 29 de 90 · Plano pós-consulta ativo',
@@ -304,10 +400,33 @@ export const initialPatients: PatientProfile[] = [
     id: 'paulo-mendes',
     initials: 'PM',
     name: 'Paulo Mendes',
+    email: 'paulo.mendes@email.com',
+    phone: '(11) 97654-3210',
+    birthDate: '22/09/1982 (43 anos)',
+    cpf: '456.***.***-18',
+    gender: 'Masculino',
+    clinicalSummary:
+      'Emagrecimento e controle de hábitos. Em adaptação à nova posologia com relato de desconforto gástrico recente.',
     focus: 'Emagrecimento · rotina',
     progress: '72% plano',
-    attention: 'Sintoma',
+    attention: 'Enjoo matinal após novo plano',
     tone: 'rose',
+    preConsultationSymptoms: {
+      symptom: 'Desconforto gástrico e enjoo matinal',
+      reportedAt: 'Hoje · 08:12',
+      severity: 'moderada',
+      patientWords:
+        'Senti enjoo moderado nas manhãs após tomar a nova suplementação em jejum. Reduzi os registros por desânimo.',
+      aiSummary:
+        'Relato de queixa gástrica matinal após atualização da prescrição #RX-1051. Sugerido avaliar tomada pós-prandial.',
+    },
+    evolutionHistory: [
+      { date: '01 ago', adherence: 85, weight: 93.0, sleepHours: 6.8, steps: 5400 },
+      { date: '08 ago', adherence: 82, weight: 92.8, sleepHours: 6.6, steps: 5200 },
+      { date: '15 ago', adherence: 78, weight: 92.6, sleepHours: 6.5, steps: 4900 },
+      { date: '22 ago', adherence: 74, weight: 92.4, sleepHours: 6.3, steps: 4600 },
+      { date: '25 ago', adherence: 72, weight: 92.4, sleepHours: 6.2, steps: 4500 },
+    ],
     reportCount: '1',
     prescriptionCount: '1 ativa',
     cycle: 'Dia 18 de 60',
@@ -355,10 +474,29 @@ export const initialPatients: PatientProfile[] = [
     id: 'rafael-lima',
     initials: 'RL',
     name: 'Rafael Lima',
+    email: 'rafael.lima@email.com',
+    phone: '(11) 99123-4567',
+    birthDate: '10/03/1990 (36 anos)',
+    cpf: '789.***.***-22',
+    gender: 'Masculino',
+    clinicalSummary:
+      'Primeira consulta de longevidade. Queixa de fadiga vespertina crônica e sobrecarga de trabalho.',
     focus: 'Avaliação inicial',
     progress: 'Novo',
-    attention: 'Anamnese pendente',
+    attention: 'Fadiga crônica · Anamnese 68%',
     tone: 'rose',
+    preConsultationSymptoms: {
+      symptom: 'Fadiga ao fim do dia e sono irregular',
+      reportedAt: 'Ontem · 11:05',
+      severity: 'moderada',
+      patientWords:
+        'Sinto um cansaço muito pesado às 16h, sem energia para treinar. Faltou preencher parte do histórico familiar.',
+      aiSummary:
+        'Anamnese 68% preenchida com queixa de fadiga vespertina e sono não restaurador. 2 exames prévios anexados.',
+    },
+    evolutionHistory: [
+      { date: '25 ago', adherence: 60, weight: 88.0, sleepHours: 6.3, steps: 4200 },
+    ],
     reportCount: '0',
     prescriptionCount: 'Nenhuma',
     cycle: 'Pré-cuidado',

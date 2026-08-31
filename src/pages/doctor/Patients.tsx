@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
 import {
@@ -12,18 +12,32 @@ import {
   Clock,
   ChevronRight,
   ShieldAlert,
+  Send,
+  Check,
+  Calendar,
+  AlertTriangle,
+  UserCheck,
+  Stethoscope,
+  Activity,
+  HeartPulse,
 } from 'lucide-react'
 
 export default function DoctorPatients() {
-  const { patients, setSelectedPatientId } = useVivans()
+  const { patients, setSelectedPatientId, nudgeSinglePatient, nudgedPatientIds } = useVivans()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [searchTerm, setSearchTerm] = useState('')
+  // Retain filter state from URL or default
+  const initialSearch = searchParams.get('q') || ''
+  const initialFilter =
+    (searchParams.get('status') as 'todos' | 'regulares' | 'atrasados' | 'atencao') || 'todos'
+
+  const [searchTerm, setSearchTerm] = useState(initialSearch)
   const [filterAttention, setFilterAttention] = useState<
     'todos' | 'regulares' | 'atrasados' | 'atencao'
-  >('todos')
+  >(initialFilter)
   const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 4
+  const pageSize = 6
 
   const filteredPatients = patients.filter((p) => {
     const matchesSearch =
@@ -46,56 +60,82 @@ export default function DoctorPatients() {
     currentPage * pageSize,
   )
 
-  const handleFilterChange = (filter: 'todos' | 'atencao' | 'regulares') => {
+  const handleFilterChange = (filter: 'todos' | 'regulares' | 'atrasados' | 'atencao') => {
     setFilterAttention(filter)
     setCurrentPage(1)
+    const newParams = new URLSearchParams(searchParams)
+    if (filter === 'todos') {
+      newParams.delete('status')
+    } else {
+      newParams.set('status', filter)
+    }
+    setSearchParams(newParams, { replace: true })
   }
 
   const handleSearchChange = (val: string) => {
     setSearchTerm(val)
     setCurrentPage(1)
+    const newParams = new URLSearchParams(searchParams)
+    if (!val) {
+      newParams.delete('q')
+    } else {
+      newParams.set('q', val)
+    }
+    setSearchParams(newParams, { replace: true })
   }
 
   return (
     <div className="space-y-6">
       <SimulationDisclaimer text="Registro e Coorte Longitudinal de Pacientes · Instituto Vivans" />
 
-      {/* Header */}
+      {/* Clean Header */}
       <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-            Coorte Clínica Longitudinal
-          </p>
-          <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-[#17372f]">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#097260]">
+              Carteira Médica · Instituto Vivans
+            </span>
+            <span className="rounded-full bg-[#EAF3EF] px-2 py-0.5 text-[11px] font-semibold text-[#075f50]">
+              {patients.length} Pacientes
+            </span>
+          </div>
+          <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-[#112822]">
             Pacientes em Acompanhamento
           </h1>
-          <p className="mt-1 text-sm text-[#60766f]">
-            Visão longitudinal contínua: objetivos do paciente, linha do tempo e dossiê assistido
-            por IA.
+          <p className="mt-1 text-xs sm:text-sm text-[#556D66] max-w-2xl">
+            Clique em qualquer paciente para abrir o prontuário longitudinal individual completo,
+            com histórico, pré-consulta, evolução e biossinais.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-[#bfe4d8] bg-[#ebf6f2] px-4 py-2.5 text-xs text-[#075f50]">
-          Total na Coorte: <strong>{patients.length} Pacientes em ciclo</strong> (15 Regulares · 4
-          Atrasados · 3 Atenção)
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate('/medico')}
+            className="flex min-h-10 items-center gap-1.5 rounded-xl border border-[#DEE7E2] bg-white px-4 text-xs font-bold text-[#556D66] hover:bg-[#F5F8F6] transition-colors"
+          >
+            &larr; Visão Geral do Painel
+          </button>
         </div>
       </section>
 
-      {/* Search and Filters Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-[#dfe8e3] bg-white p-4 shadow-sm">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#8ba29a]" />
+      {/* Clean Search and Filters Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-[20px] border border-[#DEE7E2] bg-white p-4 shadow-[0_2px_12px_rgba(17,40,34,0.03)]">
+        <div className="relative w-full sm:w-88">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#8C9E97]" />
           <input
             type="text"
-            placeholder="Buscar por nome, foco ou sintoma..."
+            placeholder="Buscar por nome, foco clínico ou sintoma..."
             value={searchTerm}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full rounded-xl border border-[#dfe8e3] pl-10 pr-4 py-2 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+            className="w-full rounded-xl border border-[#DEE7E2] bg-[#FDFCFA] pl-10 pr-4 py-2.5 text-xs text-[#112822] placeholder:text-[#8C9E97] focus:border-[#097260] focus:bg-white focus:outline-none transition-all"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-          <span className="text-xs font-bold text-[#60766f] mr-1">Filtrar:</span>
+        <div className="flex flex-wrap items-center gap-1.5 self-start sm:self-auto">
+          <span className="text-xs font-bold text-[#556D66] mr-1 hidden lg:inline">
+            Filtrar status:
+          </span>
           {[
             { id: 'todos', label: `Todos (${patients.length})` },
             { id: 'regulares', label: 'Regulares (15)' },
@@ -108,8 +148,8 @@ export default function DoctorPatients() {
               onClick={() => handleFilterChange(f.id as any)}
               className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
                 filterAttention === f.id
-                  ? 'bg-[#17372f] text-white shadow-sm'
-                  : 'text-[#60766f] hover:bg-[#f4f7f5]'
+                  ? 'bg-[#112822] text-white shadow-xs'
+                  : 'text-[#556D66] hover:bg-[#F5F8F6]'
               }`}
             >
               {f.label}
@@ -129,82 +169,138 @@ export default function DoctorPatients() {
         </span>
       </div>
 
-      {/* Patients Table / Editorial Cards */}
-      <div className="grid gap-4">
+      {/* Clean, Low-Noise Patients List */}
+      <div className="grid gap-3.5">
         {displayedPatients.length === 0 ? (
-          <div className="rounded-3xl border border-[#dfe8e3] bg-white p-12 text-center text-xs text-[#60766f]">
-            Nenhum paciente encontrado para o filtro selecionado.
+          <div className="rounded-[24px] border border-[#DEE7E2] bg-white p-12 text-center text-xs text-[#556D66] space-y-2">
+            <p className="font-semibold text-sm text-[#112822]">Nenhum paciente encontrado</p>
+            <p>Tente ajustar a busca ou o filtro de status selecionado.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchTerm('')
+                setFilterAttention('todos')
+                setSearchParams({}, { replace: true })
+              }}
+              className="mt-2 text-xs font-bold text-[#097260] hover:underline"
+            >
+              Limpar todos os filtros
+            </button>
           </div>
         ) : (
           displayedPatients.map((p) => {
+            const hasNudge = nudgedPatientIds.includes(p.id)
+            const isAttention = p.tone === 'rose'
+            const isDelayed = p.tone === 'amber'
+
             return (
-              <article
+              <div
                 key={p.id}
-                className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm transition-all hover:border-[#0b7b68] hover:shadow-md"
+                onClick={() => navigate(`/medico/pacientes/${p.id}`)}
+                className="group relative cursor-pointer rounded-[22px] border border-[#DEE7E2] bg-white p-5 shadow-[0_2px_12px_rgba(17,40,34,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#097260]/60 hover:shadow-[0_8px_24px_rgba(17,40,34,0.08)]"
               >
-                <div className="grid gap-5 lg:grid-cols-[220px_1fr_auto] lg:items-center">
-                  {/* Patient summary */}
+                <div className="grid gap-4 lg:grid-cols-[280px_1fr_auto] lg:items-center">
+                  {/* Left: Patient Initials + Identity + Clinical Focus */}
                   <div className="flex items-center gap-3.5">
-                    <div className="grid size-12 place-items-center rounded-2xl bg-[#e8f4f0] text-sm font-bold text-[#0b6a5b]">
+                    <div
+                      className={`grid size-12 shrink-0 place-items-center rounded-2xl text-sm font-bold shadow-2xs ${
+                        isAttention
+                          ? 'bg-[#FCF0EE] text-[#8E2E28] border border-[#F5C7C2]'
+                          : isDelayed
+                            ? 'bg-[#FEF7E7] text-[#7D5308] border border-[#F8DEB0]'
+                            : 'bg-[#EAF3EF] text-[#075F50] border border-[#BFE4D8]'
+                      }`}
+                    >
                       {p.initials}
                     </div>
-                    <div>
-                      <h3 className="font-serif text-lg font-bold text-[#17372f]">{p.name}</h3>
-                      <p className="text-xs text-[#60766f]">{p.focus}</p>
-                      <span className="text-[11px] text-[#8ba29a]">{p.cycle}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-serif text-base font-bold text-[#112822] group-hover:text-[#097260] transition-colors truncate">
+                          {p.name}
+                        </h3>
+                      </div>
+                      <p className="text-xs text-[#556D66] truncate">{p.focus}</p>
+                      <span className="text-[11px] text-[#8C9E97] block mt-0.5">{p.cycle}</span>
                     </div>
                   </div>
 
-                  {/* Longitudinal Metrics & Attention point */}
-                  <div className="grid gap-3 sm:grid-cols-3 border-y sm:border-y-0 sm:border-x border-[#edf2ef] py-3 sm:py-0 sm:px-5">
+                  {/* Middle: Key Longitudinal Indicators (Adherence, Status/Symptom, Next Action) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 border-y lg:border-y-0 lg:border-x border-[#F3F7F5] py-3 lg:py-0 lg:px-5 text-xs">
                     <div>
-                      <p className="text-[11px] text-[#698078] uppercase font-bold">Evolução</p>
-                      <p className="text-base font-bold text-[#17372f]">{p.progress}</p>
-                      <span className="text-[10px] text-[#0b7b68] font-medium">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#556D66]">
+                        Adesão &amp; Evolução
+                      </p>
+                      <p className="text-sm font-bold text-[#112822] mt-0.5">{p.progress}</p>
+                      <span className="text-[11px] text-[#097260] font-semibold">
                         Adesão {p.adherence}
                       </span>
                     </div>
+
                     <div>
-                      <p className="text-[11px] text-[#698078] uppercase font-bold">
-                        Ponto de Atenção
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#556D66]">
+                        Ponto de Atenção / Sintoma
                       </p>
-                      <div className="mt-0.5">
+                      <div className="mt-1 flex items-center gap-1.5">
                         <StatusBadge tone={p.tone}>{p.attention}</StatusBadge>
                       </div>
-                      <span className="text-[10px] text-[#698078]">{p.lastContact}</span>
+                      <span className="text-[10px] text-[#556D66] block mt-0.5">
+                        Contato: {p.lastContact}
+                      </span>
                     </div>
-                    <div>
-                      <p className="text-[11px] text-[#698078] uppercase font-bold">
+
+                    <div className="col-span-2 sm:col-span-1">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#556D66]">
                         Próxima Consulta
                       </p>
-                      <p className="text-xs font-semibold text-[#17372f] mt-0.5">
+                      <p className="text-xs font-semibold text-[#112822] mt-0.5 truncate">
                         {p.nextConsultation}
                       </p>
-                      <span className="text-[10px] text-[#0b7b68]">{p.prescriptionCount}</span>
+                      <span className="text-[10px] text-[#097260] font-medium block">
+                        {p.prescriptionCount}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Direct Action Links */}
-                  <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
+                  {/* Right: Clean CTAs and Nudge Status */}
+                  <div className="flex flex-wrap sm:flex-nowrap lg:flex-col items-stretch gap-2 shrink-0">
                     <Link
                       to={`/medico/pacientes/${p.id}`}
-                      className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] transition-colors shadow-sm"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-[#097260] px-4 text-xs font-bold text-white hover:bg-[#075f50] transition-colors shadow-2xs"
                     >
-                      <span>Ver Prontuário &amp; Dossiê</span>
-                      <ChevronRight className="size-4" />
+                      <span>Abrir Perfil Completo</span>
+                      <ChevronRight className="size-3.5" />
                     </Link>
 
-                    {p.name === 'Marina Costa' && (
-                      <Link
-                        to="/medico/consulta/apt-marina"
-                        className="flex min-h-10 items-center justify-center gap-1 rounded-xl border border-[#dfe8e3] bg-white px-3 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5]"
+                    {(isDelayed || isAttention) && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          nudgeSinglePatient(p.id, p.name)
+                        }}
+                        className={`flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-bold transition-all border ${
+                          hasNudge
+                            ? 'border-[#BFE4D8] bg-[#EAF3EF] text-[#075F50]'
+                            : 'border-[#DEE7E2] bg-white text-[#556D66] hover:bg-[#F5F8F6] hover:text-[#112822]'
+                        }`}
                       >
-                        <span>Abrir Sala de Vídeo</span>
-                      </Link>
+                        {hasNudge ? (
+                          <>
+                            <Check className="size-3 text-[#097260]" />
+                            <span>Cutucão Enviado</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="size-3" />
+                            <span>Cutucar / Lembrete</span>
+                          </>
+                        )}
+                      </button>
                     )}
                   </div>
                 </div>
-              </article>
+              </div>
             )
           })
         )}
@@ -212,12 +308,12 @@ export default function DoctorPatients() {
 
       {/* Accessible Numbered Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-[#dfe8e3] pt-4">
+        <div className="flex items-center justify-between border-t border-[#DEE7E2] pt-4">
           <button
             type="button"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-            className="min-h-10 rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] disabled:opacity-40 disabled:cursor-not-allowed"
+            className="min-h-10 rounded-xl border border-[#DEE7E2] bg-white px-4 text-xs font-bold text-[#112822] hover:bg-[#F5F8F6] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             &larr; Anterior
           </button>
@@ -230,8 +326,8 @@ export default function DoctorPatients() {
                 onClick={() => setCurrentPage(page)}
                 className={`size-9 rounded-xl text-xs font-bold transition-all ${
                   currentPage === page
-                    ? 'bg-[#17372f] text-white shadow-sm'
-                    : 'bg-white border border-[#dfe8e3] text-[#60766f] hover:bg-[#f4f7f5]'
+                    ? 'bg-[#112822] text-white shadow-sm'
+                    : 'bg-white border border-[#DEE7E2] text-[#556D66] hover:bg-[#F5F8F6]'
                 }`}
               >
                 {page}
@@ -243,7 +339,7 @@ export default function DoctorPatients() {
             type="button"
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-            className="min-h-10 rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] disabled:opacity-40 disabled:cursor-not-allowed"
+            className="min-h-10 rounded-xl border border-[#DEE7E2] bg-white px-4 text-xs font-bold text-[#112822] hover:bg-[#F5F8F6] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Próxima &rarr;
           </button>

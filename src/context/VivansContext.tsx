@@ -57,7 +57,11 @@ interface VivansContextType {
   completeScheduledCheckin: (id: string, value?: string | number, notes?: string) => void
   activeAttentionCount: number
   nudgeDelayedPatients: () => void
+  nudgeAttentionPatients: () => void
+  nudgeSinglePatient: (patientId: string, patientName: string) => void
   nudged: boolean
+  attentionNudged: boolean
+  nudgedPatientIds: string[]
   toastMessage: string | null
   notify: (msg: string) => void
 }
@@ -79,13 +83,15 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
   const [scheduledCheckins, setScheduledCheckins] =
     useState<ScheduledCheckin[]>(initialScheduledCheckins)
   const [nudged, setNudged] = useState<boolean>(false)
+  const [attentionNudged, setAttentionNudged] = useState<boolean>(false)
+  const [nudgedPatientIds, setNudgedPatientIds] = useState<string[]>([])
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const notify = (msg: string) => {
     setToastMessage(msg)
     setTimeout(() => {
       setToastMessage((prev) => (prev === msg ? null : prev))
-    }, 3500)
+    }, 4000)
   }
 
   const selectedPatient =
@@ -334,7 +340,23 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
 
   const nudgeDelayedPatients = () => {
     setNudged(true)
-    notify('Lembrete (cutucão) enviado com sucesso para 4 pacientes com check-ins pendentes.')
+    const delayedIds = patients.filter((p) => p.tone === 'amber').map((p) => p.id)
+    setNudgedPatientIds((prev) => Array.from(new Set([...prev, ...delayedIds])))
+    notify(
+      'Simulação: Cutucão/Lembrete enviado com sucesso para os 4 pacientes atrasados (> 48h sem diário).',
+    )
+  }
+
+  const nudgeAttentionPatients = () => {
+    setAttentionNudged(true)
+    const attentionIds = patients.filter((p) => p.tone === 'rose').map((p) => p.id)
+    setNudgedPatientIds((prev) => Array.from(new Set([...prev, ...attentionIds])))
+    notify('Simulação: Cutucão/Contato prioritário enviado aos 3 pacientes em atenção clínica.')
+  }
+
+  const nudgeSinglePatient = (patientId: string, patientName: string) => {
+    setNudgedPatientIds((prev) => Array.from(new Set([...prev, patientId])))
+    notify(`Simulação: Lembrete individual enviado com sucesso para ${patientName}.`)
   }
 
   const activeAttentionCount = 3
@@ -370,7 +392,11 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         completeScheduledCheckin,
         activeAttentionCount,
         nudgeDelayedPatients,
+        nudgeAttentionPatients,
+        nudgeSinglePatient,
         nudged,
+        attentionNudged,
+        nudgedPatientIds,
         toastMessage,
         notify,
       }}

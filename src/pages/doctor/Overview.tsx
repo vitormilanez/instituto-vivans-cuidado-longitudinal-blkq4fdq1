@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, AiDraftBadge } from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { cohortWeeklyAdherence } from '@/data/mockData'
 import {
   Calendar,
   AlertTriangle,
@@ -24,6 +25,8 @@ import {
   Moon,
   HeartPulse,
   Users,
+  TrendingUp,
+  Zap,
 } from 'lucide-react'
 
 interface AlertItem {
@@ -38,10 +41,20 @@ interface AlertItem {
   suggestedAction: string
   timeAgo: string
   keyMetric?: { label: string; val: string }
+  symptomSource?: string
 }
 
 export default function DoctorOverview() {
-  const { patients, appointments, reports, nudged, nudgeDelayedPatients, notify } = useVivans()
+  const {
+    patients,
+    appointments,
+    reports,
+    nudged,
+    attentionNudged,
+    nudgeDelayedPatients,
+    nudgeAttentionPatients,
+    nudgedPatientIds,
+  } = useVivans()
   const navigate = useNavigate()
 
   // Active status filter controlled by quick status cards
@@ -51,6 +64,9 @@ export default function DoctorOverview() {
 
   const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null)
   const [filterTag, setFilterTag] = useState<'all' | 'priority' | 'symptom' | 'report'>('all')
+
+  // Confirmation modal state for nudges
+  const [nudgeConfirmGroup, setNudgeConfirmGroup] = useState<'atrasados' | 'atencao' | null>(null)
 
   // Derive counts from actual mock data
   const totalCount = patients.length // 22
@@ -63,44 +79,48 @@ export default function DoctorOverview() {
     {
       patient: 'Marina Costa',
       patientId: 'marina-costa',
-      title: 'Padrão de sono curto compilado para observação médica',
+      title: 'Pré-consulta: Despertares às 3h e sono curto (5h42)',
       context:
-        'Média de 5h42 com despertares às 3h. Pré-consulta vinculada indica correlação a ser avaliada com crononutrição do jantar (20h30).',
-      tag: 'Revisar no retorno (10:30)',
+        'Relatado na pré-consulta de hoje: "Nos últimos quatro dias passei a acordar às 3h com sono fragmentado. Jantar às 20h30". Compilado para correlação crononutricional na consulta de retorno.',
+      tag: 'Pré-consulta · Sono Fragmentado',
       tone: 'rose',
-      category: 'Sono & Crononutrição',
+      category: 'Sintoma Pré-Consulta · Sono',
       icon: Moon,
-      suggestedAction: 'Abrir sala de consulta às 10:30 e revisar crononutrição.',
+      suggestedAction: 'Revisar crononutrição e adiantar horário da refeição para 19h30.',
       timeAgo: 'Hoje · 09:18',
-      keyMetric: { label: 'Sono médio', val: '5h42 (−1h30)' },
+      keyMetric: { label: 'Sintoma declarado', val: 'Sono 5h42 (−1h30)' },
+      symptomSource: 'Áudio transcrito da pré-consulta',
     },
     {
       patient: 'Paulo Mendes',
       patientId: 'paulo-mendes',
-      title: 'Registro de desconforto gástrico matinal',
+      title: 'Pré-consulta & Check-in: Enjoo matinal pós-suplemento',
       context:
-        'Sintoma informado no check-in de hoje. Dados compilados para avaliação médica antes de manter posologia vigente.',
-      tag: 'Observação de sintoma',
+        'Relatado no diário e pré-consulta: "Senti enjoo moderado nas manhãs após tomar a nova suplementação em jejum". Queda de adesão nos registros após o sintoma.',
+      tag: 'Pré-consulta · Queixa Gástrica',
       tone: 'rose',
-      category: 'Sintoma Agudo',
+      category: 'Sintoma Agudo · Adaptação',
       icon: HeartPulse,
-      suggestedAction: 'Revisar receita digital #RX-1051 e acolher sintoma na consulta das 16:30.',
+      suggestedAction: 'Revisar posologia da receita #RX-1051 e indicar tomada pós-refeição.',
       timeAgo: 'Hoje · 08:12',
-      keyMetric: { label: 'Queixa', val: 'Enjoo matinal' },
+      keyMetric: { label: 'Sintoma declarado', val: 'Enjoo matinal' },
+      symptomSource: 'Check-in e formulário pré-consulta',
     },
     {
       patient: 'Rafael Lima',
       patientId: 'rafael-lima',
-      title: 'Anamnese pendente e lacunas de histórico pré-consulta',
+      title: 'Pré-consulta: Fadiga vespertina e anamnese 68%',
       context:
-        'Faltam histórico familiar e uso atual de suplementos para avaliação inicial das 11:30.',
-      tag: 'Anamnese pendente',
+        'Relatado na abertura pré-consulta: "Cansaço pesado às 16h, sem energia para treinar". Faltam preencher histórico familiar e uso atual de suplementos.',
+      tag: 'Pré-consulta · Fadiga & Anamnese',
       tone: 'rose',
-      category: 'Avaliação Inicial',
+      category: 'Sintoma · Avaliação Inicial',
       icon: AlertTriangle,
-      suggestedAction: 'Revisar exames anexados e completar histórico durante a consulta inicial.',
+      suggestedAction:
+        'Aprofundar queixa de fadiga e completar lacunas durante a consulta inicial.',
       timeAgo: 'Ontem · 11:05',
-      keyMetric: { label: 'Preenchimento', val: '68% concluído' },
+      keyMetric: { label: 'Sintoma declarado', val: 'Fadiga vespertina' },
+      symptomSource: 'Formulário inicial da pré-consulta',
     },
     {
       patient: 'Carlos Silva',
@@ -342,71 +362,125 @@ export default function DoctorOverview() {
           </div>
         </button>
 
-        {/* Card 3: ATRASADOS */}
-        <button
-          type="button"
-          onClick={() => {
-            const nextFilter = activeStatusFilter === 'atrasados' ? 'all' : 'atrasados'
-            setActiveStatusFilter(nextFilter)
-            document.getElementById('atencao-box')?.scrollIntoView({ behavior: 'smooth' })
-          }}
-          className={`group flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(197,125,25,0.12)] ${
+        {/* Card 3: ATRASADOS (com Ação de Cutucão Integrada) */}
+        <div
+          className={`group relative flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(197,125,25,0.12)] ${
             activeStatusFilter === 'atrasados'
               ? 'border-[#C57D19] ring-2 ring-[#C57D19]/20'
               : 'border-[#DEE7E2] hover:border-[#C57D19]/50'
           }`}
         >
-          <div>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              const nextFilter = activeStatusFilter === 'atrasados' ? 'all' : 'atrasados'
+              setActiveStatusFilter(nextFilter)
+              document.getElementById('atencao-box')?.scrollIntoView({ behavior: 'smooth' })
+            }}
+          >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold tracking-[0.06em] text-[#C57D19] uppercase">
                 ATRASADOS
               </span>
               <Clock className="size-4 text-[#C57D19]" />
             </div>
-            <div className="mt-2.5">
+            <div className="mt-2.5 flex items-baseline justify-between">
               <span className="font-serif text-[38px] font-bold leading-none text-[#C57D19]">
                 {atrasadosCount}
               </span>
+              <span className="text-[11px] font-medium text-[#556D66]">&gt; 48h sem diário</span>
             </div>
           </div>
-          <div className="mt-4 flex items-center justify-between border-t border-transparent pt-1 text-[13px] text-[#556D66]">
-            <span>&gt; 48h sem diário</span>
-            <ChevronRight className="size-4 text-[#C57D19] transition-transform duration-200 group-hover:translate-x-0.5" />
-          </div>
-        </button>
 
-        {/* Card 4: ATENÇÃO */}
-        <button
-          type="button"
-          onClick={() => {
-            const nextFilter = activeStatusFilter === 'atencao' ? 'all' : 'atencao'
-            setActiveStatusFilter(nextFilter)
-            document.getElementById('atencao-box')?.scrollIntoView({ behavior: 'smooth' })
-          }}
-          className={`group flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(179,38,30,0.12)] ${
+          {/* Direct Nudge Button in Card */}
+          <div className="mt-3.5 pt-3 border-t border-[#F3F7F5]">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setNudgeConfirmGroup('atrasados')
+              }}
+              className={`w-full flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs font-bold transition-all ${
+                nudged
+                  ? 'bg-[#FEF7E7] text-[#7D5308] border border-[#F8DEB0]'
+                  : 'bg-[#C57D19] text-white hover:bg-[#a7660f] shadow-xs active:scale-[0.98]'
+              }`}
+            >
+              {nudged ? (
+                <>
+                  <Check className="size-3.5 text-[#C57D19]" />
+                  <span>Cutucão Enviado (4)</span>
+                </>
+              ) : (
+                <>
+                  <Send className="size-3.5" />
+                  <span>Cutucar 4 Atrasados</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Card 4: ATENÇÃO (com Ação de Cutucão / Lembrete Prioritário) */}
+        <div
+          className={`group relative flex flex-col justify-between rounded-[22px] border bg-white p-5 text-left shadow-[0_2px_12px_rgba(17,40,34,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(179,38,30,0.12)] ${
             activeStatusFilter === 'atencao'
               ? 'border-[#B3261E] ring-2 ring-[#B3261E]/20'
               : 'border-[#DEE7E2] hover:border-[#B3261E]/50'
           }`}
         >
-          <div>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              const nextFilter = activeStatusFilter === 'atencao' ? 'all' : 'atencao'
+              setActiveStatusFilter(nextFilter)
+              document.getElementById('atencao-box')?.scrollIntoView({ behavior: 'smooth' })
+            }}
+          >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold tracking-[0.06em] text-[#9A221A] uppercase">
                 ATENÇÃO
               </span>
               <AlertTriangle className="size-4 text-[#B3261E]" />
             </div>
-            <div className="mt-2.5">
+            <div className="mt-2.5 flex items-baseline justify-between">
               <span className="font-serif text-[38px] font-bold leading-none text-[#9A221A]">
                 {atencaoCount}
               </span>
+              <span className="text-[11px] font-medium text-[#556D66]">
+                Sintomas na pré-consulta
+              </span>
             </div>
           </div>
-          <div className="mt-4 flex items-center justify-between border-t border-transparent pt-1 text-[13px] text-[#556D66]">
-            <span>Sintomas/adesão</span>
-            <ChevronRight className="size-4 text-[#9A221A] transition-transform duration-200 group-hover:translate-x-0.5" />
+
+          {/* Direct Nudge Button in Card */}
+          <div className="mt-3.5 pt-3 border-t border-[#F3F7F5]">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setNudgeConfirmGroup('atencao')
+              }}
+              className={`w-full flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs font-bold transition-all ${
+                attentionNudged
+                  ? 'bg-[#FCF0EE] text-[#8E2E28] border border-[#F5C7C2]'
+                  : 'bg-[#B3261E] text-white hover:bg-[#961e17] shadow-xs active:scale-[0.98]'
+              }`}
+            >
+              {attentionNudged ? (
+                <>
+                  <Check className="size-3.5 text-[#B3261E]" />
+                  <span>Contato Prioritário (3)</span>
+                </>
+              ) : (
+                <>
+                  <Zap className="size-3.5" />
+                  <span>Cutucar 3 em Atenção</span>
+                </>
+              )}
+            </button>
           </div>
-        </button>
+        </div>
 
         {/* Card 5: RELATÓRIOS */}
         <button
@@ -432,6 +506,121 @@ export default function DoctorOverview() {
             <ChevronRight className="size-4 text-[#097260] transition-transform duration-200 group-hover:translate-x-0.5" />
           </div>
         </button>
+      </section>
+
+      {/* 2.5 Gráfico de Tendência Semanal de Adesão da Carteira (Novo Requisito 2) */}
+      <section
+        role="region"
+        aria-label="Tendência semanal de adesão da carteira de pacientes"
+        className="rounded-[24px] border border-[#DEE7E2] bg-white p-6 sm:p-7 shadow-[0_2px_14px_rgba(17,40,34,0.04)] space-y-4"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F3F7F5] pb-4">
+          <div className="flex items-center gap-3">
+            <div className="grid size-10 place-items-center rounded-2xl bg-[#EAF3EF] text-[#097260]">
+              <TrendingUp className="size-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#112822]">
+                  Tendência Semanal de Adesão da Carteira
+                </h2>
+                <StatusBadge tone="green">87% Adesão Global (+8 p.p.)</StatusBadge>
+              </div>
+              <p className="text-xs text-[#556D66]">
+                Evolução contínua nas últimas 5 semanas · 22 pacientes ativos
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-[#556D66]">
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="size-2.5 rounded-full bg-[#097260]" /> Adesão Média (%)
+            </span>
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="size-2.5 rounded-full bg-[#C57D19]" /> Atrasados (&gt;48h)
+            </span>
+          </div>
+        </div>
+
+        {/* Accessible Bar & Curve Visual Representation with clear axes and text summary */}
+        <div className="space-y-4 pt-1">
+          <div className="flex items-center justify-between text-[11px] font-semibold text-[#556D66] px-2">
+            <span>Eixo Y: Taxa de Adesão Média (%)</span>
+            <span>Eixo X: Período (Últimas 5 semanas)</span>
+          </div>
+
+          <div className="grid grid-cols-5 gap-2 sm:gap-4 bg-[#F8FAF9] p-4 sm:p-6 rounded-2xl border border-[#DEE7E2]">
+            {cohortWeeklyAdherence.map((point, idx) => {
+              const isCurrent = idx === cohortWeeklyAdherence.length - 1
+              // Scaled height: 70% to 100% mapped to height
+              const heightPct = Math.max(
+                25,
+                Math.min(100, ((point.adherence - 65) / (95 - 65)) * 100),
+              )
+
+              return (
+                <div
+                  key={point.week}
+                  className="flex flex-col items-center justify-end gap-2 group"
+                >
+                  <div className="text-center">
+                    <span className="font-serif text-sm sm:text-base font-bold text-[#112822] block">
+                      {point.adherence}%
+                    </span>
+                    <span className="text-[10px] text-[#556D66] hidden sm:block">
+                      {point.regularCount} em dia · {point.delayedCount} atr.
+                    </span>
+                  </div>
+
+                  <div className="relative w-full max-w-[56px] h-32 flex items-end justify-center rounded-xl bg-white/70 p-1 border border-[#DEE7E2]/60">
+                    <div
+                      className={`w-full rounded-lg transition-all duration-500 group-hover:brightness-105 ${
+                        isCurrent
+                          ? 'bg-gradient-to-t from-[#097260] to-[#25a18a] shadow-sm'
+                          : 'bg-[#9FE0CE]'
+                      }`}
+                      style={{ height: `${heightPct}%` }}
+                      title={`${point.label}: ${point.adherence}% de adesão`}
+                    />
+                  </div>
+
+                  <div className="text-center">
+                    <span
+                      className={`text-xs font-bold block ${
+                        isCurrent ? 'text-[#097260]' : 'text-[#112822]'
+                      }`}
+                    >
+                      {point.week}
+                    </span>
+                    <span className="text-[10px] text-[#556D66] block">{point.label}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Accessible Textual Summary of Principal Trend (Independent of Color) */}
+          <div className="rounded-2xl border border-[#DEE7E2] bg-[#FDFCFA] p-4 text-xs text-[#112822] space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#097260] flex items-center gap-1">
+                <Info className="size-3.5 text-[#097260]" />
+                Resumo Textual da Tendência Longitudinal:
+              </span>
+            </div>
+            <p className="text-xs text-[#556D66] leading-relaxed">
+              A carteira apresentou{' '}
+              <strong className="text-[#112822] font-semibold">
+                evolução positiva contínua
+              </strong>{' '}
+              de{' '}
+              <strong className="text-[#112822] font-semibold">
+                79% (Semana 1) para 87% (Semana 5 Atual)
+              </strong>
+              , com redução de 6 para 4 pacientes atrasados após o envio periódico de cutucões e
+              maior engajamento nos check-ins pós-consulta.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* 3. Main Two-Column Layout: Attention Box (Primary) & Today's Timeline */}
@@ -530,11 +719,11 @@ export default function DoctorOverview() {
                       <div
                         className={`grid size-9 place-items-center rounded-xl text-xs font-bold ${
                           al.tone === 'amber'
-                            ? 'bg-[#FEEED1] text-[#C57D19]'
+                            ? 'bg-[#FEEED1] text-[#7D5308]'
                             : al.tone === 'rose'
-                              ? 'bg-[#FCF0EE] text-[#B3261E]'
+                              ? 'bg-[#FCF0EE] text-[#8E2E28]'
                               : al.tone === 'green'
-                                ? 'bg-[#EAF3EF] text-[#097260]'
+                                ? 'bg-[#EAF3EF] text-[#075F50]'
                                 : 'bg-[#EFF5FC] text-[#244C77]'
                         }`}
                       >
@@ -544,6 +733,11 @@ export default function DoctorOverview() {
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold text-sm text-[#112822]">{al.patient}</h3>
                           <span className="text-[11px] text-[#556D66]">· {al.timeAgo}</span>
+                          {nudgedPatientIds.includes(al.patientId) && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#EAF3EF] px-2 py-0.5 text-[10px] font-bold text-[#075f50] border border-[#BFE4D8]">
+                              <Check className="size-3" /> Lembrete ativo
+                            </span>
+                          )}
                         </div>
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-[#556D66]">
                           {al.category}
@@ -569,8 +763,8 @@ export default function DoctorOverview() {
                   {/* Bottom: Action bar */}
                   <div className="mt-4 flex items-center justify-between border-t border-[#F3F7F5] pl-12 pt-3">
                     {al.keyMetric ? (
-                      <div className="text-[11px] text-[#556D66]">
-                        {al.keyMetric.label}:{' '}
+                      <div className="text-[11px] text-[#556D66] flex items-center gap-1.5">
+                        <span>{al.keyMetric.label}:</span>
                         <strong className="font-bold text-[#112822]">{al.keyMetric.val}</strong>
                       </div>
                     ) : (
@@ -578,7 +772,7 @@ export default function DoctorOverview() {
                     )}
 
                     <div className="flex items-center gap-1.5 text-xs font-bold text-[#097260] transition-colors group-hover:text-[#075f50]">
-                      <span>Revisar Contexto</span>
+                      <span>Revisar Contexto Completo</span>
                       <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
@@ -709,7 +903,82 @@ export default function DoctorOverview() {
         </section>
       </div>
 
-      {/* 4. Alert Detail / Clinical Context Drawer Modal */}
+      {/* 4. Nudge Confirmation Modal (Requisito 3: confirmação prévia e feedback claro) */}
+      {nudgeConfirmGroup && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setNudgeConfirmGroup(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-[24px] border border-[#DEE7E2] bg-white p-6 shadow-2xl animate-fade-in-up space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3 border-b border-[#F3F7F5] pb-3">
+              <div
+                className={`grid size-10 shrink-0 place-items-center rounded-2xl ${
+                  nudgeConfirmGroup === 'atrasados'
+                    ? 'bg-[#FEEED1] text-[#7D5308]'
+                    : 'bg-[#FCF0EE] text-[#8E2E28]'
+                }`}
+              >
+                <Send className="size-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-bold text-[#112822]">
+                  {nudgeConfirmGroup === 'atrasados'
+                    ? 'Confirmar Cutucão aos 4 Pacientes Atrasados'
+                    : 'Confirmar Contato Prioritário aos 3 Pacientes em Atenção'}
+                </h3>
+                <p className="text-xs text-[#556D66]">
+                  Ação simulada de engajamento do Instituto Vivans
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 text-xs text-[#556D66] leading-relaxed">
+              <p>
+                {nudgeConfirmGroup === 'atrasados'
+                  ? 'Será enviado um lembrete empático via app para os 4 pacientes sem registro de diário há mais de 48h (Carlos Silva, Felipe Vasconcelos, Marcelo Tavares e Thiago Carvalho).'
+                  : 'Será disparada uma notificação prioritária aos 3 pacientes com sintomas ou pontos de atenção (Marina Costa, Paulo Mendes e Rafael Lima) para que revisem suas pré-consultas.'}
+              </p>
+              <div className="rounded-xl bg-[#F5F8F6] p-3 border border-[#DEE7E2] text-[11px] text-[#112822]">
+                <strong>Mensagem modelo:</strong> “Olá! O Dr. Guilherme notou a ausência de
+                registros e gostaria de saber como você está se sentindo hoje.”
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#F3F7F5]">
+              <button
+                type="button"
+                onClick={() => setNudgeConfirmGroup(null)}
+                className="min-h-10 rounded-[14px] border border-[#DEE7E2] px-4 text-xs font-bold text-[#556D66] hover:bg-[#F5F8F6]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (nudgeConfirmGroup === 'atrasados') {
+                    nudgeDelayedPatients()
+                  } else {
+                    nudgeAttentionPatients()
+                  }
+                  setNudgeConfirmGroup(null)
+                }}
+                className={`min-h-10 rounded-[14px] px-5 text-xs font-bold text-white shadow-sm transition-colors ${
+                  nudgeConfirmGroup === 'atrasados'
+                    ? 'bg-[#C57D19] hover:bg-[#a7660f]'
+                    : 'bg-[#B3261E] hover:bg-[#961e17]'
+                }`}
+              >
+                Confirmar e Enviar Lembretes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Alert Detail / Clinical Context Drawer Modal */}
       {selectedAlert && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in"

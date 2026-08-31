@@ -27,26 +27,63 @@ import {
   ExternalLink,
   PenLine,
   Plus,
+  Send,
+  Check,
+  User,
+  HeartPulse,
+  Activity,
+  Footprints,
+  Moon,
+  AlertTriangle,
+  Mail,
+  Phone,
+  Stethoscope,
+  Info,
 } from 'lucide-react'
 import { QuickConsultationModal } from '@/components/QuickConsultationModal'
 
 export default function DoctorPatientDetail() {
   const { id } = useParams<{ id: string }>()
-  const { patients, preConsultation, notify } = useVivans()
+  const {
+    patients,
+    preConsultation,
+    scheduledCheckins,
+    returnJourney,
+    carePlans,
+    meals,
+    messages,
+    reports,
+    nudgeSinglePatient,
+    nudgedPatientIds,
+    notify,
+  } = useVivans()
   const navigate = useNavigate()
 
   // Find patient by ID or fallback to Marina Costa
   const patient = patients.find((p) => p.id === id) || patients[0]
 
-  const { scheduledCheckins, returnJourney } = useVivans()
-
   const [activeTab, setActiveTab] = useState<
-    'dossie' | 'retorno' | 'preconsulta' | 'plano' | 'refeicoes' | 'linha_tempo' | 'evidencias'
+    | 'dossie'
+    | 'cadastrais'
+    | 'evolucao'
+    | 'preconsulta'
+    | 'plano'
+    | 'mensagens'
+    | 'refeicoes'
+    | 'linha_tempo'
+    | 'retorno'
+    | 'relatorios'
+    | 'evidencias'
   >('dossie')
+
   const [isQuickNoteModalOpen, setIsQuickNoteModalOpen] = useState(false)
   const [selectedEvidence, setSelectedEvidence] = useState<(typeof medicalEvidences)[0] | null>(
     null,
   )
+
+  const isNudged = nudgedPatientIds.includes(patient.id)
+  const isAttention = patient.tone === 'rose'
+  const isDelayed = patient.tone === 'amber'
 
   return (
     <div className="space-y-6">
@@ -55,46 +92,93 @@ export default function DoctorPatientDetail() {
       />
 
       {/* Back button and profile header */}
-      <div className="flex items-center gap-2 text-xs font-bold text-[#698078]">
-        <Link to="/medico/pacientes" className="flex items-center gap-1 hover:text-[#17372f]">
-          <ArrowLeft className="size-3.5" />
-          <span>Voltar para Lista de Pacientes</span>
+      <div className="flex items-center justify-between gap-2 text-xs font-bold text-[#556D66]">
+        <Link
+          to="/medico/pacientes"
+          className="flex items-center gap-1.5 hover:text-[#112822] transition-colors rounded-lg px-2 py-1 -ml-2 hover:bg-white"
+        >
+          <ArrowLeft className="size-4 text-[#097260]" />
+          <span>&larr; Voltar para a Lista de Pacientes</span>
         </Link>
+
+        <span className="text-[11px] text-[#8C9E97]">
+          ID Prontuário: <strong className="font-mono text-[#112822]">#{patient.id}</strong>
+        </span>
       </div>
 
-      {/* Patient Header Card */}
-      <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm">
+      {/* Patient Header Card with Full Identity Summary */}
+      <article className="rounded-[24px] border border-[#DEE7E2] bg-white p-6 sm:p-7 shadow-[0_2px_14px_rgba(17,40,34,0.04)]">
         <div className="grid gap-5 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-          <div className="grid size-16 place-items-center rounded-3xl bg-[#17372f] text-xl font-bold text-white shadow-md">
+          <div
+            className={`grid size-16 shrink-0 place-items-center rounded-3xl text-2xl font-bold shadow-sm ${
+              isAttention
+                ? 'bg-[#FCF0EE] text-[#8E2E28] border border-[#F5C7C2]'
+                : isDelayed
+                  ? 'bg-[#FEF7E7] text-[#7D5308] border border-[#F8DEB0]'
+                  : 'bg-[#112822] text-white'
+            }`}
+          >
             {patient.initials}
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#17372f]">
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#112822]">
                 {patient.name}
               </h1>
               <StatusBadge tone={patient.tone}>{patient.attention}</StatusBadge>
               <StatusBadge tone="green">{patient.cycle}</StatusBadge>
+              {isNudged && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#EAF3EF] px-2.5 py-0.5 text-xs font-bold text-[#075F50] border border-[#BFE4D8]">
+                  <Check className="size-3" /> Cutucão Ativo
+                </span>
+              )}
             </div>
-            <p className="text-xs text-[#60766f]">
-              Foco clínico: <strong>{patient.focus}</strong> · Último contato: {patient.lastContact}
+
+            <p className="text-xs text-[#556D66]">
+              Foco clínico: <strong className="text-[#112822]">{patient.focus}</strong> · Último
+              contato: {patient.lastContact} · Próxima consulta:{' '}
+              <strong>{patient.nextConsultation}</strong>
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {(isDelayed || isAttention) && (
+              <button
+                type="button"
+                onClick={() => nudgeSinglePatient(patient.id, patient.name)}
+                className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-xs font-bold transition-all border ${
+                  isNudged
+                    ? 'border-[#BFE4D8] bg-[#EAF3EF] text-[#075F50]'
+                    : 'border-[#C57D19] bg-[#FEF7E7] text-[#7D5308] hover:bg-[#FDF0D5]'
+                }`}
+              >
+                {isNudged ? (
+                  <>
+                    <Check className="size-3.5 text-[#097260]" />
+                    <span>Cutucão Enviado</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="size-3.5" />
+                    <span>Cutucar / Enviar Lembrete</span>
+                  </>
+                )}
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => setIsQuickNoteModalOpen(true)}
-              className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors cursor-pointer"
+              className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#DEE7E2] bg-white px-4 text-xs font-bold text-[#112822] hover:bg-[#F5F8F6] transition-colors cursor-pointer"
             >
-              <PenLine className="size-3.5 text-[#0b7b68]" />
+              <PenLine className="size-3.5 text-[#097260]" />
               <span>+ Anotação Rápida</span>
             </button>
 
             <Link
               to={`/medico/consulta/${patient.id}`}
-              className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm transition-colors"
+              className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#097260] px-5 text-xs font-bold text-white hover:bg-[#075f50] shadow-sm transition-colors"
             >
               <Video className="size-4" />
               <span>Entrar na Sala Virtual</span>
@@ -103,25 +187,33 @@ export default function DoctorPatientDetail() {
         </div>
 
         {/* Patient Words Goal Highlight */}
-        <div className="mt-5 rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4 text-xs text-[#0b6a5b] leading-relaxed">
-          <p className="font-bold uppercase tracking-wider text-[11px] mb-1">
+        <div className="mt-5 rounded-2xl border border-[#BFE4D8] bg-[#EAF3EF]/70 p-4 text-xs text-[#075F50] leading-relaxed">
+          <p className="font-bold uppercase tracking-wider text-[11px] mb-1 flex items-center gap-1.5">
+            <HeartPulse className="size-3.5 text-[#097260]" />
             Objetivo Declarado nas Palavras do Paciente:
           </p>
-          <p className="text-sm font-serif italic text-[#17372f]">
-            “Quero continuar perdendo peso sem ficar cansada e voltar a dormir melhor à noite.”
+          <p className="text-sm font-serif italic text-[#112822]">
+            “
+            {patient.preConsultationSymptoms?.patientWords ||
+              'Quero continuar perdendo peso com preservação de disposição, energia e retorno da qualidade do sono.'}
+            ”
           </p>
         </div>
       </article>
 
-      {/* Longitudinal Tabs Navigation */}
-      <div className="flex overflow-x-auto gap-2 border-b border-[#dfe8e3] pb-2">
+      {/* Longitudinal Tabs Navigation - Clean & Comprehensive */}
+      <div className="flex overflow-x-auto gap-1.5 border-b border-[#DEE7E2] pb-2 text-xs scrollbar-thin">
         {[
-          { id: 'dossie', label: 'Dossiê Longitudinal (IA)', icon: Sparkles },
-          { id: 'retorno', label: 'Jornada de Retorno & Check-ins', icon: Clock },
+          { id: 'dossie', label: 'Dossiê Multicamadas', icon: Sparkles },
+          { id: 'cadastrais', label: 'Dados Pessoais & Clínicos', icon: User },
+          { id: 'evolucao', label: 'Evolução & Biossinais', icon: TrendingDown },
           { id: 'preconsulta', label: 'Pré-Consulta Recebida', icon: FileText },
-          { id: 'plano', label: 'Plano de Cuidado & Prescrições', icon: CheckCircle2 },
-          { id: 'refeicoes', label: 'Diário & Fotos', icon: Camera },
+          { id: 'plano', label: 'Plano & Prescrições', icon: CheckCircle2 },
+          { id: 'mensagens', label: 'Mensagens', icon: MessageSquare },
+          { id: 'refeicoes', label: 'Diário & Refeições', icon: Camera },
           { id: 'linha_tempo', label: 'Linha do Tempo', icon: Layers },
+          { id: 'retorno', label: 'Jornada de Retorno', icon: Clock },
+          { id: 'relatorios', label: 'Relatórios Clínicos', icon: Stethoscope },
           { id: 'evidencias', label: 'Evidências Médicas', icon: BookOpen },
         ].map((tab) => {
           const Icon = tab.icon
@@ -131,10 +223,10 @@ export default function DoctorPatientDetail() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 whitespace-nowrap rounded-2xl px-4 py-2.5 text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 font-bold transition-all ${
                 isActive
-                  ? 'bg-[#17372f] text-white shadow-sm'
-                  : 'text-[#60766f] hover:bg-white hover:text-[#17372f]'
+                  ? 'bg-[#112822] text-white shadow-xs'
+                  : 'text-[#556D66] hover:bg-white hover:text-[#112822]'
               }`}
             >
               <Icon className="size-3.5" />
@@ -218,9 +310,9 @@ export default function DoctorPatientDetail() {
       {/* TAB 1: DOSSIÊ LONGITUDINAL (4 CAMADAS CLÍNICAS SEPARADAS) */}
       {activeTab === 'dossie' && (
         <section className="space-y-5 animate-fade-in">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <AiDraftBadge status="Dossiê Multicamadas · IA como Copiloto Organizador" />
+              <AiDraftBadge status="Dossiê Multicamadas · IA como Copiloto Organizador (Rascunho Revisável)" />
             </div>
             <StatusBadge tone="green">Atualizado hoje às 09:20</StatusBadge>
           </div>
@@ -228,83 +320,92 @@ export default function DoctorPatientDetail() {
           {/* 4 Explicit Clinical Layers */}
           <div className="grid gap-5">
             {/* Camada 1: Fatos e Biossinais Observados */}
-            <article className="rounded-3xl border border-[#d8e4df] bg-white p-6 shadow-sm space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+            <article className="rounded-[22px] border border-[#DEE7E2] bg-white p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#F3F7F5] pb-3">
                 <div className="flex items-center gap-2">
                   <ClinicalLayerBadge layer="fato" />
-                  <h3 className="font-serif text-base font-bold text-[#17372f]">
+                  <h3 className="font-serif text-base font-bold text-[#112822]">
                     Biossinais &amp; Registros Objetivos
                   </h3>
                 </div>
-                <span className="text-xs text-[#698078]">Smartwatch &amp; Balança Conectada</span>
+                <span className="text-xs text-[#556D66]">Smartwatch &amp; Balança Conectada</span>
               </div>
               <div className="grid gap-3 sm:grid-cols-4 text-xs">
-                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
-                  <p className="text-[10px] text-[#698078] uppercase font-bold">
+                <div className="rounded-2xl bg-[#F8FAF9] p-3.5 border border-[#DEE7E2]">
+                  <p className="text-[10px] text-[#556D66] uppercase font-bold">
                     Variação Ponderal
                   </p>
-                  <p className="text-base font-bold text-[#17372f] mt-0.5">80,0 &rarr; 78,2 kg</p>
-                  <span className="text-[10px] text-[#0b7b68]">−1,8 kg em 29 dias</span>
-                </div>
-                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
-                  <p className="text-[10px] text-[#698078] uppercase font-bold">
-                    Sono Médio (4 noites)
+                  <p className="text-base font-bold text-[#112822] mt-0.5">
+                    {patient.startWeight.toFixed(1)} &rarr; {patient.currentWeight.toFixed(1)} kg
                   </p>
-                  <p className="text-base font-bold text-[#17372f] mt-0.5">5h42 / noite</p>
-                  <span className="text-[10px] text-[#c96a3b]">Despertares ~03:00</span>
+                  <span className="text-[10px] text-[#097260] font-semibold">
+                    {patient.weightLoss} no ciclo
+                  </span>
                 </div>
-                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
-                  <p className="text-[10px] text-[#698078] uppercase font-bold">Passos Diários</p>
-                  <p className="text-base font-bold text-[#17372f] mt-0.5">6.420 passos</p>
-                  <span className="text-[10px] text-[#0b7b68]">Meta 6.000 atingida</span>
+                <div className="rounded-2xl bg-[#F8FAF9] p-3.5 border border-[#DEE7E2]">
+                  <p className="text-[10px] text-[#556D66] uppercase font-bold">Adesão Global</p>
+                  <p className="text-base font-bold text-[#112822] mt-0.5">{patient.adherence}</p>
+                  <span className="text-[10px] text-[#097260] font-semibold">Meta de rotina</span>
                 </div>
-                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
-                  <p className="text-[10px] text-[#698078] uppercase font-bold">Check-ins Feitos</p>
-                  <p className="text-base font-bold text-[#17372f] mt-0.5">24 de 29 dias</p>
-                  <span className="text-[10px] text-[#0b7b68]">82% de adesão</span>
+                <div className="rounded-2xl bg-[#F8FAF9] p-3.5 border border-[#DEE7E2]">
+                  <p className="text-[10px] text-[#556D66] uppercase font-bold">Ponto de Atenção</p>
+                  <p className="text-xs font-bold text-[#112822] mt-0.5 truncate">
+                    {patient.attention}
+                  </p>
+                  <span className="text-[10px] text-[#556D66]">
+                    Último log: {patient.lastContact}
+                  </span>
+                </div>
+                <div className="rounded-2xl bg-[#F8FAF9] p-3.5 border border-[#DEE7E2]">
+                  <p className="text-[10px] text-[#556D66] uppercase font-bold">Relatórios / Rx</p>
+                  <p className="text-xs font-bold text-[#112822] mt-0.5">
+                    {patient.reportCount} relatórios · {patient.prescriptionCount}
+                  </p>
+                  <span className="text-[10px] text-[#097260]">Prontuário ativo</span>
                 </div>
               </div>
             </article>
 
-            {/* Camada 2: Relato Original da Paciente */}
-            <article className="rounded-3xl border border-[#c7ddf4] bg-white p-6 shadow-sm space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+            {/* Camada 2: Relato Original do Paciente */}
+            <article className="rounded-[22px] border border-[#CBE0F6] bg-white p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#F3F7F5] pb-3">
                 <div className="flex items-center gap-2">
                   <ClinicalLayerBadge layer="relato" />
-                  <h3 className="font-serif text-base font-bold text-[#17372f]">
-                    Relato Direto da Paciente (Pré-Consulta &amp; Diário)
+                  <h3 className="font-serif text-base font-bold text-[#112822]">
+                    Relato Direto do Paciente (Pré-Consulta &amp; Diário)
                   </h3>
                 </div>
-                <span className="text-xs text-[#698078]">Transcrição e Notas 1–5</span>
+                <span className="text-xs text-[#244C77]">Voz Transcrita e Notas 1–5</span>
               </div>
-              <div className="rounded-2xl bg-[#eff5fc]/40 p-4 text-xs text-[#1e4877] leading-relaxed space-y-2 border border-[#d3e5f8]">
-                <p className="italic">
-                  “Nos últimos quatro dias passei a acordar por volta das 3h da manhã. A saciedade
-                  no jantar tem sido ótima com a omelete, mas o cansaço à tarde aumentou. Gostaria
-                  de entender se jantar às 20h30 pode estar influenciando meu sono.”
+              <div className="rounded-2xl bg-[#EFF5FC]/60 p-4 text-xs text-[#1E4877] leading-relaxed space-y-2 border border-[#CBE0F6]">
+                <p className="italic font-serif text-sm">
+                  “
+                  {patient.preConsultationSymptoms?.patientWords ||
+                    'Paciente relatou boa adesão às metas e solicitou acompanhamento contínuo dos marcos estipulados.'}
+                  ”
                 </p>
-                <div className="flex flex-wrap gap-3 text-[11px] pt-1">
+                <div className="flex flex-wrap gap-3 text-[11px] pt-1 text-[#244C77]">
                   <span>
-                    Saciedade média noturna: <strong>4,2/5</strong>
+                    Sintoma informado:{' '}
+                    <strong>{patient.preConsultationSymptoms?.symptom || patient.attention}</strong>
                   </span>
                   <span>•</span>
                   <span>
-                    Conforto digestivo: <strong>4,6/5</strong>
-                  </span>
-                  <span>•</span>
-                  <span>
-                    Disposição matinal: <strong>3/5</strong>
+                    Registrado em:{' '}
+                    <strong>
+                      {patient.preConsultationSymptoms?.reportedAt || patient.lastContact}
+                    </strong>
                   </span>
                 </div>
               </div>
             </article>
 
-            {/* Camada 3: Síntese Estruturada da IA */}
-            <article className="rounded-3xl border border-[#f8deb0] bg-[#fffbf2] p-6 shadow-sm space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#faeccf] pb-3">
+            {/* Camada 3: Síntese Estruturada da IA (Rascunho) */}
+            <article className="rounded-[22px] border border-[#F8DEB0] bg-[#FFFBF2] p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#FAECCF] pb-3">
                 <div className="flex items-center gap-2">
                   <ClinicalLayerBadge layer="sintese_ia" />
-                  <h3 className="font-serif text-base font-bold text-[#70480e]">
+                  <h3 className="font-serif text-base font-bold text-[#7D5308]">
                     Compilação e Hipóteses de Apoio ao Médico
                   </h3>
                 </div>
@@ -313,60 +414,56 @@ export default function DoctorPatientDetail() {
                   variant="compact"
                 />
               </div>
-              <div className="space-y-2 text-xs text-[#70480e] leading-relaxed">
+              <div className="space-y-2 text-xs text-[#7D5308] leading-relaxed">
                 <p>
-                  <strong>Cruzamento automático:</strong> Redução ponderal satisfatória (−1,8 kg)
-                  com alta saciedade referida, porém correlacionada com sono curto (5h42) e jantar
-                  tardio (20h30).
+                  <strong>Cruzamento automático de dados:</strong> {patient.insight.detail}
                 </p>
                 <p>
-                  <strong>Pontos sugeridos para deliberação médica:</strong>
+                  <strong>Base de compilação:</strong> {patient.insight.basis}
+                </p>
+                <p className="font-bold text-[#7D5308] pt-1">
+                  Pontos sugeridos pelo Copiloto para deliberação médica:
                 </p>
                 <ul className="list-disc pl-5 space-y-1">
-                  <li>
-                    Avaliar antecipação do jantar para 19h30 para aumentar intervalo antes do
-                    repouso.
-                  </li>
-                  <li>Avaliar tolerância digestiva e rotina de desaceleração às 22h.</li>
-                  <li>Ativar check-ins de retorno de 14 dias para acompanhar resposta.</li>
+                  {patient.nextSteps.map((step, idx) => (
+                    <li key={idx}>{step}</li>
+                  ))}
                 </ul>
               </div>
             </article>
 
             {/* Camada 4: Decisão e Aprovação Médica */}
-            <article className="rounded-3xl border border-[#bfe4d8] bg-[#ebf6f2] p-6 shadow-sm space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#cfe6dc] pb-3">
+            <article className="rounded-[22px] border border-[#BFE4D8] bg-[#EBF6F2] p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#CFE6DC] pb-3">
                 <div className="flex items-center gap-2">
                   <ClinicalLayerBadge layer="decisao_medica" />
-                  <h3 className="font-serif text-base font-bold text-[#075f50]">
+                  <h3 className="font-serif text-base font-bold text-[#075F50]">
                     Conduta e Orientações Validadas pelo Médico
                   </h3>
                 </div>
-                <span className="text-xs font-bold text-[#075f50]">Dr. Guilherme Martins</span>
+                <span className="text-xs font-bold text-[#075F50]">Dr. Guilherme Martins</span>
               </div>
-              <div className="rounded-2xl bg-white p-4 text-xs text-[#17372f] leading-relaxed space-y-2 border border-[#bfe4d8]">
+              <div className="rounded-2xl bg-white p-4 text-xs text-[#112822] leading-relaxed space-y-2 border border-[#BFE4D8]">
                 <p>
-                  <strong>Conduta acordada em consulta:</strong> Antecipação do horário da refeição
-                  noturna para 19h30 e início de higiene do sono sem telas às 22h. Manter hidratação
-                  de 500ml pré-refeições.
+                  <strong>Conduta acordada em consulta:</strong> {patient.report.summary}
                 </p>
-                <p className="text-[11px] text-[#0b7b68] font-bold">
-                  ✓ Plano publicado e vinculado ao aplicativo da paciente em 25 ago 2026.
+                <p className="text-[11px] text-[#097260] font-bold">
+                  ✓ Prescrição e plano ativos vinculados ao aplicativo do paciente.
                 </p>
               </div>
 
               {/* Patient Quick Notes Sub-section */}
               {patient.quickNotes && patient.quickNotes.length > 0 && (
-                <div className="mt-3 rounded-2xl bg-[#fafdfc] p-4 border border-[#bfe4d8]/70 space-y-2.5">
+                <div className="mt-3 rounded-2xl bg-[#FAFDFC] p-4 border border-[#BFE4D8]/70 space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#075f50] flex items-center gap-1.5">
-                      <PenLine className="size-3.5 text-[#0b7b68]" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#075F50] flex items-center gap-1.5">
+                      <PenLine className="size-3.5 text-[#097260]" />
                       Anotações Clínicas Registradas ({patient.quickNotes.length})
                     </span>
                     <button
                       type="button"
                       onClick={() => setIsQuickNoteModalOpen(true)}
-                      className="text-[11px] font-bold text-[#0b7b68] hover:underline cursor-pointer"
+                      className="text-[11px] font-bold text-[#097260] hover:underline cursor-pointer"
                     >
                       + Nova anotação
                     </button>
@@ -376,19 +473,307 @@ export default function DoctorPatientDetail() {
                     {patient.quickNotes.map((note) => (
                       <div
                         key={note.id}
-                        className="rounded-xl border border-[#dfe8e3] bg-white p-3 text-xs space-y-1"
+                        className="rounded-xl border border-[#DEE7E2] bg-white p-3 text-xs space-y-1"
                       >
-                        <div className="flex items-center justify-between text-[10px] text-[#60766f]">
-                          <span className="font-bold text-[#17372f]">{note.author}</span>
+                        <div className="flex items-center justify-between text-[10px] text-[#556D66]">
+                          <span className="font-bold text-[#112822]">{note.author}</span>
                           <span>{note.createdAt}</span>
                         </div>
-                        <p className="text-xs text-[#2c3e38] leading-relaxed">{note.content}</p>
+                        <p className="text-xs text-[#112822] leading-relaxed">{note.content}</p>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
             </article>
+          </div>
+        </section>
+      )}
+
+      {/* TAB: DADOS PESSOAIS & CADASTRAIS (Requisito 1) */}
+      {activeTab === 'cadastrais' && (
+        <section className="rounded-[22px] border border-[#DEE7E2] bg-white p-6 shadow-sm space-y-6 animate-fade-in">
+          <div className="border-b border-[#F3F7F5] pb-4">
+            <h3 className="font-serif text-xl font-bold text-[#112822]">
+              Ficha Cadastral e Dados Pessoais
+            </h3>
+            <p className="text-xs text-[#556D66]">
+              Informações do paciente, contatos e sumário clínico de abertura
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 text-xs">
+            <div className="rounded-2xl border border-[#DEE7E2] bg-[#F8FAF9] p-4 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-[#556D66]">Nome Completo</span>
+              <p className="text-sm font-bold text-[#112822]">{patient.name}</p>
+            </div>
+            <div className="rounded-2xl border border-[#DEE7E2] bg-[#F8FAF9] p-4 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-[#556D66]">E-mail</span>
+              <p className="text-sm font-bold text-[#112822]">
+                {patient.email || `${patient.id}@instituto.vivans.med.br`}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#DEE7E2] bg-[#F8FAF9] p-4 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-[#556D66]">Telefone</span>
+              <p className="text-sm font-bold text-[#112822]">
+                {patient.phone || '(11) 98765-4321'}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#DEE7E2] bg-[#F8FAF9] p-4 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-[#556D66]">
+                Nascimento / Idade
+              </span>
+              <p className="text-sm font-bold text-[#112822]">
+                {patient.birthDate || '14/05/1988 (38 anos)'}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#DEE7E2] bg-[#F8FAF9] p-4 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-[#556D66]">Gênero</span>
+              <p className="text-sm font-bold text-[#112822]">{patient.gender || 'Feminino'}</p>
+            </div>
+            <div className="rounded-2xl border border-[#DEE7E2] bg-[#F8FAF9] p-4 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-[#556D66]">CPF</span>
+              <p className="text-sm font-bold text-[#112822]">{patient.cpf || '321.***.***-09'}</p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#DEE7E2] bg-[#FDFCFA] p-5 space-y-2 text-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#097260]">
+              Sumário Clínico Longitudinal
+            </span>
+            <p className="text-sm text-[#112822] leading-relaxed">
+              {patient.clinicalSummary || patient.report.summary}
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* TAB: EVOLUÇÃO LONGITUDINAL (Peso, Adesão, Sono, Passos) (Requisito 1) */}
+      {activeTab === 'evolucao' && (
+        <section className="space-y-6 animate-fade-in">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            <div className="rounded-2xl border border-[#DEE7E2] bg-white p-4">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#556D66]">
+                <TrendingDown className="size-3.5 text-[#097260]" />
+                <span>Peso Atual</span>
+              </div>
+              <p className="text-2xl font-bold text-[#112822] mt-1">
+                {patient.currentWeight.toFixed(1)} kg
+              </p>
+              <span className="text-[11px] text-[#097260] font-semibold">
+                {patient.weightLoss} no ciclo
+              </span>
+            </div>
+
+            <div className="rounded-2xl border border-[#DEE7E2] bg-white p-4">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#556D66]">
+                <Activity className="size-3.5 text-[#097260]" />
+                <span>Adesão Média</span>
+              </div>
+              <p className="text-2xl font-bold text-[#112822] mt-1">{patient.adherence}</p>
+              <span className="text-[11px] text-[#097260] font-semibold">Meta &gt; 80%</span>
+            </div>
+
+            <div className="rounded-2xl border border-[#DEE7E2] bg-white p-4">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#556D66]">
+                <Moon className="size-3.5 text-[#244C77]" />
+                <span>Sono Médio</span>
+              </div>
+              <p className="text-2xl font-bold text-[#112822] mt-1">
+                {patient.id === 'marina-costa' ? '5h42' : '6h45'}
+              </p>
+              <span className="text-[11px] text-[#556D66]">4 noites registradas</span>
+            </div>
+
+            <div className="rounded-2xl border border-[#DEE7E2] bg-white p-4">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#556D66]">
+                <Footprints className="size-3.5 text-[#097260]" />
+                <span>Passos Diários</span>
+              </div>
+              <p className="text-2xl font-bold text-[#112822] mt-1">6.420</p>
+              <span className="text-[11px] text-[#097260] font-semibold">Meta 6.000 atingida</span>
+            </div>
+          </div>
+
+          {/* Historical Evolution Table */}
+          <div className="rounded-[22px] border border-[#DEE7E2] bg-white p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-[#F3F7F5] pb-3">
+              <h3 className="font-serif text-lg font-bold text-[#112822]">
+                Histórico Longitudinal de Biossinais
+              </h3>
+              <span className="text-xs text-[#556D66]">Smartwatch &amp; Diário</span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead>
+                  <tr className="border-b border-[#DEE7E2] text-[#556D66]">
+                    <th className="pb-2.5 font-bold">Data</th>
+                    <th className="pb-2.5 font-bold">Peso (kg)</th>
+                    <th className="pb-2.5 font-bold">Adesão (%)</th>
+                    <th className="pb-2.5 font-bold">Sono (h)</th>
+                    <th className="pb-2.5 font-bold">Passos</th>
+                    <th className="pb-2.5 font-bold">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F3F7F5]">
+                  {(
+                    patient.evolutionHistory || [
+                      {
+                        date: '01 ago',
+                        adherence: 76,
+                        weight: patient.startWeight,
+                        sleepHours: 6.2,
+                        steps: 5800,
+                      },
+                      {
+                        date: '08 ago',
+                        adherence: 79,
+                        weight: patient.startWeight - 0.6,
+                        sleepHours: 6.0,
+                        steps: 6100,
+                      },
+                      {
+                        date: '15 ago',
+                        adherence: 82,
+                        weight: patient.startWeight - 1.2,
+                        sleepHours: 6.1,
+                        steps: 6350,
+                      },
+                      {
+                        date: '22 ago',
+                        adherence: 80,
+                        weight: patient.currentWeight + 0.2,
+                        sleepHours: 5.7,
+                        steps: 6400,
+                      },
+                      {
+                        date: '25 ago',
+                        adherence: 82,
+                        weight: patient.currentWeight,
+                        sleepHours: 5.7,
+                        steps: 6420,
+                      },
+                    ]
+                  ).map((h, i) => (
+                    <tr key={i} className="hover:bg-[#F8FAF9] transition-colors">
+                      <td className="py-3 font-semibold text-[#112822]">{h.date}</td>
+                      <td className="py-3 font-mono font-bold text-[#112822]">
+                        {h.weight?.toFixed(1) || '—'} kg
+                      </td>
+                      <td className="py-3">
+                        <span className="font-bold text-[#097260]">{h.adherence}%</span>
+                      </td>
+                      <td className="py-3 text-[#556D66]">
+                        {h.sleepHours
+                          ? `${Math.floor(h.sleepHours)}h${Math.round((h.sleepHours % 1) * 60)}`
+                          : '—'}
+                      </td>
+                      <td className="py-3 text-[#556D66]">
+                        {h.steps ? h.steps.toLocaleString('pt-BR') : '—'}
+                      </td>
+                      <td className="py-3">
+                        <StatusBadge tone={h.adherence >= 80 ? 'green' : 'amber'}>
+                          {h.adherence >= 80 ? 'Consistente' : 'Abaixo da meta'}
+                        </StatusBadge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* TAB: MENSAGENS (Requisito 1) */}
+      {activeTab === 'mensagens' && (
+        <section className="rounded-[22px] border border-[#DEE7E2] bg-white p-6 shadow-sm space-y-4 animate-fade-in">
+          <div className="flex items-center justify-between border-b border-[#F3F7F5] pb-3">
+            <div>
+              <h3 className="font-serif text-lg font-bold text-[#112822]">
+                Histórico de Mensagens com {patient.name}
+              </h3>
+              <p className="text-xs text-[#556D66]">Comunicação segura e assistida por IA</p>
+            </div>
+            <Link
+              to="/medico/mensagens"
+              className="text-xs font-bold text-[#097260] hover:underline"
+            >
+              Abrir Central de Mensagens &rarr;
+            </Link>
+          </div>
+
+          <div className="space-y-3">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`p-4 rounded-2xl text-xs space-y-1.5 border ${
+                  msg.sender === 'doctor'
+                    ? 'bg-[#EAF3EF] border-[#BFE4D8] text-[#112822]'
+                    : msg.sender === 'ai_draft'
+                      ? 'bg-[#FFFBF2] border-[#F8DEB0] text-[#7D5308]'
+                      : 'bg-[#F8FAF9] border-[#DEE7E2] text-[#112822]'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="font-bold">{msg.author}</strong>
+                  <span className="text-[11px] text-[#556D66]">{msg.time}</span>
+                </div>
+                <p className="leading-relaxed">{msg.content}</p>
+                {msg.isAiDraft && (
+                  <div className="pt-2">
+                    <AiDraftBadge status="Rascunho aguardando validação médica" variant="compact" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* TAB: RELATÓRIOS CLÍNICOS (Requisito 1) */}
+      {activeTab === 'relatorios' && (
+        <section className="space-y-4 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <h3 className="font-serif text-lg font-bold text-[#112822]">
+              Relatórios e Dossiês Clínicos
+            </h3>
+            <Link
+              to="/medico/relatorios"
+              className="text-xs font-bold text-[#097260] hover:underline"
+            >
+              Ver todos os relatórios &rarr;
+            </Link>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {reports.map((rep) => (
+              <div
+                key={rep.id}
+                className="rounded-2xl border border-[#DEE7E2] bg-white p-5 shadow-sm space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-[#556D66]">{rep.period}</span>
+                  <StatusBadge tone={rep.status === 'aprovado' ? 'green' : 'amber'}>
+                    {rep.status === 'aprovado' ? 'Aprovado' : 'Em Revisão'}
+                  </StatusBadge>
+                </div>
+                <h4 className="font-serif text-base font-bold text-[#112822]">{rep.title}</h4>
+                <p className="text-xs text-[#556D66] leading-relaxed line-clamp-3">{rep.summary}</p>
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-[#F3F7F5] text-[11px]">
+                  {rep.metrics.map(([k, v], i) => (
+                    <span
+                      key={i}
+                      className="rounded-md bg-[#F8FAF9] px-2 py-1 text-[#112822] font-medium border border-[#DEE7E2]"
+                    >
+                      {k}: <strong>{v}</strong>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
