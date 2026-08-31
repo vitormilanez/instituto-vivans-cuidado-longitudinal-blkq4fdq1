@@ -17,12 +17,7 @@ import {
   BookOpen,
   TrendingUp,
   Video,
-  AlertTriangle,
-  ArrowRightLeft,
-  Check,
   PenLine,
-  UserCheck,
-  Clock,
   Radio,
 } from 'lucide-react'
 
@@ -44,18 +39,18 @@ export function NavigationHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#dfe8e3] bg-white/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-[#333333]/80 bg-[#0F0F0F]/85 backdrop-blur-xl">
       <div className="mx-auto flex h-[72px] max-w-[1540px] items-center justify-between gap-3 px-4 sm:px-5 lg:px-8">
         {/* Brand Logo & Title */}
         <Link to="/" className="flex min-w-0 items-center gap-3 group">
-          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#0b7b68] text-sm font-bold text-white shadow-[0_8px_20px_rgba(11,123,104,0.22)] transition-transform group-hover:scale-105">
+          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-[#D6B270] to-[#B8935A] text-sm font-bold text-[#0F0F0F] shadow-[0_8px_20px_rgba(214,178,112,0.25)] transition-transform group-hover:scale-105 border border-[#E8C391]/40">
             IV
           </div>
           <div className="min-w-0">
-            <p className="truncate text-lg font-bold tracking-[-0.03em] text-[#17372f]">
+            <p className="truncate text-lg font-bold tracking-[-0.03em] text-white group-hover:text-[#D6B270] transition-colors">
               Instituto Vivans
             </p>
-            <p className="hidden text-xs font-medium text-[#698078] sm:block">
+            <p className="hidden text-xs font-medium text-[#ADADAD] sm:block">
               Instituto de Saúde e Longevidade
             </p>
           </div>
@@ -63,40 +58,54 @@ export function NavigationHeader() {
 
         {/* Demo Indicator & Switcher */}
         <div className="flex items-center gap-2 sm:gap-4">
-          <div className="hidden md:flex items-center gap-1.5 rounded-full border border-[#f0d59c] bg-[#fffbf2] px-3 py-1 text-xs font-medium text-[#825b0b]">
-            <span className="size-2 rounded-full bg-[#e49d45] animate-pulse" />
+          <div className="hidden md:flex items-center gap-1.5 rounded-full border border-[#D6B270]/30 bg-[#D6B270]/10 px-3 py-1 text-xs font-medium text-[#E8C391] backdrop-blur-sm">
+            <span className="size-2 rounded-full bg-[#D6B270] animate-pulse" />
             <span>Protótipo Demonstrativo</span>
           </div>
 
           <div
-            className="flex items-center rounded-2xl border border-[#dfe8e3] bg-[#f4f7f5] p-1 shadow-inner"
+            className="flex items-center rounded-2xl border border-[#333333] bg-[#1A1A1A]/80 p-1 shadow-inner backdrop-blur-md"
             aria-label="Alternador de perfil para demonstração"
           >
             <button
               type="button"
               onClick={() => handleRoleSwitch('doctor')}
               className={cn(
-                'flex items-center gap-1.5 min-h-9 rounded-xl px-3 text-xs font-bold transition-all sm:px-4 sm:text-xs',
+                'flex items-center gap-1.5 min-h-9 rounded-xl px-3 text-xs font-bold transition-all sm:px-4 sm:text-xs cursor-pointer',
                 role === 'doctor'
-                  ? 'bg-white text-[#17372f] shadow-[0_2px_8px_rgba(0,0,0,0.06)]'
-                  : 'text-[#698078] hover:text-[#17372f]',
+                  ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-[0_2px_12px_rgba(214,178,112,0.3)]'
+                  : 'text-[#ADADAD] hover:text-white hover:bg-white/5',
               )}
             >
               <span>Dr. Guilherme</span>
-              <span className="hidden lg:inline text-[10px] text-[#60766f]">(Médico)</span>
+              <span
+                className={cn(
+                  'hidden lg:inline text-[10px]',
+                  role === 'doctor' ? 'text-[#3B2D12]' : 'text-[#888888]',
+                )}
+              >
+                (Médico)
+              </span>
             </button>
             <button
               type="button"
               onClick={() => handleRoleSwitch('patient')}
               className={cn(
-                'flex items-center gap-1.5 min-h-9 rounded-xl px-3 text-xs font-bold transition-all sm:px-4 sm:text-xs',
+                'flex items-center gap-1.5 min-h-9 rounded-xl px-3 text-xs font-bold transition-all sm:px-4 sm:text-xs cursor-pointer',
                 role === 'patient'
-                  ? 'bg-white text-[#17372f] shadow-[0_2px_8px_rgba(0,0,0,0.06)]'
-                  : 'text-[#698078] hover:text-[#17372f]',
+                  ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-[0_2px_12px_rgba(214,178,112,0.3)]'
+                  : 'text-[#ADADAD] hover:text-white hover:bg-white/5',
               )}
             >
               <span>Marina Costa</span>
-              <span className="hidden lg:inline text-[10px] text-[#60766f]">(Paciente)</span>
+              <span
+                className={cn(
+                  'hidden lg:inline text-[10px]',
+                  role === 'patient' ? 'text-[#3B2D12]' : 'text-[#888888]',
+                )}
+              >
+                (Paciente)
+              </span>
             </button>
           </div>
 
@@ -107,7 +116,7 @@ export function NavigationHeader() {
                 name={DOCTOR_PROFILE.name}
                 initials={DOCTOR_PROFILE.initials}
                 size="md"
-                className="border-2 border-[#b9d8cf]"
+                className="border-2 border-[#D6B270]/60 shadow-[0_0_12px_rgba(214,178,112,0.2)]"
               />
             ) : (
               <VivansAvatar
@@ -115,7 +124,7 @@ export function NavigationHeader() {
                 name="Marina Costa"
                 initials="MC"
                 size="md"
-                className="border-2 border-[#b9d8cf]"
+                className="border-2 border-[#D6B270]/60 shadow-[0_0_12px_rgba(214,178,112,0.2)]"
               />
             )}
           </div>
@@ -163,9 +172,9 @@ export function DoctorSidebar() {
 
   return (
     <>
-      <aside className="hidden min-h-[calc(100vh-72px)] border-r border-[#dfe8e3] bg-white px-3.5 py-5 lg:block w-[260px] shrink-0">
+      <aside className="hidden min-h-[calc(100vh-72px)] border-r border-[#333333]/80 bg-[#121212]/90 backdrop-blur-xl px-3.5 py-5 lg:block w-[260px] shrink-0">
         {/* Prominent Doctor Profile & Quick Actions Card */}
-        <div className="mb-5 rounded-[24px] bg-gradient-to-b from-[#111827] to-[#16202e] p-4 text-white shadow-[0_12px_28px_rgba(17,24,39,0.22)] border border-[#1f2937]">
+        <div className="mb-5 rounded-[24px] bg-gradient-to-b from-[#1A1A1A] to-[#141414] p-4 text-white shadow-[0_12px_28px_rgba(0,0,0,0.4)] border border-[#D6B270]/25 backdrop-blur-md">
           {/* Doctor Info Row */}
           <div className="flex items-start gap-3">
             <VivansAvatar
@@ -173,19 +182,19 @@ export function DoctorSidebar() {
               name={DOCTOR_PROFILE.name}
               initials={DOCTOR_PROFILE.initials}
               size="lg"
-              className="border border-[#b59e7f]/40 shadow-inner"
+              className="border-2 border-[#D6B270]/50 shadow-inner"
             />
 
             <div className="min-w-0 flex-1">
               <h2 className="truncate font-serif text-sm font-bold text-white tracking-tight leading-tight">
                 {DOCTOR_PROFILE.name}
               </h2>
-              <p className="mt-0.5 text-[10px] font-mono tracking-wide text-[#b59e7f]">
+              <p className="mt-0.5 text-[10px] font-mono tracking-wide text-[#E8C391]">
                 {DOCTOR_PROFILE.crm}
               </p>
               <div className="mt-1 flex items-center gap-1.5">
-                <span className="size-1.5 rounded-full bg-[#b59e7f]" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#9ca3af]">
+                <span className="size-1.5 rounded-full bg-[#D6B270]" />
+                <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#ADADAD]">
                   LONGEVIDADE & METABOLISMO
                 </span>
               </div>
@@ -193,24 +202,24 @@ export function DoctorSidebar() {
           </div>
 
           {/* Real-time Virtual Waiting Room Status Indicator */}
-          <div className="mt-3.5 rounded-xl border border-[#23483f] bg-[#0c2e27]/80 p-2.5 backdrop-blur-xs">
+          <div className="mt-3.5 rounded-xl border border-[#D6B270]/25 bg-[#D6B270]/10 p-2.5 backdrop-blur-sm">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#7ae0c8]">
-                <Radio className="size-3 text-[#55e0be] animate-pulse" />
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#E8C391]">
+                <Radio className="size-3 text-[#D6B270] animate-pulse" />
                 <span>Sala de Espera Virtual</span>
               </div>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#13493e] px-2 py-0.5 text-[10px] font-bold text-[#bbf7e8]">
-                <span className="size-1.5 rounded-full bg-[#40e0be] animate-ping" />1 online
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#D6B270]/20 px-2 py-0.5 text-[10px] font-bold text-[#E8C391] border border-[#D6B270]/30">
+                <span className="size-1.5 rounded-full bg-[#D6B270] animate-ping" />1 online
               </span>
             </div>
 
             {primaryWaitingPatient && (
-              <div className="mt-2 flex items-center justify-between gap-2 border-t border-[#1a443b] pt-2">
+              <div className="mt-2 flex items-center justify-between gap-2 border-t border-[#D6B270]/20 pt-2">
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-white">
                     {primaryWaitingPatient.name}
                   </p>
-                  <p className="truncate text-[10px] text-[#8ea79f]">
+                  <p className="truncate text-[10px] text-[#ADADAD]">
                     Aguardando na sala · {primaryWaitingPatient.waitingSince || 'Há 4 min'}
                   </p>
                 </div>
@@ -218,7 +227,7 @@ export function DoctorSidebar() {
                   type="button"
                   onClick={() => openQuickAction('video', primaryWaitingPatient.id)}
                   title={`Atender ${primaryWaitingPatient.name} agora`}
-                  className="grid size-7 shrink-0 place-items-center rounded-lg bg-[#b59e7f] text-[#111827] hover:bg-[#c9b293] transition-colors cursor-pointer"
+                  className="grid size-7 shrink-0 place-items-center rounded-lg bg-[#D6B270] text-[#0F0F0F] hover:bg-[#E8C391] transition-colors cursor-pointer font-bold shadow-sm"
                 >
                   <Video className="size-3.5" />
                 </button>
@@ -230,9 +239,9 @@ export function DoctorSidebar() {
           <button
             type="button"
             onClick={() => openQuickAction('video')}
-            className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-2xl bg-[#b59e7f] px-3 text-xs font-bold text-[#111827] shadow-sm transition-all hover:bg-[#a68f70] active:scale-[0.98] cursor-pointer"
+            className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-3 text-xs font-bold text-[#0F0F0F] shadow-sm transition-all hover:brightness-110 active:scale-[0.98] cursor-pointer"
           >
-            <Video className="size-4 shrink-0 text-[#111827]" />
+            <Video className="size-4 shrink-0 text-[#0F0F0F]" />
             <span>Iniciar Teleconsulta (Meet)</span>
           </button>
 
@@ -241,27 +250,28 @@ export function DoctorSidebar() {
             <button
               type="button"
               onClick={() => openQuickAction('history')}
-              className="flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-[11px] font-semibold text-[#d1d5db] hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+              className="flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-[11px] font-semibold text-[#E5E5E5] hover:bg-white/10 hover:border-[#D6B270]/40 hover:text-white transition-all cursor-pointer"
               title="Consultar prontuário ou histórico clínico sem iniciar vídeo"
             >
-              <FileText className="size-3.5 text-[#b59e7f]" />
+              <FileText className="size-3.5 text-[#D6B270]" />
               <span>Histórico</span>
             </button>
 
             <button
               type="button"
               onClick={() => openQuickAction('note')}
-              className="flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-[11px] font-semibold text-[#d1d5db] hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+              className="flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-[11px] font-semibold text-[#E5E5E5] hover:bg-white/10 hover:border-[#D6B270]/40 hover:text-white transition-all cursor-pointer"
               title="Registrar nota clínica rápida no prontuário do paciente"
             >
-              <PenLine className="size-3.5 text-[#b59e7f]" />
+              <PenLine className="size-3.5 text-[#D6B270]" />
               <span>Anotação</span>
             </button>
           </div>
         </div>
+
         {/* Section Header: Navegação Principal */}
         <div className="px-2 pb-2">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8ba29a]">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#888888]">
             NAVEGAÇÃO PRINCIPAL
           </p>
         </div>
@@ -274,40 +284,44 @@ export function DoctorSidebar() {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  'flex min-h-11 w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-xs font-bold transition-colors',
+                  'flex min-h-11 w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-xs font-bold transition-all',
                   active
-                    ? 'bg-[#e8f4f0] text-[#075f50] shadow-sm'
-                    : 'text-[#60766f] hover:bg-[#f4f7f5] hover:text-[#17372f]',
+                    ? 'bg-[#D6B270]/15 text-[#E8C391] border border-[#D6B270]/30 shadow-sm backdrop-blur-sm'
+                    : 'text-[#ADADAD] hover:bg-white/5 hover:text-white border border-transparent',
                 )}
               >
                 <Icon
-                  className={cn('size-4 shrink-0', active ? 'text-[#0b7b68]' : 'text-[#8ba29a]')}
+                  className={cn(
+                    'size-4 shrink-0 transition-colors',
+                    active ? 'text-[#D6B270]' : 'text-[#777777]',
+                  )}
                 />
                 <span>{item.label}</span>
               </Link>
             )
           })}
-        </nav>{' '}
-        <div className="mt-8 rounded-[20px] border border-[#DEE7E2] bg-[#FDFCFA] p-4 text-[#112822] shadow-[0_4px_16px_rgba(17,40,34,0.03)]">
+        </nav>
+
+        <div className="mt-8 rounded-[20px] border border-[#333333] bg-[#1A1A1A]/80 p-4 text-white shadow-[0_4px_16px_rgba(0,0,0,0.3)] backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#556D66]">
+            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#ADADAD]">
               Painel de Coorte
             </p>
-            <span className="size-2 rounded-full bg-[#097260]" />
+            <span className="size-2 rounded-full bg-[#D6B270] shadow-[0_0_8px_#D6B270]" />
           </div>
 
           <div className="mt-3 space-y-1.5">
-            <div className="flex items-center justify-between rounded-[14px] bg-[#F5F8F6] px-3 py-2 text-xs">
-              <span className="text-[#556D66]">Ativos</span>
-              <strong className="text-sm font-bold text-[#112822]">22</strong>
+            <div className="flex items-center justify-between rounded-[14px] bg-white/5 border border-white/5 px-3 py-2 text-xs">
+              <span className="text-[#ADADAD]">Ativos</span>
+              <strong className="text-sm font-bold text-white">22</strong>
             </div>
-            <div className="flex items-center justify-between rounded-[14px] bg-[#EAF3EF]/60 px-3 py-2 text-xs">
-              <span className="text-[#097260] font-medium">Regulares</span>
-              <strong className="text-sm font-bold text-[#097260]">17</strong>
+            <div className="flex items-center justify-between rounded-[14px] bg-[#D6B270]/10 border border-[#D6B270]/20 px-3 py-2 text-xs">
+              <span className="text-[#E8C391] font-medium">Regulares</span>
+              <strong className="text-sm font-bold text-[#D6B270]">17</strong>
             </div>
-            <div className="flex items-center justify-between rounded-[14px] bg-[#FEF7E7] px-3 py-2 text-xs text-[#7D5308]">
+            <div className="flex items-center justify-between rounded-[14px] bg-[#F59E0B]/15 border border-[#F59E0B]/30 px-3 py-2 text-xs text-[#FCD34D]">
               <span className="font-semibold">Atrasados</span>
-              <strong className="text-sm font-bold text-[#7D5308]">5</strong>
+              <strong className="text-sm font-bold text-[#FCD34D]">5</strong>
             </div>
           </div>
 
@@ -316,22 +330,23 @@ export function DoctorSidebar() {
             disabled={nudged}
             onClick={nudgeDelayedPatients}
             className={cn(
-              'mt-3 min-h-9 w-full rounded-[14px] px-3 text-xs font-bold transition-all',
+              'mt-3 min-h-9 w-full rounded-[14px] px-3 text-xs font-bold transition-all cursor-pointer',
               nudged
-                ? 'bg-[#DEE7E2] text-[#556D66] cursor-default'
-                : 'bg-[#112822] text-white hover:bg-[#1e483e] shadow-2xs active:scale-[0.98]',
+                ? 'bg-white/10 text-[#888888] cursor-default border border-white/5'
+                : 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] hover:brightness-110 shadow-sm active:scale-[0.98]',
             )}
           >
             {nudged ? 'Lembrete enviado (5)' : 'Enviar lembrete (5)'}
           </button>
         </div>
+
         {/* AI Structured Support - Secondary Notice */}
-        <div className="mt-4 rounded-[16px] border border-[#DEE7E2] bg-[#F5F8F6]/80 p-3 text-xs text-[#556D66] space-y-1">
-          <div className="flex items-center gap-1.5 font-bold text-[#097260]">
+        <div className="mt-4 rounded-[16px] border border-[#333333]/80 bg-[#1A1A1A]/50 p-3 text-xs text-[#ADADAD] space-y-1 backdrop-blur-sm">
+          <div className="flex items-center gap-1.5 font-bold text-[#D6B270]">
             <Sparkles className="size-3.5 shrink-0" />
             <span className="text-[11px]">Apoio Clínico Estruturado</span>
           </div>
-          <p className="text-[10px] leading-relaxed text-[#556D66]">
+          <p className="text-[10px] leading-relaxed text-[#888888]">
             Rascunhos documentais para validação médica. Sem emissão autônoma de diagnóstico.
           </p>
         </div>
@@ -370,7 +385,7 @@ export function PatientBottomNav() {
   return (
     <nav
       aria-label="Navegação do paciente"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-[#dfe8e3] bg-white px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-[#333333] bg-[#0F0F0F]/90 backdrop-blur-xl px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5 lg:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.5)]"
     >
       <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
         {links.map((item) => {
@@ -383,14 +398,14 @@ export function PatientBottomNav() {
               className={cn(
                 'flex min-h-[48px] flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[11px] font-bold transition-all active:scale-95',
                 active
-                  ? 'bg-[#e8f4f0] text-[#0b6a5b] shadow-2xs'
-                  : 'text-[#698078] hover:text-[#17372f] hover:bg-[#f4f7f5]',
+                  ? 'bg-[#D6B270]/15 text-[#E8C391] border border-[#D6B270]/30'
+                  : 'text-[#ADADAD] hover:text-white hover:bg-white/5 border border-transparent',
               )}
             >
               <Icon
                 className={cn(
                   'size-5 transition-transform',
-                  active ? 'text-[#0b7b68] scale-105' : 'text-[#789087]',
+                  active ? 'text-[#D6B270] scale-105' : 'text-[#777777]',
                 )}
               />
               <span className="truncate leading-none">{item.label}</span>

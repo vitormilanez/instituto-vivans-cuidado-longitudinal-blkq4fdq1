@@ -2,164 +2,168 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, SimulationDisclaimer, UrgentCareWarning } from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
+import { DOCTOR_PROFILE } from '@/data/mockData'
 import {
   Calendar,
-  Video,
   Clock,
-  CheckCircle2,
-  FileText,
-  ArrowRight,
+  Video,
+  MapPin,
   Sparkles,
+  ChevronRight,
   ShieldCheck,
-  Check,
+  CheckCircle2,
+  FileCheck,
 } from 'lucide-react'
 
 export default function PatientAppointments() {
-  const { appointments, preConsultation } = useVivans()
-
-  // Find Marina's appointment
-  const marinaApt = appointments.find((a) => a.patient === 'Marina Costa') || appointments[1]
-
-  const pastAppointments = [
-    {
-      id: 'past-1',
-      date: '12 de agosto de 2026',
-      type: 'Primeira Consulta · Longevidade e Emagrecimento',
-      doctor: 'Dr. Guilherme Martins',
-      summary:
-        'Definição das metas ponderais (80 kg -> 72 kg), alinhamento do protocolo de saciedade noturna e solicitação de exames laboratoriais.',
-      documents: ['Síntese da Consulta (PDF)', 'Plano Inicial v1.0'],
-    },
-    {
-      id: 'past-2',
-      date: '15 de julho de 2026',
-      type: 'Avaliação Metabólica Inicial',
-      doctor: 'Dr. Guilherme Martins',
-      summary:
-        'Alinhamento do protocolo de acompanhamento contínuo e orientação de rotina matinal.',
-      documents: ['Anamnese Completa'],
-    },
-  ]
+  const { preConsultation } = useVivans()
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      <SimulationDisclaimer text="Agenda e Histórico de Consultas · Instituto Vivans" />
+    <div className="space-y-6">
+      <SimulationDisclaimer text="Agendamentos e Jornada de Consultas · Instituto Vivans" />
 
-      {/* Header */}
       <section>
-        <div className="flex items-center gap-2">
-          <StatusBadge tone="green">Acompanhamento Médico</StatusBadge>
-          <span className="text-xs text-[#5e776e]">Dr. Guilherme Martins</span>
-        </div>
-        <h1 className="mt-2 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#17372f]">
-          Consultas &amp; Retornos
+        <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">Suas Consultas</p>
+        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-white">
+          Agenda e Acompanhamento Clínico
         </h1>
-        <p className="mt-0.5 text-xs sm:text-sm text-[#5a736a]">
-          Acompanhe suas consultas agendadas, pré-consulta e histórico de orientações médicas.
+        <p className="mt-1 text-sm text-[#ADADAD]">
+          Consultas presenciais e por telemedicina estruturadas para o cuidado longitudinal.
         </p>
       </section>
 
-      {/* Upcoming Consultation Hero Card */}
-      <article className="rounded-3xl border border-[#9fc9bd] bg-white p-5 sm:p-7 shadow-[0_12px_34px_rgba(28,55,47,0.06)] space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf2ef] pb-4">
-          <div className="flex items-center gap-3">
-            <div className="grid size-11 place-items-center rounded-2xl bg-[#e8f4f0] text-[#0b7b68]">
-              <Calendar className="size-5" />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#0b7b68]">
-                Próxima Consulta Agendada
-              </p>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#17372f]">
-                Hoje, 25 de agosto · 10:30
-              </h2>
-            </div>
+      {/* Main Appointment Highlight */}
+      <article className="overflow-hidden rounded-3xl border border-[#D6B270]/30 bg-gradient-to-br from-[#1A1A1A] via-[#141414] to-[#0F0F0F] p-6 sm:p-8 text-white shadow-xl space-y-6 backdrop-blur-md">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#333333] pb-4">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-3 py-1 text-xs font-bold text-[#0F0F0F]">
+              <Calendar className="size-3.5" />
+              <span>Próxima Consulta · Hoje</span>
+            </span>
+            <StatusBadge tone="green">Confirmada</StatusBadge>
           </div>
-          <StatusBadge tone="green">Confirmada</StatusBadge>
+          <span className="text-xs text-[#ADADAD]">Telemedicina Segura</span>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-xs text-[#5e776e]">
-              <Clock className="size-4 text-[#0b7b68]" />
-              <span>Duração: 30 minutos · Teleconsulta segura</span>
-            </div>
-            <p className="text-xs sm:text-sm text-[#45655c] leading-relaxed">
-              <strong>Objetivo alinhado:</strong> “{preConsultation.objective}”
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-2 max-w-xl">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+              Retorno de 30 Dias · Longevidade &amp; Metabolismo
+            </h2>
+            <p className="text-xs sm:text-sm text-[#CCCCCC] leading-relaxed">
+              Avaliação de adesão ao plano, resposta ao ajuste nutricional vespertino e alinhamento
+              dos próximos 30 dias de acompanhamento.
             </p>
 
-            {/* Pre-consultation Status Box */}
-            <div className="rounded-2xl border border-[#dfe8e3] bg-[#f8faf9] p-4 text-xs space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-[#17372f]">Status da Pré-consulta:</span>
-                <StatusBadge tone={preConsultation.completed ? 'green' : 'amber'}>
-                  {preConsultation.completed ? 'Enviada e Vinculada' : 'Pendente de envio'}
-                </StatusBadge>
+            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#ADADAD]">
+              <div className="flex items-center gap-1.5 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5">
+                <Clock className="size-4 text-[#D6B270]" />
+                <span className="font-bold text-white">Hoje, às 10:30 (45 min)</span>
               </div>
-              <p className="text-[#698078] leading-relaxed">
-                {preConsultation.completed
-                  ? 'O Dr. Guilherme já recebeu a síntese do seu sono e saciedade para guiar a consulta.'
-                  : 'Preencha a pré-consulta para que o médico conheça suas prioridades antes de entrar na sala.'}
-              </p>
+              <div className="flex items-center gap-1.5 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5">
+                <Video className="size-4 text-[#D6B270]" />
+                <span className="font-bold text-white">Sala Virtual Google Meet</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col justify-center gap-2.5">
-            <Link
-              to="/medico/consulta/apt-marina"
-              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-[#0b7b68] px-6 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#096656] transition-colors"
-            >
-              <Video className="size-4" />
-              <span>Entrar na Sala Virtual</span>
-            </Link>
-            <Link
-              to="/paciente/pre-consulta"
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors"
-            >
-              <Sparkles className="size-4 text-[#0b7b68]" />
-              <span>
-                {preConsultation.completed
-                  ? 'Ver Resumo da Pré-Consulta'
-                  : 'Iniciar Pré-Consulta Estruturada'}
-              </span>
-            </Link>
+          <div className="flex items-center gap-3.5 rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4">
+            <VivansAvatar
+              src={DOCTOR_PROFILE.avatarUrl}
+              name={DOCTOR_PROFILE.name}
+              initials={DOCTOR_PROFILE.initials}
+              size="lg"
+              className="border-2 border-[#D6B270]/50"
+            />
+            <div>
+              <p className="text-xs font-bold text-white">{DOCTOR_PROFILE.name}</p>
+              <p className="text-[11px] font-mono text-[#D6B270]">{DOCTOR_PROFILE.crm}</p>
+              <p className="text-[10px] text-[#ADADAD]">Médico Responsável</p>
+            </div>
           </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-[#333333]">
+          <Link
+            to="/medico/consulta/apt-marina"
+            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs sm:text-sm font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all active:scale-98"
+          >
+            <Video className="size-4.5" />
+            <span>Entrar na Sala de Teleconsulta</span>
+          </Link>
+
+          <Link
+            to="/paciente/pre-consulta"
+            className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-[#333333] bg-white/5 px-6 text-xs sm:text-sm font-bold text-white hover:bg-white/10 transition-all"
+          >
+            <Sparkles className="size-4 text-[#D6B270]" />
+            <span>
+              {preConsultation.completed
+                ? 'Ver Síntese de Pré-Consulta Enviada'
+                : 'Preencher Pré-Consulta Guiada'}
+            </span>
+          </Link>
         </div>
       </article>
 
-      {/* History Timeline */}
-      <section className="space-y-4">
-        <h2 className="font-serif text-xl font-bold text-[#17372f]">Histórico de Atendimentos</h2>
+      {/* Pre-Consultation Status Card */}
+      <section className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-4 backdrop-blur-md">
+        <div className="flex items-center justify-between border-b border-[#333333] pb-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="size-5 text-[#D6B270]" />
+            <h3 className="font-serif text-lg font-bold text-white">
+              Status da Pré-Consulta Guiada
+            </h3>
+          </div>
+          {preConsultation.completed ? (
+            <StatusBadge tone="green">Enviada ao Médico</StatusBadge>
+          ) : (
+            <StatusBadge tone="amber">Pendente de Preenchimento</StatusBadge>
+          )}
+        </div>
 
-        <div className="space-y-3.5">
-          {pastAppointments.map((past) => (
-            <article
-              key={past.id}
-              className="rounded-3xl border border-[#dfe8e3] bg-white p-5 sm:p-6 shadow-sm space-y-3"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <span className="text-xs font-bold text-[#0b7b68]">{past.date}</span>
-                  <h3 className="font-serif text-base font-bold text-[#17372f]">{past.type}</h3>
-                </div>
-                <StatusBadge tone="gray">Concluída</StatusBadge>
+        <p className="text-xs text-[#CCCCCC] leading-relaxed">
+          {preConsultation.completed
+            ? 'Suas respostas foram compiladas em uma síntese clínica estruturada que já está disponível no prontuário do Dr. Guilherme.'
+            : 'A pré-consulta leva menos de 4 minutos e permite que o médico inicie o atendimento conhecendo suas principais dúvidas e sintomas.'}
+        </p>
+
+        <div className="flex justify-end">
+          <Link
+            to="/paciente/pre-consulta"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D6B270] hover:underline underline-offset-4"
+          >
+            <span>
+              {preConsultation.completed
+                ? 'Revisar ou editar respostas'
+                : 'Iniciar pré-consulta guiada'}
+            </span>
+            <ChevronRight className="size-4" />
+          </Link>
+        </div>
+      </section>
+
+      {/* Past History */}
+      <section className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-4 backdrop-blur-md">
+        <h3 className="font-serif text-lg font-bold text-white">Histórico de Atendimentos</h3>
+
+        <div className="space-y-3">
+          <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-white">Consulta de Abertura do Ciclo</span>
+                <span className="text-[10px] text-[#888888]">Presencial · Instituto Vivans</span>
               </div>
-
-              <p className="text-xs text-[#526a62] leading-relaxed">{past.summary}</p>
-
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-[#edf2ef]">
-                {past.documents.map((doc) => (
-                  <span
-                    key={doc}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-[#dfe8e3] bg-[#f8faf9] px-3 py-1.5 text-xs text-[#17372f] font-medium"
-                  >
-                    <FileText className="size-3.5 text-[#0b7b68]" />
-                    <span>{doc}</span>
-                  </span>
-                ))}
-              </div>
-            </article>
-          ))}
+              <p className="text-xs text-[#ADADAD]">
+                28 de julho de 2024 · Definição do plano de longevidade de 90 dias
+              </p>
+            </div>
+            <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-[#CCCCCC] self-start sm:self-auto">
+              Realizada (100%)
+            </span>
+          </div>
         </div>
       </section>
 

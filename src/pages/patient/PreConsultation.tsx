@@ -9,582 +9,331 @@ import {
   UrgentCareWarning,
 } from '@/components/CommonUI'
 import {
-  Mic,
-  FileText,
   Sparkles,
   ShieldCheck,
   CheckCircle2,
+  AlertCircle,
+  HelpCircle,
   ArrowRight,
   ArrowLeft,
-  Volume2,
-  Edit3,
-  RotateCcw,
   Calendar,
   Lock,
-  Trash2,
-  Check,
-  Info,
 } from 'lucide-react'
-
-// Steps 1 to 9 of pre-consultation flow:
-// 1. Ver próxima consulta
-// 2. Consentimento LGPD
-// 3. Escolher texto ou voz simulada
-// 4. Perguntas conversacionais
-// 5. Visualizar transcrição
-// 6. Corrigir o próprio relato
-// 7. Revisar objetivo / respostas / resumo
-// 8. Enviar ao médico
-// 9. Confirmação + histórico
-type Step =
-  | 'step1_view_appointment'
-  | 'step2_lgpd_consent'
-  | 'step3_choose_mode'
-  | 'step4_questions'
-  | 'step5_transcription_view'
-  | 'step6_edit_transcript'
-  | 'step7_review_summary'
-  | 'step8_sending'
-  | 'step9_confirmed'
 
 export default function PatientPreConsultation() {
   const { preConsultation, updatePreConsultation, submitPreConsultation, notify } = useVivans()
   const navigate = useNavigate()
 
-  const [step, setStep] = useState<Step>('step1_view_appointment')
-  const [consentModalOpen, setConsentModalOpen] = useState(false)
-  const [mode, setMode] = useState<'voice' | 'text'>('voice')
-  const [isRecording, setIsRecording] = useState(false)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [step, setStep] = useState<number>(1)
+  const [isConsentOpen, setIsConsentOpen] = useState(false)
+  const [hasConsented, setHasConsented] = useState(true)
 
-  // Form states for editing
-  const [patientGoal, setPatientGoal] = useState(preConsultation.objective)
-  const [patientTranscript, setPatientTranscript] = useState(preConsultation.transcript)
-  const [patientEnergy, setPatientEnergy] = useState<number>(3)
-  const [patientSleep, setPatientSleep] = useState<number>(2)
-  const [patientSpecificQuestion, setPatientSpecificQuestion] = useState(
-    'Avaliar se o horário do jantar habitual (20h30) pode ter correlação com os despertares noturnos.',
+  // Local state for the 4-step wizard
+  const [objective, setObjective] = useState(
+    preConsultation.objective ||
+      'Avaliar a perda de peso no primeiro mês e entender o motivo dos despertares noturnos por volta das 3h da manhã.',
+  )
+  const [mainQuestions, setMainQuestions] = useState(
+    preConsultation.questionsForDoctor ||
+      'Devo ajustar o horário do magnésio? Posso manter o café após o almoço sem prejudicar o sono?',
+  )
+  const [routineChanges, setRoutineChanges] = useState(
+    preConsultation.transcript ||
+      'Aumentei o consumo de água para 2,5L/dia e incluí ovos no café da manhã. Tenho jantado mais leve por volta das 19h30.',
+  )
+  const [observedSymptoms, setObservedSymptoms] = useState(
+    preConsultation.digestiveStatus ||
+      'Disposição melhor pela manhã, mas leve cansaço mental por volta das 16h e despertar pontual às 3h.',
   )
 
-  const questions = [
-    {
-      q: '1. Qual é o seu principal objetivo para a consulta de hoje com o Dr. Guilherme?',
-      hint: 'Ex: perda gradual de peso sem cansaço, investigar sono, tirar dúvidas...',
-      sampleReply:
-        'Quero manter o emagrecimento gradual com preservação de disposição e entender o motivo dos despertares às 3h.',
-    },
-    {
-      q: '2. Como esteve seu nível de energia e vitalidade nas últimas duas semanas?',
-      hint: 'Ex: boa pela manhã, queda no meio da tarde, sonolência após almoço...',
-      sampleReply:
-        'Disposição muito boa pela manhã, mas com leve queda de energia no final da tarde por volta das 16h.',
-    },
-    {
-      q: '3. Houve algum sintoma novo ou alteração digestiva (náusea, azia, desconforto)?',
-      hint: 'Ex: ótima digestão com mais fibras, sem queixas gástricas...',
-      sampleReply:
-        'Digestão excelente com o omelete e salada, sem nenhum sintoma gastrointestinal agudo.',
-    },
-    {
-      q: '4. Tem alguma pergunta ou dúvida crucial para fazermos durante os 30 minutos de consulta?',
-      hint: 'Ex: horário do jantar, suplementação, exames complementares...',
-      sampleReply:
-        'Gostaria de saber se adiantar o jantar para as 19h30 pode ajudar a evitar acordar de madrugada.',
-    },
-  ]
-
-  const handleStartConsentFlow = () => {
-    setConsentModalOpen(true)
-  }
-
-  const handleConsentAccepted = () => {
-    setConsentModalOpen(false)
-    updatePreConsultation({ consentGiven: true })
-    setStep('step3_choose_mode')
-    notify('Consentimento LGPD registrado. Escolha o formato de resposta.')
-  }
-
-  const handleSelectMode = (selectedMode: 'voice' | 'text') => {
-    setMode(selectedMode)
-    updatePreConsultation({ mode: selectedMode })
-    setCurrentQuestionIndex(0)
-    setStep('step4_questions')
-  }
-
-  const handleSimulateVoiceInput = () => {
-    setIsRecording(true)
-    setTimeout(() => {
-      setIsRecording(false)
-      notify('Áudio gravado e transcrito temporariamente com sucesso.')
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex((prev) => prev + 1)
-      } else {
-        setStep('step5_transcription_view')
-      }
-    }, 1400)
-  }
-
-  const handleNextTextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1)
-    } else {
-      setStep('step5_transcription_view')
+  const handleNext = () => {
+    if (step < 4) {
+      setStep(step + 1)
     }
   }
 
-  const handleConfirmReviewAndSend = () => {
-    setStep('step8_sending')
-    setTimeout(() => {
-      updatePreConsultation({
-        objective: patientGoal,
-        transcript: patientTranscript,
-        energyRating: patientEnergy,
-        sleepRating: patientSleep,
-        questionsForDoctor: patientSpecificQuestion,
-      })
-      submitPreConsultation()
-      setStep('step9_confirmed')
-    }, 1200)
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1)
+    }
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    updatePreConsultation({
+      objective,
+      questionsForDoctor: mainQuestions,
+      transcript: routineChanges,
+      digestiveStatus: observedSymptoms,
+    })
+
+    submitPreConsultation()
+    notify('Pré-consulta enviada com sucesso ao Dr. Guilherme Martins!')
+    navigate('/paciente/consultas')
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <SimulationDisclaimer text="Pré-Consulta Guiada · Instituto Vivans" />
+    <div className="space-y-6">
+      <SimulationDisclaimer text="Pré-Consulta Guiada Estruturada · Instituto Vivans" />
 
-      {/* 9-Step Progress Header Indicator */}
-      <div className="flex items-center justify-between border-b border-[#dfe8e3] pb-3 text-xs text-[#698078]">
+      {/* Header */}
+      <section>
         <div className="flex items-center gap-2">
-          <Sparkles className="size-4 text-[#0b7b68]" />
-          <span className="font-bold text-[#17372f]">Pré-Consulta Estruturada</span>
-        </div>
-        <div className="flex items-center gap-1 font-semibold text-[#0b7b68]">
-          <span>
-            {step === 'step1_view_appointment' && 'Etapa 1/9 · Próxima Consulta'}
-            {step === 'step2_lgpd_consent' && 'Etapa 2/9 · Consentimento LGPD'}
-            {step === 'step3_choose_mode' && 'Etapa 3/9 · Escolher Formato'}
-            {step === 'step4_questions' &&
-              `Etapa 4/9 · Pergunta ${currentQuestionIndex + 1} de ${questions.length}`}
-            {step === 'step5_transcription_view' && 'Etapa 5/9 · Visualizar Transcrição'}
-            {step === 'step6_edit_transcript' && 'Etapa 6/9 · Corrigir Relato'}
-            {step === 'step7_review_summary' && 'Etapa 7/9 · Revisão Completa'}
-            {step === 'step8_sending' && 'Etapa 8/9 · Enviando ao Médico...'}
-            {step === 'step9_confirmed' && 'Etapa 9/9 · Confirmação & Histórico'}
+          <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+            Preparação Clínica
           </span>
+          <StatusBadge tone="green">4 minutos estimados</StatusBadge>
+        </div>
+        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-white">
+          Pré-Consulta Guiada
+        </h1>
+        <p className="mt-1 text-sm text-[#ADADAD] max-w-2xl">
+          Organize seus principais objetivos, dúvidas e relatos antes do atendimento com o Dr.
+          Guilherme Martins.
+        </p>
+      </section>
+
+      {/* Wizard Progress Bar */}
+      <div className="rounded-2xl border border-[#333333] bg-[#1A1A1A] p-4 shadow-sm backdrop-blur-md">
+        <div className="flex items-center justify-between text-xs font-bold text-white mb-2">
+          <span>Passo {step} de 4</span>
+          <span className="text-[#D6B270]">
+            {step === 1 && '1. Objetivo Principal'}
+            {step === 2 && '2. Principais Dúvidas'}
+            {step === 3 && '3. Mudanças na Rotina'}
+            {step === 4 && '4. Sintomas & Revisão'}
+          </span>
+        </div>
+        <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[#B8935A] to-[#D6B270] transition-all duration-300"
+            style={{ width: `${(step / 4) * 100}%` }}
+          />
         </div>
       </div>
 
-      {/* STEP 1: VER PRÓXIMA CONSULTA */}
-      {step === 'step1_view_appointment' && (
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-6 animate-fade-in">
-          <div className="flex items-start justify-between gap-3 border-b border-[#edf2ef] pb-4">
-            <div className="flex items-center gap-3">
-              <div className="grid size-12 place-items-center rounded-2xl bg-[#e8f4f0] text-[#0b7b68]">
-                <Calendar className="size-6" />
-              </div>
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-[#0b7b68]">
-                  Consulta Vinculada
-                </p>
-                <h2 className="font-serif text-2xl font-bold text-[#17372f]">
-                  Hoje, 25 de agosto às 10:30
-                </h2>
-              </div>
-            </div>
-            <StatusBadge tone="green">Confirmada</StatusBadge>
-          </div>
-
-          <div className="space-y-3 text-xs text-[#526b63] leading-relaxed">
-            <p>
-              Você tem um retorno agendado com o <strong>Dr. Guilherme Martins</strong> (30 min por
-              teleconsulta).
-            </p>
-            <p>
-              A pré-consulta leva cerca de <strong>4 minutos</strong> e permite que você organize
-              seus pontos principais com calma. Assim, o Dr. Guilherme já entra na chamada
-              conhecendo suas dúvidas e sintomas recentes.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4 text-xs text-[#0b6a5b] flex items-start gap-3">
-            <ShieldCheck className="size-5 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <strong className="block text-[#17372f]">Segurança e Governança LGPD:</strong>
-              <p className="text-[#3b534b]">
-                Por padrão, qualquer áudio de voz gravado é{' '}
-                <strong>descartado imediatamente após a transcrição</strong>. Você sempre revisa e
-                aprova o texto antes de enviar.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex justify-end pt-2">
-            <button
-              type="button"
-              onClick={handleStartConsentFlow}
-              className="min-h-[48px] rounded-2xl bg-[#0b7b68] px-7 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#086555] transition-all flex items-center gap-2 active:scale-98"
-            >
-              <span>Avançar para Consentimento (LGPD)</span>
-              <ArrowRight className="size-4" />
-            </button>
-          </div>
-        </article>
-      )}
-
-      {/* STEP 3: ESCOLHER TEXTO OU VOZ SIMULADA */}
-      {step === 'step3_choose_mode' && (
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-6 animate-fade-in">
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#0b7b68]">
-              Formato de Resposta
-            </span>
-            <h2 className="font-serif text-2xl font-bold text-[#17372f] mt-1">
-              Como você prefere relatar suas informações?
-            </h2>
-            <p className="text-xs text-[#60766f] mt-1">
-              Ambos os formatos geram o mesmo resumo estruturado e são revisados por você antes do
-              envio.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => handleSelectMode('voice')}
-              className="flex flex-col items-start rounded-3xl border-2 border-[#dfe8e3] p-5 text-left transition-all hover:border-[#0b7b68] hover:bg-[#edf7f4] group shadow-2xs cursor-pointer"
-            >
-              <div className="grid size-12 place-items-center rounded-2xl bg-[#17372f] text-white group-hover:scale-105 transition-transform mb-3">
-                <Mic className="size-6 text-[#9fe0ce]" />
-              </div>
-              <h3 className="font-serif text-lg font-bold text-[#17372f]">Voz Simulada</h3>
-              <p className="text-xs text-[#526b63] mt-1 leading-relaxed">
-                Fale naturalmente. O sistema transcreve suas respostas e descarta o áudio por padrão
-                logo em seguida.
-              </p>
-              <span className="mt-4 text-xs font-bold text-[#0b7b68]">
-                Recomendado (Prático) &rarr;
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleSelectMode('text')}
-              className="flex flex-col items-start rounded-3xl border-2 border-[#dfe8e3] p-5 text-left transition-all hover:border-[#0b7b68] hover:bg-[#edf7f4] group shadow-2xs cursor-pointer"
-            >
-              <div className="grid size-12 place-items-center rounded-2xl bg-[#e8f4f0] text-[#0b7b68] group-hover:scale-105 transition-transform mb-3">
-                <FileText className="size-6" />
-              </div>
-              <h3 className="font-serif text-lg font-bold text-[#17372f]">Digitar por Texto</h3>
-              <p className="text-xs text-[#526b63] mt-1 leading-relaxed">
-                Prefere silêncio? Digite suas respostas em campos guiados no seu próprio ritmo.
-              </p>
-              <span className="mt-4 text-xs font-bold text-[#0b7b68]">
-                Formulário Guiado &rarr;
-              </span>
-            </button>
-          </div>
-        </article>
-      )}
-
-      {/* STEP 4: PERGUNTAS CONVERSACIONAIS */}
-      {step === 'step4_questions' && (
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-6 animate-fade-in">
-          <div className="flex items-center justify-between border-b border-[#edf2ef] pb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-              Pergunta {currentQuestionIndex + 1} de {questions.length}
-            </span>
-            <StatusBadge tone="green">
-              {mode === 'voice' ? 'Modo Voz Ativo' : 'Modo Texto Ativo'}
-            </StatusBadge>
-          </div>
-
-          <div className="space-y-1.5">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#17372f] leading-snug">
-              {questions[currentQuestionIndex]?.q}
-            </h2>
-            <p className="text-xs text-[#60766f]">{questions[currentQuestionIndex]?.hint}</p>
-          </div>
-
-          {mode === 'voice' ? (
-            <div className="flex flex-col items-center justify-center rounded-3xl bg-[#f8faf9] border border-[#dfe8e3] p-8 text-center space-y-4">
-              <button
-                type="button"
-                onClick={handleSimulateVoiceInput}
-                disabled={isRecording}
-                className={`grid size-22 place-items-center rounded-full shadow-lg transition-all cursor-pointer ${
-                  isRecording
-                    ? 'bg-[#d95d52] text-white animate-pulse'
-                    : 'bg-[#0b7b68] text-white hover:scale-105 active:scale-95'
-                }`}
-              >
-                <Mic className="size-9" />
-              </button>
-              <div>
-                <p className="text-xs font-bold text-[#17372f]">
-                  {isRecording
-                    ? 'Gravando e gerando transcrição temporária...'
-                    : 'Toque no microfone para falar seu relato'}
-                </p>
-                <p className="text-[11px] text-[#60766f] mt-1">
-                  (Simulação com áudio demonstrativo)
+      {/* Main Wizard Form Container */}
+      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 sm:p-8 shadow-sm space-y-6 backdrop-blur-md"
+        >
+          {/* STEP 1 */}
+          {step === 1 && (
+            <div className="space-y-4 animate-fade-in">
+              <div className="space-y-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                  Passo 1
+                </span>
+                <h3 className="font-serif text-xl font-bold text-white">
+                  Qual é o seu objetivo principal para esta consulta?
+                </h3>
+                <p className="text-xs text-[#ADADAD]">
+                  O que você mais gostaria de alinhar ou resolver durante os 45 minutos com o Dr.
+                  Guilherme?
                 </p>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
+
               <textarea
                 rows={4}
-                defaultValue={questions[currentQuestionIndex]?.sampleReply}
-                className="w-full rounded-2xl border border-[#dfe8e3] p-4 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+                value={objective}
+                onChange={(e) => setObjective(e.target.value)}
+                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4 text-xs sm:text-sm text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                placeholder="Ex.: Gostaria de avaliar a perda de peso deste primeiro mês..."
               />
-              <div className="flex justify-end">
+
+              <div className="rounded-xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-3 text-xs text-[#E8C391]">
+                💡 <strong className="text-white">Dica:</strong> Seja específica. Isso orienta o
+                foco inicial da teleconsulta.
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div className="space-y-4 animate-fade-in">
+              <div className="space-y-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                  Passo 2
+                </span>
+                <h3 className="font-serif text-xl font-bold text-white">
+                  Quais são suas principais dúvidas para o médico?
+                </h3>
+                <p className="text-xs text-[#ADADAD]">
+                  Perguntas sobre suplementação, horário de refeições, exames ou sintomas pontuais.
+                </p>
+              </div>
+
+              <textarea
+                rows={4}
+                value={mainQuestions}
+                onChange={(e) => setMainQuestions(e.target.value)}
+                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4 text-xs sm:text-sm text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                placeholder="Ex.: Devo mudar o horário do magnésio? Posso tomar café após o almoço?"
+              />
+            </div>
+          )}
+
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div className="space-y-4 animate-fade-in">
+              <div className="space-y-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                  Passo 3
+                </span>
+                <h3 className="font-serif text-xl font-bold text-white">
+                  Quais mudanças você conseguiu implementar na rotina?
+                </h3>
+                <p className="text-xs text-[#ADADAD]">
+                  Conte o que foi fácil e o que ainda está difícil de sustentar no dia a dia.
+                </p>
+              </div>
+
+              <textarea
+                rows={4}
+                value={routineChanges}
+                onChange={(e) => setRoutineChanges(e.target.value)}
+                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4 text-xs sm:text-sm text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                placeholder="Ex.: Aumentei o consumo de água, jantei mais cedo, mas ainda sinto sono durante a tarde..."
+              />
+            </div>
+          )}
+
+          {/* STEP 4 */}
+          {step === 4 && (
+            <div className="space-y-5 animate-fade-in">
+              <div className="space-y-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                  Passo 4 · Revisão Final
+                </span>
+                <h3 className="font-serif text-xl font-bold text-white">
+                  Sintomas observados e conferência
+                </h3>
+                <p className="text-xs text-[#ADADAD]">
+                  Revise os pontos antes do envio definitivo para o prontuário.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-white mb-1">
+                  Sintomas ou sensações notadas:
+                </label>
+                <textarea
+                  rows={3}
+                  value={observedSymptoms}
+                  onChange={(e) => setObservedSymptoms(e.target.value)}
+                  className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-3 text-xs sm:text-sm text-white focus:border-[#D6B270] focus:outline-none"
+                />
+              </div>
+
+              {/* Review summary cards */}
+              <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-3 text-xs">
+                <div className="border-b border-[#333333] pb-2">
+                  <strong className="text-[#D6B270]">Objetivo:</strong>
+                  <p className="text-white mt-0.5">{objective}</p>
+                </div>
+                <div className="border-b border-[#333333] pb-2">
+                  <strong className="text-[#D6B270]">Dúvidas:</strong>
+                  <p className="text-white mt-0.5">{mainQuestions}</p>
+                </div>
+                <div>
+                  <strong className="text-[#D6B270]">Mudanças de Rotina:</strong>
+                  <p className="text-white mt-0.5">{routineChanges}</p>
+                </div>
+              </div>
+
+              {/* Governance & LGPD confirmation */}
+              <div className="rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-4 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-white">
+                  <ShieldCheck className="size-4 text-[#D6B270]" />
+                  <span>Termo de Consentimento e Governança Clínica</span>
+                </div>
+                <p className="text-xs text-[#E8C391] leading-relaxed">
+                  Ao enviar, suas respostas serão organizadas em uma síntese para o Dr. Guilherme.
+                  Nenhum diagnóstico automatizado é gerado.
+                </p>
                 <button
                   type="button"
-                  onClick={handleNextTextQuestion}
-                  className="min-h-[44px] rounded-xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#086555]"
+                  onClick={() => setIsConsentOpen(true)}
+                  className="text-xs text-[#D6B270] font-bold underline underline-offset-4 cursor-pointer"
                 >
-                  Próxima Pergunta &rarr;
+                  Ver termos detalhados de proteção de dados (LGPD)
                 </button>
               </div>
             </div>
           )}
-        </article>
-      )}
 
-      {/* STEP 5: VISUALIZAR TRANSCRIÇÃO */}
-      {step === 'step5_transcription_view' && (
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-6 animate-fade-in">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#0b7b68]">
-                Etapa 5 · Visualização da Transcrição
-              </span>
-              <h2 className="font-serif text-2xl font-bold text-[#17372f] mt-0.5">
-                Veja como seu relato foi transcrito
-              </h2>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-[#5e776e]">
-              <Trash2 className="size-3.5 text-[#0b7b68]" />
-              <span>Áudio original descartado</span>
-            </div>
-          </div>
-
-          <div className="rounded-2xl bg-[#f8faf9] border border-[#dfe8e3] p-5 text-xs sm:text-sm text-[#2c473e] leading-relaxed whitespace-pre-line">
-            {patientTranscript}
-          </div>
-
-          <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4 text-xs text-[#0b6a5b]">
-            <strong>Tudo certo?</strong> Na próxima etapa você pode alterar ou acrescentar qualquer
-            detalhe caso queira corrigir suas palavras.
-          </div>
-
-          <div className="flex justify-between pt-2">
-            <button
-              type="button"
-              onClick={() => setStep('step4_questions')}
-              className="min-h-[44px] rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
-            >
-              Gravar Novamente
-            </button>
-            <div className="flex gap-2">
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between pt-4 border-t border-[#333333]">
+            {step > 1 ? (
               <button
                 type="button"
-                onClick={() => setStep('step6_edit_transcript')}
-                className="min-h-[44px] rounded-xl border border-[#0b7b68] px-4 text-xs font-bold text-[#0b7b68] hover:bg-[#edf7f4]"
+                onClick={handleBack}
+                className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#333333] px-4 text-xs font-bold text-[#ADADAD] hover:bg-white/5 hover:text-white transition-all cursor-pointer"
               >
-                Corrigir Texto
+                <ArrowLeft className="size-4" />
+                <span>Voltar</span>
               </button>
+            ) : (
+              <div />
+            )}
+
+            {step < 4 ? (
               <button
                 type="button"
-                onClick={() => setStep('step7_review_summary')}
-                className="min-h-[44px] rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#086555]"
+                onClick={handleNext}
+                className="flex min-h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm transition-all cursor-pointer"
               >
-                Avançar para Resumo &rarr;
+                <span>Avançar</span>
+                <ArrowRight className="size-4" />
               </button>
-            </div>
+            ) : (
+              <button
+                type="submit"
+                className="flex min-h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-7 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all cursor-pointer"
+              >
+                <CheckCircle2 className="size-4" />
+                <span>Enviar Pré-Consulta ao Médico</span>
+              </button>
+            )}
           </div>
-        </article>
-      )}
+        </form>
 
-      {/* STEP 6: CORRIGIR O PRÓPRIO RELATO */}
-      {step === 'step6_edit_transcript' && (
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-6 animate-fade-in">
-          <div className="border-b border-[#edf2ef] pb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#0b7b68]">
-              Etapa 6 · Edição do Paciente
-            </span>
-            <h2 className="font-serif text-2xl font-bold text-[#17372f] mt-0.5">
-              Edite suas palavras livremente
-            </h2>
-            <p className="text-xs text-[#60766f]">
-              O texto final que o médico receberá será exatamente o que você salvar aqui.
+        {/* Sidebar Info */}
+        <aside className="space-y-4">
+          <div className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-3 backdrop-blur-md">
+            <div className="flex items-center gap-2 font-bold text-white">
+              <Sparkles className="size-4 text-[#D6B270]" />
+              <h4 className="font-serif text-base">Por que preencher a pré-consulta?</h4>
+            </div>
+            <ul className="space-y-2 text-xs text-[#CCCCCC] leading-relaxed list-disc pl-4">
+              <li>Economiza até 15 minutos na consulta para discussões clínicas mais profundas.</li>
+              <li>Garante que nenhuma dúvida importante seja esquecida.</li>
+              <li>Permite ao médico revisar exames e evolução antes de abrir o vídeo.</li>
+            </ul>
+          </div>
+
+          <div className="rounded-3xl border border-[#333333] bg-[#141414] p-5 shadow-sm space-y-2 text-xs text-[#ADADAD]">
+            <div className="flex items-center gap-1.5 font-bold text-white">
+              <Lock className="size-3.5 text-[#D6B270]" />
+              <span>Privacidade Absoluta</span>
+            </div>
+            <p className="leading-relaxed">
+              Os dados fornecidos são acessados unicamente pelo Dr. Guilherme Martins e pela equipe
+              clínica do Instituto Vivans.
             </p>
           </div>
+        </aside>
+      </div>
 
-          <div className="space-y-4 text-xs">
-            <div>
-              <label className="block font-bold text-[#17372f] mb-1">
-                Objetivo principal para a consulta:
-              </label>
-              <input
-                type="text"
-                value={patientGoal}
-                onChange={(e) => setPatientGoal(e.target.value)}
-                className="w-full min-h-[44px] rounded-xl border border-[#dfe8e3] px-3.5 py-2 text-xs font-semibold text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-[#17372f] mb-1">
-                Relato completo transcrito:
-              </label>
-              <textarea
-                rows={6}
-                value={patientTranscript}
-                onChange={(e) => setPatientTranscript(e.target.value)}
-                className="w-full rounded-2xl border border-[#0b7b68] p-4 text-xs leading-relaxed text-[#17372f] focus:outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-between pt-2">
-            <button
-              type="button"
-              onClick={() => setStep('step5_transcription_view')}
-              className="min-h-[44px] rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
-            >
-              Cancelar Edição
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep('step7_review_summary')}
-              className="min-h-[44px] rounded-xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#086555]"
-            >
-              Salvar e Gerar Síntese &rarr;
-            </button>
-          </div>
-        </article>
-      )}
-
-      {/* STEP 7: REVISAR OBJETIVO / RESPOSTAS / RESUMO */}
-      {step === 'step7_review_summary' && (
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-6 animate-fade-in">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
-              </div>
-              <h2 className="font-serif text-2xl font-bold text-[#17372f]">
-                Revisão da Síntese de Pré-Consulta
-              </h2>
-            </div>
-            <StatusBadge tone="blue">Pronto para Enviar</StatusBadge>
-          </div>
-
-          <div className="space-y-4 text-xs leading-relaxed text-[#2c473e]">
-            <div className="rounded-2xl bg-[#f5f8f6] p-4.5 border border-[#edf2ef] space-y-2">
-              <p className="font-bold text-[#17372f] uppercase tracking-wider text-[11px]">
-                Objetivo Declarado por Você:
-              </p>
-              <p className="font-semibold text-[#0b7b68]">“{patientGoal}”</p>
-            </div>
-
-            <div className="rounded-2xl bg-[#f5f8f6] p-4.5 border border-[#edf2ef] space-y-2">
-              <p className="font-bold text-[#17372f] uppercase tracking-wider text-[11px]">
-                Síntese Estruturada do Copiloto para o Dr. Guilherme:
-              </p>
-              <p className="whitespace-pre-line text-[#45655c]">{preConsultation.aiSynthesis}</p>
-            </div>
-
-            <div className="rounded-2xl border border-[#dfe8e3] p-4.5 space-y-2">
-              <p className="font-bold text-[#17372f] uppercase tracking-wider text-[11px]">
-                Perguntas Organizadas para a Consulta:
-              </p>
-              <ul className="list-disc pl-5 space-y-1 text-[#526b63]">
-                {preConsultation.suggestedQuestions.map((q, i) => (
-                  <li key={i}>{q}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#edf2ef]">
-            <button
-              type="button"
-              onClick={() => setStep('step6_edit_transcript')}
-              className="min-h-[44px] rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
-            >
-              Corrigir meu relato
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirmReviewAndSend}
-              className="min-h-[48px] rounded-2xl bg-[#0b7b68] px-7 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#086555]"
-            >
-              Enviar ao Dr. Guilherme Martins &rarr;
-            </button>
-          </div>
-        </article>
-      )}
-
-      {/* STEP 8: ENVIANDO AO MÉDICO */}
-      {step === 'step8_sending' && (
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-12 text-center space-y-4 shadow-sm animate-fade-in">
-          <div className="size-12 border-4 border-[#0b7b68] border-t-transparent rounded-full animate-spin mx-auto" />
-          <h2 className="font-serif text-xl font-bold text-[#17372f]">
-            Enviando pré-consulta ao prontuário...
-          </h2>
-          <p className="text-xs text-[#60766f]">
-            Compilando relato, estruturando síntese e descartando áudio original por segurança.
-          </p>
-        </article>
-      )}
-
-      {/* STEP 9: CONFIRMAÇÃO + HISTÓRICO */}
-      {step === 'step9_confirmed' && (
-        <article className="rounded-3xl border border-[#9fc9bd] bg-white p-8 text-center space-y-6 shadow-md animate-fade-in">
-          <div className="grid size-16 place-items-center rounded-full bg-[#e8f4f0] text-[#0b7b68] mx-auto">
-            <CheckCircle2 className="size-9" />
-          </div>
-
-          <div>
-            <h2 className="font-serif text-2xl font-bold text-[#17372f]">
-              Pré-Consulta Enviada com Sucesso!
-            </h2>
-            <p className="text-xs sm:text-sm text-[#526b63] max-w-md mx-auto mt-1 leading-relaxed">
-              O Dr. Guilherme Martins já recebeu a síntese do seu sono e saciedade para a consulta
-              das 10:30.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-[#dfe8e3] bg-[#f8faf9] p-4 text-xs text-[#0b6a5b] max-w-md mx-auto flex items-center justify-center gap-2">
-            <Check className="size-4 text-[#0b7b68]" />
-            <span>Áudio descartado · Relato salvo no prontuário protegido</span>
-          </div>
-
-          <div className="pt-2 flex flex-wrap justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/paciente')}
-              className="min-h-[44px] rounded-xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#086555]"
-            >
-              Voltar ao Início
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/medico/consulta/apt-marina')}
-              className="min-h-[44px] rounded-xl border border-[#dfe8e3] px-6 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5]"
-            >
-              Entrar na Sala Virtual
-            </button>
-          </div>
-        </article>
-      )}
-
-      {/* LGPD Consent Modal */}
       <ConsentModal
-        isOpen={consentModalOpen}
-        onClose={() => setConsentModalOpen(false)}
-        onAccept={handleConsentAccepted}
+        isOpen={isConsentOpen}
+        onClose={() => setIsConsentOpen(false)}
+        onAccept={() => {
+          setHasConsented(true)
+          setIsConsentOpen(false)
+        }}
       />
 
       <UrgentCareWarning />

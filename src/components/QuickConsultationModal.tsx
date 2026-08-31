@@ -17,11 +17,7 @@ import {
   Stethoscope,
   FileText,
   PenLine,
-  Clock,
   CheckCircle2,
-  Bookmark,
-  Calendar,
-  Layers,
 } from 'lucide-react'
 
 export type QuickActionType = 'video' | 'history' | 'note'
@@ -207,27 +203,27 @@ export function QuickConsultationModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="quick-consultation-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-4 animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-xl overflow-hidden rounded-[28px] border border-[#d6e2dc] bg-white shadow-2xl animate-fade-in-up"
+        className="relative w-full max-w-xl overflow-hidden rounded-[28px] border border-[#333333] bg-[#1A1A1A] shadow-2xl animate-fade-in-up text-white"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header section with high-end editorial styling */}
-        <div className="relative bg-gradient-to-br from-[#111827] via-[#172338] to-[#1f2937] p-5 sm:p-6 text-white">
-          <div className="absolute -right-10 -top-10 size-48 rounded-full bg-[#b59e7f]/20 blur-3xl pointer-events-none" />
+        {/* Header section with high-end dark/gold editorial styling */}
+        <div className="relative bg-gradient-to-br from-[#141414] via-[#1A1A1A] to-[#222222] p-5 sm:p-6 border-b border-[#333333]">
+          <div className="absolute -right-10 -top-10 size-48 rounded-full bg-[#D6B270]/15 blur-3xl pointer-events-none" />
 
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#b59e7f]/20 text-[#d4af37] border border-[#b59e7f]/40 shadow-inner">
-                {activeAction === 'video' && <Video className="size-5 text-[#f1dec6]" />}
-                {activeAction === 'history' && <FileText className="size-5 text-[#f1dec6]" />}
-                {activeAction === 'note' && <PenLine className="size-5 text-[#f1dec6]" />}
+              <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#D6B270]/20 text-[#D6B270] border border-[#D6B270]/40 shadow-inner">
+                {activeAction === 'video' && <Video className="size-5 text-[#E8C391]" />}
+                {activeAction === 'history' && <FileText className="size-5 text-[#E8C391]" />}
+                {activeAction === 'note' && <PenLine className="size-5 text-[#E8C391]" />}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b59e7f]">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#D6B270]">
                     Dr. Guilherme Martins · CRM/SP 184.920
                   </span>
                 </div>
@@ -252,7 +248,7 @@ export function QuickConsultationModal({
             </button>
           </div>
 
-          <p className="mt-2.5 text-xs text-[#d1d5db] font-light leading-relaxed">
+          <p className="mt-2.5 text-xs text-[#ADADAD] font-light leading-relaxed">
             {activeAction === 'video' &&
               'Abra uma sessão clínica integrada ao Google Meet com anotações automáticas e suporte do Copiloto Vivans.'}
             {activeAction === 'history' &&
@@ -262,7 +258,7 @@ export function QuickConsultationModal({
           </p>
 
           {/* Action Selector Pills (Video, History, Quick Note) */}
-          <div className="mt-4 grid grid-cols-3 gap-1.5 rounded-2xl bg-black/40 p-1.5 border border-white/10">
+          <div className="mt-4 grid grid-cols-3 gap-1.5 rounded-2xl bg-[#0F0F0F] p-1.5 border border-[#333333]">
             <button
               type="button"
               onClick={() => {
@@ -273,8 +269,8 @@ export function QuickConsultationModal({
               className={cn(
                 'flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer',
                 activeAction === 'video'
-                  ? 'bg-[#b59e7f] text-[#111827] shadow-sm'
-                  : 'text-[#9ca3af] hover:text-white',
+                  ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
+                  : 'text-[#ADADAD] hover:text-white',
               )}
             >
               <Video className="size-3.5" />
@@ -292,8 +288,8 @@ export function QuickConsultationModal({
               className={cn(
                 'flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer',
                 activeAction === 'history'
-                  ? 'bg-[#b59e7f] text-[#111827] shadow-sm'
-                  : 'text-[#9ca3af] hover:text-white',
+                  ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
+                  : 'text-[#ADADAD] hover:text-white',
               )}
             >
               <FileText className="size-3.5" />
@@ -310,8 +306,8 @@ export function QuickConsultationModal({
               className={cn(
                 'flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer',
                 activeAction === 'note'
-                  ? 'bg-[#b59e7f] text-[#111827] shadow-sm'
-                  : 'text-[#9ca3af] hover:text-white',
+                  ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
+                  : 'text-[#ADADAD] hover:text-white',
               )}
             >
               <PenLine className="size-3.5" />
@@ -321,7 +317,7 @@ export function QuickConsultationModal({
           </div>
 
           {/* Mode Tabs: Paciente Existente vs Novo Paciente */}
-          <div className="mt-3 grid grid-cols-2 gap-2 rounded-2xl bg-black/20 p-1 border border-white/5">
+          <div className="mt-3 grid grid-cols-2 gap-2 rounded-2xl bg-[#0F0F0F]/60 p-1 border border-[#333333]">
             <button
               type="button"
               onClick={() => {
@@ -331,8 +327,8 @@ export function QuickConsultationModal({
               className={cn(
                 'flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer',
                 mode === 'existing'
-                  ? 'bg-white text-[#111827] shadow-[0_2px_10px_rgba(0,0,0,0.15)]'
-                  : 'text-[#9ca3af] hover:text-white',
+                  ? 'bg-white/15 text-white shadow-sm border border-white/10'
+                  : 'text-[#ADADAD] hover:text-white',
               )}
             >
               <Users className="size-3.5" />
@@ -348,8 +344,8 @@ export function QuickConsultationModal({
               className={cn(
                 'flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer',
                 mode === 'new'
-                  ? 'bg-white text-[#111827] shadow-[0_2px_10px_rgba(0,0,0,0.15)]'
-                  : 'text-[#9ca3af] hover:text-white',
+                  ? 'bg-white/15 text-white shadow-sm border border-white/10'
+                  : 'text-[#ADADAD] hover:text-white',
               )}
             >
               <UserPlus className="size-3.5" />
@@ -359,18 +355,18 @@ export function QuickConsultationModal({
         </div>
 
         {/* Modal Content Body */}
-        <div className="p-5 sm:p-6 space-y-4 max-h-[calc(85vh-240px)] overflow-y-auto">
+        <div className="p-5 sm:p-6 space-y-4 max-h-[calc(85vh-240px)] overflow-y-auto bg-[#1A1A1A]">
           {/* Note saved success feedback */}
           {noteSavedSuccess && (
-            <div className="rounded-2xl border border-[#bfe4d8] bg-[#ebf6f2] p-4 text-xs font-bold text-[#075f50] flex items-center gap-3 animate-fade-in">
-              <div className="grid size-8 shrink-0 place-items-center rounded-xl bg-[#0b7b68] text-white">
+            <div className="rounded-2xl border border-[#D6B270]/40 bg-[#D6B270]/15 p-4 text-xs font-bold text-[#E8C391] flex items-center gap-3 animate-fade-in backdrop-blur-sm">
+              <div className="grid size-8 shrink-0 place-items-center rounded-xl bg-[#D6B270] text-[#0F0F0F]">
                 <Check className="size-4 stroke-[3]" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold text-[#075f50]">Anotação gravada com sucesso!</p>
-                <p className="font-normal text-[11px] text-[#0b6a5b]">
+                <p className="text-sm font-bold text-white">Anotação gravada com sucesso!</p>
+                <p className="font-normal text-[11px] text-[#E8C391]">
                   O registro foi vinculado ao histórico de{' '}
-                  <strong>{selectedPatientData?.name || newName}</strong>.
+                  <strong className="text-white">{selectedPatientData?.name || newName}</strong>.
                 </p>
               </div>
             </div>
@@ -382,33 +378,33 @@ export function QuickConsultationModal({
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="patient-search-input"
-                  className="font-serif text-sm font-bold text-[#112822]"
+                  className="font-serif text-sm font-bold text-white"
                 >
                   {activeAction === 'video' && 'Para quem é esta teleconsulta?'}
                   {activeAction === 'history' && 'Qual prontuário deseja consultar?'}
                   {activeAction === 'note' && 'Para qual paciente é a anotação?'}
                 </label>
-                <span className="text-[11px] text-[#556d66]">
+                <span className="text-[11px] text-[#ADADAD]">
                   {filteredPatients.length} de {patients.length} pacientes
                 </span>
               </div>
 
               {/* Search input */}
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#8ba29a]" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#888888]" />
                 <input
                   id="patient-search-input"
                   type="text"
                   placeholder="Buscar por nome, foco clínico ou e-mail..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-2xl border border-[#dfe8e3] bg-[#f9faf9] pl-10 pr-16 py-2.5 text-xs text-[#17372f] placeholder-[#8ba29a] focus:border-[#0b7b68] focus:bg-white focus:outline-none transition-all"
+                  className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] pl-10 pr-16 py-2.5 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none transition-all"
                 />
                 {searchTerm && (
                   <button
                     type="button"
                     onClick={() => setSearchTerm('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8ba29a] hover:text-[#17372f] cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#ADADAD] hover:text-white cursor-pointer"
                   >
                     Limpar
                   </button>
@@ -422,9 +418,9 @@ export function QuickConsultationModal({
                 className="space-y-2 max-h-52 overflow-y-auto pr-1"
               >
                 {filteredPatients.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-[#dfe8e3] p-8 text-center text-xs text-[#60766f]">
-                    <p className="font-semibold text-[#17372f]">Nenhum paciente encontrado.</p>
-                    <p className="mt-1 text-[11px] text-[#8ba29a]">
+                  <div className="rounded-2xl border border-dashed border-[#333333] p-8 text-center text-xs text-[#ADADAD]">
+                    <p className="font-semibold text-white">Nenhum paciente encontrado.</p>
+                    <p className="mt-1 text-[11px] text-[#888888]">
                       Tente outro termo ou cadastre como "Novo Paciente".
                     </p>
                   </div>
@@ -450,8 +446,8 @@ export function QuickConsultationModal({
                         className={cn(
                           'flex items-center justify-between gap-3 p-3 rounded-2xl border cursor-pointer transition-all',
                           isSelected
-                            ? 'border-[#0b7b68] bg-[#f0f8f5] shadow-xs'
-                            : 'border-[#dfe8e3] bg-white hover:border-[#bfe4d8] hover:bg-[#fafcfb]',
+                            ? 'border-[#D6B270] bg-[#D6B270]/15 shadow-xs'
+                            : 'border-[#333333] bg-[#141414] hover:border-[#D6B270]/40 hover:bg-[#1C1C1C]',
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -459,44 +455,44 @@ export function QuickConsultationModal({
                             className={cn(
                               'grid size-10 shrink-0 place-items-center rounded-xl text-xs font-bold transition-colors',
                               isSelected
-                                ? 'bg-[#0b7b68] text-white'
-                                : 'bg-[#e8f4f0] text-[#0b6a5b]',
+                                ? 'bg-[#D6B270] text-[#0F0F0F]'
+                                : 'bg-white/10 text-[#E8C391]',
                             )}
                           >
                             {p.initials}
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <h3 className="truncate font-bold text-xs sm:text-sm text-[#17372f]">
+                              <h3 className="truncate font-bold text-xs sm:text-sm text-white">
                                 {p.name}
                               </h3>
                               {p.isOnlineInWaitingRoom && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-[#ebf6f2] px-2 py-0.5 text-[10px] font-bold text-[#075f50] border border-[#bfe4d8]">
-                                  <span className="size-1.5 rounded-full bg-[#0b7b68] animate-pulse" />
+                                <span className="inline-flex items-center gap-1 rounded-full bg-[#D6B270]/20 px-2 py-0.5 text-[10px] font-bold text-[#E8C391] border border-[#D6B270]/30">
+                                  <span className="size-1.5 rounded-full bg-[#D6B270] animate-pulse" />
                                   Online na sala
                                 </span>
                               )}
                               {p.tone === 'amber' && !p.isOnlineInWaitingRoom && (
                                 <span
-                                  className="size-2 rounded-full bg-[#e49d45]"
+                                  className="size-2 rounded-full bg-[#F59E0B]"
                                   title="Atenção"
                                 />
                               )}
                             </div>
-                            <p className="truncate text-[11px] text-[#60766f]">{p.focus}</p>
+                            <p className="truncate text-[11px] text-[#ADADAD]">{p.focus}</p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="hidden sm:inline text-[10px] text-[#8ba29a]">
+                          <span className="hidden sm:inline text-[10px] text-[#888888]">
                             {p.cycle}
                           </span>
                           <div
                             className={cn(
                               'grid size-6 place-items-center rounded-full border transition-all',
                               isSelected
-                                ? 'border-[#0b7b68] bg-[#0b7b68] text-white'
-                                : 'border-[#dfe8e3] bg-white text-transparent',
+                                ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F]'
+                                : 'border-[#333333] bg-transparent text-transparent',
                             )}
                           >
                             <Check className="size-3.5 stroke-[3]" />
@@ -510,20 +506,20 @@ export function QuickConsultationModal({
 
               {/* Selection summary */}
               {selectedPatientData && (
-                <div className="rounded-2xl border border-[#bfe4d8] bg-[#ebf6f2] p-3 text-xs text-[#075f50] flex items-center justify-between">
+                <div className="rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-3 text-xs text-[#E8C391] flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Stethoscope className="size-4 shrink-0 text-[#0b7b68]" />
+                    <Stethoscope className="size-4 shrink-0 text-[#D6B270]" />
                     <span>
-                      Paciente: <strong>{selectedPatientData.name}</strong>
+                      Paciente: <strong className="text-white">{selectedPatientData.name}</strong>
                     </span>
                   </div>
                   {selectedPatientData.isOnlineInWaitingRoom ? (
-                    <span className="inline-flex items-center gap-1 font-bold text-[#075f50]">
-                      <span className="size-1.5 rounded-full bg-[#0b7b68] animate-ping" />
+                    <span className="inline-flex items-center gap-1 font-bold text-[#E8C391]">
+                      <span className="size-1.5 rounded-full bg-[#D6B270] animate-ping" />
                       Aguardando atendimento ({selectedPatientData.waitingSince})
                     </span>
                   ) : (
-                    <span className="text-[11px] font-semibold text-[#0b7b68]">
+                    <span className="text-[11px] font-semibold text-[#E8C391]">
                       {selectedPatientData.nextConsultation}
                     </span>
                   )}
@@ -533,11 +529,9 @@ export function QuickConsultationModal({
           ) : (
             /* Mode 2: New Patient Info */
             <div className="space-y-3.5">
-              <div className="border-b border-[#edf2ef] pb-2">
-                <h3 className="font-serif text-sm font-bold text-[#112822]">
-                  Dados do Novo Paciente
-                </h3>
-                <p className="text-[11px] text-[#60766f]">
+              <div className="border-b border-[#333333] pb-2">
+                <h3 className="font-serif text-sm font-bold text-white">Dados do Novo Paciente</h3>
+                <p className="text-[11px] text-[#ADADAD]">
                   Cadastre as informações básicas para executar a ação imediatamente.
                 </p>
               </div>
@@ -546,12 +540,12 @@ export function QuickConsultationModal({
                 <div>
                   <label
                     htmlFor="new-patient-name"
-                    className="block text-xs font-bold text-[#17372f] mb-1"
+                    className="block text-xs font-bold text-white mb-1"
                   >
-                    Nome Completo <span className="text-[#e67e76]">*</span>
+                    Nome Completo <span className="text-[#EF4444]">*</span>
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#8ba29a]" />
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#888888]" />
                     <input
                       id="new-patient-name"
                       type="text"
@@ -561,7 +555,7 @@ export function QuickConsultationModal({
                         setNewName(e.target.value)
                         setFormError(null)
                       }}
-                      className="w-full rounded-2xl border border-[#dfe8e3] bg-white pl-10 pr-4 py-2.5 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none transition-all shadow-xs"
+                      className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] pl-10 pr-4 py-2.5 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none transition-all shadow-xs"
                       autoFocus
                     />
                   </div>
@@ -570,19 +564,19 @@ export function QuickConsultationModal({
                 <div>
                   <label
                     htmlFor="new-patient-email"
-                    className="block text-xs font-bold text-[#17372f] mb-1"
+                    className="block text-xs font-bold text-white mb-1"
                   >
                     E-mail do Paciente
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#8ba29a]" />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#888888]" />
                     <input
                       id="new-patient-email"
                       type="email"
                       placeholder="Ex: paciente@email.com"
                       value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)}
-                      className="w-full rounded-2xl border border-[#dfe8e3] bg-white pl-10 pr-4 py-2.5 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none transition-all shadow-xs"
+                      className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] pl-10 pr-4 py-2.5 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none transition-all shadow-xs"
                     />
                   </div>
                 </div>
@@ -592,13 +586,13 @@ export function QuickConsultationModal({
 
           {/* Quick Note Input Field (Only in 'note' action) */}
           {activeAction === 'note' && (
-            <div className="space-y-3 pt-2 border-t border-[#edf2ef]">
+            <div className="space-y-3 pt-2 border-t border-[#333333]">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="quick-note-textarea"
-                  className="font-serif text-sm font-bold text-[#112822] flex items-center gap-1.5"
+                  className="font-serif text-sm font-bold text-white flex items-center gap-1.5"
                 >
-                  <PenLine className="size-4 text-[#0b7b68]" />
+                  <PenLine className="size-4 text-[#D6B270]" />
                   <span>Anotação Clínica / Observação</span>
                 </label>
                 <div className="flex items-center gap-1">
@@ -616,8 +610,8 @@ export function QuickConsultationModal({
                       className={cn(
                         'rounded-lg px-2 py-0.5 text-[10px] font-bold transition-all cursor-pointer',
                         noteCategory === cat.id
-                          ? 'bg-[#17372f] text-white'
-                          : 'bg-[#f4f7f5] text-[#60766f] hover:text-[#17372f]',
+                          ? 'bg-[#D6B270] text-[#0F0F0F]'
+                          : 'bg-white/5 text-[#ADADAD] hover:text-white',
                       )}
                     >
                       {cat.label}
@@ -635,10 +629,10 @@ export function QuickConsultationModal({
                   setNoteContent(e.target.value)
                   setFormError(null)
                 }}
-                className="w-full rounded-2xl border border-[#dfe8e3] bg-white p-3 text-xs leading-relaxed text-[#17372f] placeholder-[#8ba29a] focus:border-[#0b7b68] focus:outline-none transition-all shadow-xs"
+                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-3 text-xs leading-relaxed text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none transition-all shadow-xs"
               />
 
-              <p className="text-[11px] text-[#60766f]">
+              <p className="text-[11px] text-[#ADADAD]">
                 Esta nota será gravada diretamente na linha do tempo e no prontuário longitudinal do
                 paciente com data/hora e identificação do médico.
               </p>
@@ -647,16 +641,16 @@ export function QuickConsultationModal({
 
           {/* Validation error message */}
           {formError && (
-            <div className="rounded-xl border border-[#fecdd3] bg-[#fff1f2] p-3 text-xs font-medium text-[#be123c] animate-fade-in">
+            <div className="rounded-xl border border-[#EF4444]/40 bg-[#EF4444]/15 p-3 text-xs font-medium text-[#FCA5A5] animate-fade-in">
               {formError}
             </div>
           )}
         </div>
 
         {/* Modal Action Footer */}
-        <div className="border-t border-[#edf2ef] bg-[#fafcfb] px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-[11px] text-[#60766f]">
-            <ShieldCheck className="size-4 text-[#0b7b68]" />
+        <div className="border-t border-[#333333] bg-[#141414] px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-[11px] text-[#ADADAD]">
+            <ShieldCheck className="size-4 text-[#D6B270]" />
             <span>Ambiente seguro · Criptografia de ponta a ponta</span>
           </div>
 
@@ -664,7 +658,7 @@ export function QuickConsultationModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-initial min-h-11 rounded-2xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5] transition-all cursor-pointer"
+              className="flex-1 sm:flex-initial min-h-11 rounded-2xl border border-[#333333] bg-transparent px-4 text-xs font-bold text-[#ADADAD] hover:bg-white/5 hover:text-white transition-all cursor-pointer"
             >
               Fechar
             </button>
@@ -675,9 +669,9 @@ export function QuickConsultationModal({
                 type="button"
                 disabled={isStarting}
                 onClick={handleStartConsultation}
-                className="flex-1 sm:flex-initial min-h-11 rounded-2xl bg-[#b59e7f] px-6 text-xs font-bold text-[#111827] hover:bg-[#a68f70] shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                className="flex-1 sm:flex-initial min-h-11 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
               >
-                <Video className="size-4 text-[#111827]" />
+                <Video className="size-4 text-[#0F0F0F]" />
                 <span>{isStarting ? 'Iniciando Meet...' : 'Iniciar Teleconsulta'}</span>
                 <ArrowRight className="size-3.5" />
               </button>
@@ -688,9 +682,9 @@ export function QuickConsultationModal({
               <button
                 type="button"
                 onClick={handleViewHistory}
-                className="flex-1 sm:flex-initial min-h-11 rounded-2xl bg-[#17372f] px-6 text-xs font-bold text-white hover:bg-[#0e2721] shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 sm:flex-initial min-h-11 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
               >
-                <FileText className="size-4 text-white" />
+                <FileText className="size-4 text-[#0F0F0F]" />
                 <span>Abrir Prontuário Longitudinal</span>
                 <ArrowRight className="size-3.5" />
               </button>
@@ -702,9 +696,9 @@ export function QuickConsultationModal({
                 type="button"
                 disabled={isSavingNote}
                 onClick={handleSaveQuickNote}
-                className="flex-1 sm:flex-initial min-h-11 rounded-2xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#096656] shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                className="flex-1 sm:flex-initial min-h-11 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
               >
-                <PenLine className="size-4 text-white" />
+                <PenLine className="size-4 text-[#0F0F0F]" />
                 <span>{isSavingNote ? 'Salvando Anotação...' : 'Salvar Anotação Rápida'}</span>
                 <CheckCircle2 className="size-3.5" />
               </button>

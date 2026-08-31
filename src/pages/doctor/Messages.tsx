@@ -67,13 +67,13 @@ export default function DoctorMessages() {
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
             Comunicação da Equipe Médica
           </p>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-[#17372f]">
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-white">
             Mensagens com Pacientes
           </h1>
-          <p className="text-sm text-[#60766f]">
+          <p className="text-sm text-[#ADADAD]">
             Atendimento assíncrono com apoio de rascunhos inteligentes para aprovação médica.
           </p>
         </div>
@@ -82,9 +82,9 @@ export default function DoctorMessages() {
       {/* Main Layout: Patients Threads (Left) vs Active Chat (Right) */}
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         {/* Patient threads list */}
-        <aside className="rounded-3xl border border-[#dfe8e3] bg-white p-4 shadow-sm space-y-3">
-          <div className="border-b border-[#edf2ef] pb-3 px-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+        <aside className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-4 shadow-sm space-y-3 backdrop-blur-md">
+          <div className="border-b border-[#333333] pb-3 px-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
               Conversas por Paciente
             </span>
           </div>
@@ -97,10 +97,10 @@ export default function DoctorMessages() {
                   key={pt.name}
                   type="button"
                   onClick={() => setFilterPatient(pt.name)}
-                  className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all ${
+                  className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#e8f4f0] border border-[#b9d8cf] shadow-sm'
-                      : 'border border-[#edf2ef] hover:bg-[#f8faf9]'
+                      ? 'bg-[#D6B270]/15 border border-[#D6B270]/40 shadow-sm'
+                      : 'border border-[#333333] hover:bg-white/5'
                   }`}
                 >
                   <VivansAvatar
@@ -108,14 +108,14 @@ export default function DoctorMessages() {
                     name={pt.name}
                     initials={pt.initials}
                     size="md"
-                    className="border border-[#b9d8cf] shrink-0"
+                    className="border border-[#333333] shrink-0"
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between mb-0.5">
-                      <strong className="text-xs text-[#17372f] truncate">{pt.name}</strong>
-                      <span className="text-[10px] text-[#698078] shrink-0">{pt.last}</span>
+                      <strong className="text-xs text-white truncate">{pt.name}</strong>
+                      <span className="text-[10px] text-[#888888] shrink-0">{pt.last}</span>
                     </div>
-                    <p className="text-[11px] text-[#45655c] truncate">{pt.tag}</p>
+                    <p className="text-[11px] text-[#ADADAD] truncate">{pt.tag}</p>
                   </div>
                 </button>
               )
@@ -124,9 +124,9 @@ export default function DoctorMessages() {
         </aside>
 
         {/* Active Chat Thread */}
-        <section className="rounded-3xl border border-[#dfe8e3] bg-white shadow-sm overflow-hidden flex flex-col h-[600px]">
+        <section className="rounded-3xl border border-[#333333] bg-[#1A1A1A] shadow-sm overflow-hidden flex flex-col h-[600px] backdrop-blur-md">
           {/* Thread Header */}
-          <div className="border-b border-[#edf2ef] bg-[#f8faf9] px-6 py-3 flex items-center justify-between">
+          <div className="border-b border-[#333333] bg-[#141414] px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <VivansAvatar
                 src={
@@ -140,11 +140,11 @@ export default function DoctorMessages() {
                   .join('')
                   .slice(0, 2)}
                 size="md"
-                className="border border-[#b9d8cf]"
+                className="border border-[#333333]"
               />
               <div>
-                <strong className="text-sm text-[#17372f] block">{filterPatient}</strong>
-                <span className="text-xs text-[#698078]">Em acompanhamento · Dia 29 de 90</span>
+                <strong className="text-sm text-white block">{filterPatient}</strong>
+                <span className="text-xs text-[#ADADAD]">Em acompanhamento · Dia 29 de 90</span>
               </div>
             </div>
 
@@ -152,7 +152,7 @@ export default function DoctorMessages() {
           </div>
 
           {/* Messages list */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#0F0F0F]/50">
             {messages.map((msg) => {
               const isDoctor = msg.sender === 'doctor'
               const isDraft = msg.sender === 'ai_draft'
@@ -161,7 +161,7 @@ export default function DoctorMessages() {
                 return (
                   <div
                     key={msg.id}
-                    className="mx-auto max-w-xl rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4 space-y-3"
+                    className="mx-auto max-w-xl rounded-2xl border border-[#D6B270]/40 bg-[#D6B270]/15 p-4 space-y-3 backdrop-blur-sm"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -170,7 +170,7 @@ export default function DoctorMessages() {
                       <StatusBadge tone="amber">Aguardando Validação</StatusBadge>
                     </div>
 
-                    <p className="text-xs text-[#17372f] italic bg-white p-3 rounded-xl border border-[#b9d8cf]">
+                    <p className="text-xs text-[#E8C391] italic bg-[#0F0F0F] p-3 rounded-xl border border-[#333333]">
                       "{msg.content}"
                     </p>
 
@@ -178,7 +178,7 @@ export default function DoctorMessages() {
                       <button
                         type="button"
                         onClick={() => approveAiDraft(msg.id)}
-                        className="min-h-9 rounded-xl bg-[#0b7b68] px-4 text-xs font-bold text-white hover:bg-[#096656] shadow-sm flex items-center gap-1.5"
+                        className="min-h-9 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm flex items-center gap-1.5 cursor-pointer"
                       >
                         <CheckCircle2 className="size-3.5" />
                         <span>Aprovar e Enviar como Mensagem do Médico</span>
@@ -194,14 +194,14 @@ export default function DoctorMessages() {
                   className={`flex flex-col ${isDoctor ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`flex items-center gap-2 mb-1 px-1 text-[11px] text-[#698078] ${isDoctor ? 'flex-row-reverse' : 'flex-row'}`}
+                    className={`flex items-center gap-2 mb-1 px-1 text-[11px] text-[#ADADAD] ${isDoctor ? 'flex-row-reverse' : 'flex-row'}`}
                   >
                     <VivansAvatar
                       src={msg.authorAvatarUrl}
                       name={msg.author}
                       initials={isDoctor ? 'GM' : 'MC'}
                       size="sm"
-                      className="border border-[#dfe8e3]"
+                      className="border border-[#333333]"
                     />
                     <span>{msg.author}</span>
                     <span>•</span>
@@ -211,8 +211,8 @@ export default function DoctorMessages() {
                   <div
                     className={`max-w-md rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-sm ${
                       isDoctor
-                        ? 'bg-[#17372f] text-white rounded-tr-sm'
-                        : 'bg-[#f4f7f5] text-[#17372f] border border-[#dfe8e3] rounded-tl-sm'
+                        ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] font-semibold rounded-tr-sm'
+                        : 'bg-[#141414] text-[#FFFFFF] border border-[#333333] rounded-tl-sm'
                     }`}
                   >
                     {msg.content}
@@ -225,20 +225,20 @@ export default function DoctorMessages() {
           {/* Input Form */}
           <form
             onSubmit={handleSend}
-            className="border-t border-[#edf2ef] p-4 bg-[#fbfcfb] flex items-center gap-2"
+            className="border-t border-[#333333] p-4 bg-[#141414] flex items-center gap-2"
           >
             <input
               type="text"
               placeholder={`Escrever mensagem para ${filterPatient}...`}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="flex-1 rounded-2xl border border-[#dfe8e3] bg-white px-4 py-3 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+              className="flex-1 rounded-2xl border border-[#333333] bg-[#0F0F0F] px-4 py-3 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
             />
             <button
               type="submit"
-              className="grid size-11 place-items-center rounded-2xl bg-[#0b7b68] text-white hover:bg-[#096656] transition-colors shrink-0 shadow-sm"
+              className="grid size-11 place-items-center rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] hover:brightness-110 transition-all shrink-0 shadow-sm cursor-pointer"
             >
-              <Send className="size-4" />
+              <Send className="size-4 text-[#0F0F0F]" />
             </button>
           </form>
         </section>

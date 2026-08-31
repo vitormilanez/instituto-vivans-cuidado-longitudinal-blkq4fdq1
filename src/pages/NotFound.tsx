@@ -1,30 +1,31 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Home } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-lg rounded-3xl border border-[#dfe8e3] bg-white p-8 text-center space-y-5 my-12 shadow-sm">
-      <div className="grid size-14 place-items-center rounded-2xl bg-[#f4f7f5] text-[#17372f] mx-auto text-xl font-bold">
-        404
-      </div>
-      <h1 className="font-serif text-2xl font-bold text-[#17372f]">Página não encontrada</h1>
-      <p className="text-xs text-[#60766f]">
-        O link solicitado não existe no protótipo demonstrativo do Instituto Vivans.
-      </p>
-      <div className="pt-2 flex justify-center gap-3">
-        <Link
-          to="/"
-          className="flex items-center gap-1.5 min-h-11 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656]"
-        >
-          <Home className="size-3.5" />
-          <span>Início</span>
-        </Link>
-        <Link
-          to="/medico"
-          className="flex items-center gap-1.5 min-h-11 rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5]"
-        >
-          <span>Painel do Médico</span>
-        </Link>
+    <div className="min-h-[70vh] flex items-center justify-center p-4">
+      <div className="max-w-md w-full rounded-3xl border border-[#333333] bg-[#1A1A1A] p-8 text-center space-y-6 shadow-2xl backdrop-blur-md">
+        <div className="grid size-16 mx-auto place-items-center rounded-2xl bg-[#D6B270]/20 text-[#D6B270] border border-[#D6B270]/40 font-serif text-2xl font-bold">
+          404
+        </div>
+
+        <div className="space-y-2">
+          <h1 className="font-serif text-2xl font-bold text-white">Página Não Encontrada</h1>
+          <p className="text-xs text-[#ADADAD] leading-relaxed">
+            O endereço solicitado não existe ou foi movido dentro do sistema do Instituto Vivans.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <Link
+            to="/"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all cursor-pointer"
+          >
+            <Home className="size-4" />
+            <span>Voltar ao Início</span>
+          </Link>
+        </div>
       </div>
     </div>
   )

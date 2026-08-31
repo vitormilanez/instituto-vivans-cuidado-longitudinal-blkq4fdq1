@@ -6,50 +6,50 @@
 
 @layer base {
   :root {
-    /* Natural warm sand background & deep forest green typography */
-    --background: 42 35% 98%; /* #FDFCFA Warm sand */
-    --foreground: 165 42% 12%; /* #112822 Deep Forest */
+    /* Near-Black & Gold Aesthetic Design Tokens */
+    --background: 0 0% 6%; /* #0F0F0F */
+    --foreground: 0 0% 100%; /* #FFFFFF */
 
-    --card: 0 0% 100%;
-    --card-foreground: 165 42% 12%;
+    --card: 0 0% 10%; /* #1A1A1A */
+    --card-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 165 42% 12%;
+    --popover: 0 0% 10%; /* #1A1A1A */
+    --popover-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --primary: 168 76% 24%; /* #097260 Instituto Vivans Deep Emerald / Natural Sage */
-    --primary-foreground: 0 0% 100%;
+    --primary: 37 54% 64%; /* #D6B270 Accent Gold */
+    --primary-foreground: 0 0% 6%; /* #0F0F0F */
 
-    --secondary: 152 28% 94%; /* #EAF3EF Soft natural mist */
-    --secondary-foreground: 168 76% 18%;
+    --secondary: 0 0% 14%; /* #242424 */
+    --secondary-foreground: 37 54% 74%; /* #E8C391 */
 
-    --muted: 148 16% 95%; /* #F3F7F5 */
-    --muted-foreground: 162 14% 38%; /* #556D66 Crisp readable body slate */
+    --muted: 0 0% 15%; /* #262626 */
+    --muted-foreground: 0 0% 68%; /* #ADADAD High contrast secondary text */
 
-    --accent: 152 28% 94%;
-    --accent-foreground: 168 76% 18%;
+    --accent: 37 54% 64%; /* #D6B270 */
+    --accent-foreground: 0 0% 6%;
 
-    --destructive: 6 62% 52%; /* #CF4B42 Soft muted terracotta alert */
+    --destructive: 0 72% 51%; /* #DC2626 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 14% 89%; /* #DEE7E2 Soft crisp border */
-    --input: 150 14% 89%;
-    --ring: 168 76% 24%;
+    --border: 0 0% 20%; /* #333333 */
+    --input: 0 0% 20%; /* #333333 */
+    --ring: 37 54% 64%; /* #D6B270 */
 
     --radius: 1.125rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 165 42% 12%;
-    --sidebar-primary: 168 76% 24%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 152 28% 94%;
-    --sidebar-accent-foreground: 168 76% 18%;
-    --sidebar-border: 150 14% 89%;
-    --sidebar-ring: 168 76% 24%;
+    --sidebar-background: 0 0% 8%; /* #141414 */
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 37 54% 64%;
+    --sidebar-primary-foreground: 0 0% 6%;
+    --sidebar-accent: 0 0% 14%;
+    --sidebar-accent-foreground: 37 54% 74%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 37 54% 64%;
   }
 
   body {
-    background-color: #f5f8f6;
-    color: #112822;
+    background-color: #0f0f0f;
+    color: #ffffff;
     font-family:
       'Plus Jakarta Sans',
       -apple-system,
@@ -71,8 +71,24 @@
 
   /* Accessible outline for keyboard navigation */
   :focus-visible {
-    outline: 2px solid #097260;
+    outline: 2px solid #d6b270;
     outline-offset: 2px;
+  }
+
+  /* Scrollbars styling for dark theme */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f0f0f;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d6b270;
   }
 
   /* Motion reduction respect */

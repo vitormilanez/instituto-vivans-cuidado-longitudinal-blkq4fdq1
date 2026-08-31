@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 
 export default function PatientDiary() {
-  const { meals, addMealRecord, rateMealRecord, notify } = useVivans()
+  const { meals, addMealRecord, notify } = useVivans()
 
   const [selectedMealType, setSelectedMealType] = useState('Jantar')
   const [photoSelected, setPhotoSelected] = useState<string>(
@@ -75,13 +75,13 @@ export default function PatientDiary() {
 
       {/* Header */}
       <section>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+        <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
           Diário Alimentar
         </p>
-        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-[#17372f]">
+        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-white">
           Registre o Que Aconteceu
         </h1>
-        <p className="mt-1 text-sm text-[#60766f]">
+        <p className="mt-1 text-sm text-[#ADADAD]">
           O objetivo é identificar padrões de saciedade e rotina, não classificar refeições como
           "boas" ou "ruins".
         </p>
@@ -90,13 +90,13 @@ export default function PatientDiary() {
       {/* Main Journal Layout */}
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         {/* Active Meal Registration & Analysis */}
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#edf2ef] pb-4">
+        <article className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm backdrop-blur-md">
+          <div className="flex items-center justify-between border-b border-[#333333] pb-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
                 {selectedMealType} · Registro em Andamento
               </p>
-              <h3 className="font-serif text-xl font-bold text-[#17372f]">
+              <h3 className="font-serif text-xl font-bold text-white">
                 Foto e Análise da Refeição
               </h3>
             </div>
@@ -105,7 +105,7 @@ export default function PatientDiary() {
 
           {/* Photo Selector */}
           <div className="mt-5 space-y-3">
-            <p className="text-xs font-bold text-[#17372f]">
+            <p className="text-xs font-bold text-white">
               Selecione uma foto demonstrativa para simular o upload:
             </p>
             <div className="grid grid-cols-3 gap-3">
@@ -130,14 +130,14 @@ export default function PatientDiary() {
                   key={item.label}
                   type="button"
                   onClick={() => handleSimulatePhoto(item.url, item.type)}
-                  className={`overflow-hidden rounded-2xl border text-left transition-all ${
+                  className={`overflow-hidden rounded-2xl border text-left transition-all cursor-pointer ${
                     photoSelected === item.url
-                      ? 'border-[#0b7b68] ring-2 ring-[#0b7b68]/30'
-                      : 'border-[#dfe8e3] opacity-70 hover:opacity-100'
+                      ? 'border-[#D6B270] ring-2 ring-[#D6B270]/30 opacity-100'
+                      : 'border-[#333333] opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img src={item.url} alt={item.label} className="h-20 w-full object-cover" />
-                  <div className="p-2 text-[11px] font-bold text-[#17372f] truncate">
+                  <div className="p-2 text-[11px] font-bold text-white truncate bg-[#141414]">
                     {item.label}
                   </div>
                 </button>
@@ -146,25 +146,25 @@ export default function PatientDiary() {
           </div>
 
           {/* Current photo preview & AI Trigger */}
-          <div className="mt-5 grid gap-5 sm:grid-cols-[180px_1fr] items-center rounded-2xl bg-[#f8faf9] p-4 border border-[#edf2ef]">
+          <div className="mt-5 grid gap-5 sm:grid-cols-[180px_1fr] items-center rounded-2xl bg-[#0F0F0F] p-4 border border-[#333333]">
             <img
               src={photoSelected}
               alt="Prato selecionado"
-              className="h-36 w-full rounded-2xl object-cover shadow-sm"
+              className="h-36 w-full rounded-2xl object-cover shadow-sm border border-[#333333]"
             />
             <div className="space-y-3">
-              <p className="text-xs text-[#60766f]">
+              <p className="text-xs text-[#ADADAD]">
                 Você registrou esta refeição como{' '}
-                <strong className="text-[#17372f]">{selectedMealType}</strong>. Clique abaixo para
+                <strong className="text-white">{selectedMealType}</strong>. Clique abaixo para
                 executar a análise visual assistida.
               </p>
               <button
                 type="button"
                 onClick={handleRunAiAnalysis}
                 disabled={isAnalyzing || Boolean(analysisResult)}
-                className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0b7b68] px-4 text-xs font-bold text-white hover:bg-[#096656] disabled:bg-[#779a91]"
+                className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 disabled:opacity-50 cursor-pointer shadow-sm"
               >
-                <Sparkles className="size-4" />
+                <Sparkles className="size-4 text-[#0F0F0F]" />
                 <span>
                   {isAnalyzing
                     ? 'Processando visão computacional...'
@@ -179,17 +179,17 @@ export default function PatientDiary() {
           {/* AI Analysis Result box & Mandatory Medical Disclaimer */}
           {analysisResult && (
             <div className="mt-5 space-y-3 animate-fade-in">
-              <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4">
+              <div className="rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
                   <StatusBadge tone="green">Registro Arquivado</StatusBadge>
                 </div>
-                <p className="text-xs text-[#3b534b] leading-relaxed">{analysisResult}</p>
+                <p className="text-xs text-[#E8C391] leading-relaxed">{analysisResult}</p>
               </div>
 
               {/* Explicit Mandatory Warning */}
-              <div className="rounded-xl border border-[#f0d59c] bg-[#fffbf2] p-3 text-[11px] text-[#805f24] leading-relaxed">
-                <div className="flex items-center gap-1.5 font-bold text-[#70480e] mb-0.5">
+              <div className="rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-3 text-[11px] text-[#FCD34D] leading-relaxed">
+                <div className="flex items-center gap-1.5 font-bold text-[#FCD34D] mb-0.5">
                   <AlertCircle className="size-3.5" />
                   <span>Aviso: Rascunho gerado com IA - requer validação médica</span>
                 </div>
@@ -203,22 +203,22 @@ export default function PatientDiary() {
           {/* 3 Context Ratings (1 to 5) */}
           <form
             onSubmit={handleSendFeedbackToDoctor}
-            className="mt-6 border-t border-[#edf2ef] pt-5 space-y-5"
+            className="mt-6 border-t border-[#333333] pt-5 space-y-5"
           >
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
                 Contexto da Refeição (Notas de 1 a 5)
               </p>
-              <h4 className="font-serif text-base font-bold text-[#17372f] mt-1">
+              <h4 className="font-serif text-base font-bold text-white mt-1">
                 Como você se sentiu com esta refeição?
               </h4>
             </div>
 
             {/* Question 1: Satiety */}
-            <div className="rounded-2xl border border-[#dfe8e3] p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-[#17372f]">
+            <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-white">
                 <span>1. Nível de Saciedade ao terminar</span>
-                <span className="text-[#0b7b68]">{satietyRating} de 5</span>
+                <span className="text-[#D6B270]">{satietyRating} de 5</span>
               </div>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((val) => (
@@ -226,27 +226,27 @@ export default function PatientDiary() {
                     key={val}
                     type="button"
                     onClick={() => setSatietyRating(val)}
-                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all ${
+                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                       satietyRating === val
-                        ? 'border-[#0b7b68] bg-[#0b7b68] text-white shadow-sm'
-                        : 'border-[#dfe8e3] text-[#60766f] hover:bg-[#f4f7f5]'
+                        ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F] shadow-sm'
+                        : 'border-[#333333] bg-[#0F0F0F] text-[#ADADAD] hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     {val}
                   </button>
                 ))}
               </div>
-              <div className="flex justify-between text-[10px] text-[#789087]">
+              <div className="flex justify-between text-[10px] text-[#888888]">
                 <span>1 · Pouco saciada</span>
                 <span>5 · Plenamente saciada</span>
               </div>
             </div>
 
             {/* Question 2: Comfort */}
-            <div className="rounded-2xl border border-[#dfe8e3] p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-[#17372f]">
+            <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-white">
                 <span>2. Conforto Digestivo após comer</span>
-                <span className="text-[#0b7b68]">{comfortRating} de 5</span>
+                <span className="text-[#D6B270]">{comfortRating} de 5</span>
               </div>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((val) => (
@@ -254,27 +254,27 @@ export default function PatientDiary() {
                     key={val}
                     type="button"
                     onClick={() => setComfortRating(val)}
-                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all ${
+                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                       comfortRating === val
-                        ? 'border-[#0b7b68] bg-[#0b7b68] text-white shadow-sm'
-                        : 'border-[#dfe8e3] text-[#60766f] hover:bg-[#f4f7f5]'
+                        ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F] shadow-sm'
+                        : 'border-[#333333] bg-[#0F0F0F] text-[#ADADAD] hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     {val}
                   </button>
                 ))}
               </div>
-              <div className="flex justify-between text-[10px] text-[#789087]">
+              <div className="flex justify-between text-[10px] text-[#888888]">
                 <span>1 · Desconfortável/Pesada</span>
                 <span>5 · Muito leve e bem</span>
               </div>
             </div>
 
             {/* Question 3: Ease */}
-            <div className="rounded-2xl border border-[#dfe8e3] p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-[#17372f]">
+            <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-white">
                 <span>3. Facilidade de seguir o combinado</span>
-                <span className="text-[#0b7b68]">{easeRating} de 5</span>
+                <span className="text-[#D6B270]">{easeRating} de 5</span>
               </div>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((val) => (
@@ -282,17 +282,17 @@ export default function PatientDiary() {
                     key={val}
                     type="button"
                     onClick={() => setEaseRating(val)}
-                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all ${
+                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                       easeRating === val
-                        ? 'border-[#0b7b68] bg-[#0b7b68] text-white shadow-sm'
-                        : 'border-[#dfe8e3] text-[#60766f] hover:bg-[#f4f7f5]'
+                        ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F] shadow-sm'
+                        : 'border-[#333333] bg-[#0F0F0F] text-[#ADADAD] hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     {val}
                   </button>
                 ))}
               </div>
-              <div className="flex justify-between text-[10px] text-[#789087]">
+              <div className="flex justify-between text-[10px] text-[#888888]">
                 <span>1 · Muito difícil</span>
                 <span>5 · Muito natural e prático</span>
               </div>
@@ -300,19 +300,19 @@ export default function PatientDiary() {
 
             {/* Submission button */}
             {submittedCurrent ? (
-              <div className="rounded-2xl border border-[#b9d8cf] bg-[#edf7f4] p-4 text-center">
-                <CheckCircle2 className="size-6 text-[#0b7b68] mx-auto mb-1" />
-                <p className="text-xs font-bold text-[#0b6a5b]">
+              <div className="rounded-2xl border border-[#D6B270]/40 bg-[#D6B270]/15 p-4 text-center backdrop-blur-sm">
+                <CheckCircle2 className="size-6 text-[#D6B270] mx-auto mb-1" />
+                <p className="text-xs font-bold text-[#E8C391]">
                   Avaliação enviada com sucesso ao Dr. Guilherme!
                 </p>
-                <p className="text-[11px] text-[#526a62] mt-0.5">
+                <p className="text-[11px] text-[#ADADAD] mt-0.5">
                   O registro foi compilado no seu prontuário.
                 </p>
               </div>
             ) : (
               <button
                 type="submit"
-                className="min-h-12 w-full rounded-2xl bg-[#17372f] px-6 text-xs font-bold text-white hover:bg-[#0e2721] transition-all shadow-md"
+                className="min-h-12 w-full rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 transition-all shadow-md cursor-pointer"
               >
                 Enviar Refeição e Avaliação ao Médico
               </button>
@@ -322,30 +322,30 @@ export default function PatientDiary() {
 
         {/* History of meals */}
         <aside className="space-y-4">
-          <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm">
-            <h3 className="font-serif text-lg font-bold text-[#17372f] mb-4">Refeições Recentes</h3>
+          <div className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm backdrop-blur-md">
+            <h3 className="font-serif text-lg font-bold text-white mb-4">Refeições Recentes</h3>
 
             <div className="space-y-4">
               {meals.map((m) => (
                 <div
                   key={m.id}
-                  className="rounded-2xl border border-[#edf2ef] p-3.5 space-y-2 hover:bg-[#f8faf9] transition-colors"
+                  className="rounded-2xl border border-[#333333] bg-[#141414] p-3.5 space-y-2 hover:border-[#D6B270]/40 transition-colors"
                 >
                   <div className="flex gap-3">
                     <img
                       src={m.image}
                       alt={m.alt}
-                      className="size-16 rounded-xl object-cover shrink-0"
+                      className="size-16 rounded-xl object-cover shrink-0 border border-[#333333]"
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <strong className="text-xs text-[#17372f]">{m.meal}</strong>
-                        <span className="text-[10px] text-[#789087]">{m.time}</span>
+                        <strong className="text-xs text-white">{m.meal}</strong>
+                        <span className="text-[10px] text-[#888888]">{m.time}</span>
                       </div>
-                      <p className="text-[11px] text-[#60766f] line-clamp-2 mt-0.5">
+                      <p className="text-[11px] text-[#ADADAD] line-clamp-2 mt-0.5">
                         {m.recognized}
                       </p>
-                      <div className="mt-1 flex items-center gap-1 text-[10px] text-[#0b7b68] font-semibold">
+                      <div className="mt-1 flex items-center gap-1 text-[10px] text-[#D6B270] font-semibold">
                         <CheckCircle2 className="size-3" />
                         <span>Avaliada (3/3)</span>
                       </div>
@@ -356,22 +356,22 @@ export default function PatientDiary() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-[#f8deb0] bg-[#fffbf2] p-5 text-xs text-[#7d5308] shadow-sm space-y-2">
-            <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px] text-[#916207]">
-              <Sparkles className="size-3.5 text-[#b45309]" />
+          <div className="rounded-3xl border border-[#D6B270]/30 bg-[#1A1A1A] p-5 text-xs text-[#E8C391] shadow-sm space-y-2 backdrop-blur-md">
+            <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px] text-[#D6B270]">
+              <Sparkles className="size-3.5 text-[#D6B270]" />
               <span>Transparência da IA Visual</span>
             </div>
-            <p className="leading-relaxed">
+            <p className="leading-relaxed text-[#CCCCCC]">
               A identificação dos alimentos é um rascunho automatizado para apoiar o seu diário. O
               Dr. Guilherme Martins analisa o contexto integral antes de qualquer orientação.
             </p>
           </div>
 
-          <div className="rounded-3xl bg-[#17372f] p-5 text-white shadow-sm text-xs space-y-2">
-            <p className="font-bold text-[#9cc7ba] uppercase tracking-wider text-[11px]">
+          <div className="rounded-3xl bg-[#141414] border border-[#333333] p-5 text-white shadow-sm text-xs space-y-2">
+            <p className="font-bold text-[#D6B270] uppercase tracking-wider text-[11px]">
               Privacidade e Sigilo Clínico
             </p>
-            <p className="text-[#d6e8e2] leading-relaxed">
+            <p className="text-[#ADADAD] leading-relaxed">
               Seus registros são confidenciais e restritos à equipe do Instituto Vivans, sem
               compartilhamento externo ou fins comerciais.
             </p>

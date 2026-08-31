@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
@@ -8,264 +8,175 @@ import {
   Clock,
   Video,
   FileText,
+  User,
+  Sparkles,
+  ChevronRight,
   Filter,
   CheckCircle2,
-  ChevronRight,
-  ArrowRight,
-  Sparkles,
-  UserCheck,
+  CalendarCheck,
+  Plus,
 } from 'lucide-react'
 
 export default function DoctorAgenda() {
   const { appointments, notify } = useVivans()
-  const navigate = useNavigate()
-
-  const [viewMode, setViewMode] = useState<'dia' | 'semana'>('dia')
-  const [filterStatus, setFilterStatus] = useState<string>('todos')
+  const [selectedDay, setSelectedDay] = useState<'hoje' | 'amanha' | 'semana'>('hoje')
+  const [modalityFilter, setModalityFilter] = useState<'todos' | 'teleconsulta' | 'presencial'>(
+    'todos',
+  )
 
   const filteredAppointments = appointments.filter((apt) => {
-    if (filterStatus === 'todos') return true
-    if (filterStatus === 'confirmadas')
-      return apt.status === 'Confirmada' || apt.status === 'Próxima'
-    if (filterStatus === 'concluidas') return apt.status === 'Concluída'
-    if (filterStatus === 'atencao') return apt.status === 'A confirmar'
+    if (selectedDay === 'hoje' && !apt.date.toLowerCase().includes('hoje')) return false
+    if (selectedDay === 'amanha' && !apt.date.toLowerCase().includes('amanhã')) return false
+
+    if (modalityFilter === 'teleconsulta' && !apt.modality.toLowerCase().includes('teleconsulta'))
+      return false
+    if (modalityFilter === 'presencial' && !apt.modality.toLowerCase().includes('presencial'))
+      return false
+
     return true
   })
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Agenda Clínica e Preparação de Consultas · Instituto Vivans" />
+      <SimulationDisclaimer text="Agenda Clínica e Grade de Teleconsultas · Instituto Vivans" />
 
       {/* Header */}
-      <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-            Agenda do Dr. Guilherme Martins
-          </p>
-          <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-[#17372f]">
-            Consultas e Atendimentos
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+              Grade de Atendimentos
+            </span>
+            <StatusBadge tone="green">Dr. Guilherme Martins</StatusBadge>
+          </div>
+          <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            Agenda do Médico
           </h1>
-          <p className="mt-1 text-sm text-[#60766f]">
-            Acesso direto ao preparo de pré-consulta e ao ambiente de teleconsulta com copiloto
-            clínico.
+          <p className="mt-1 text-xs sm:text-sm text-[#ADADAD]">
+            Gerenciamento de teleconsultas com Google Meet integrado e atendimentos presenciais.
           </p>
         </div>
 
-        {/* View mode toggle */}
-        <div className="flex items-center gap-2">
-          <div className="flex rounded-2xl border border-[#dfe8e3] bg-white p-1">
+        {/* Day Selector */}
+        <div className="flex rounded-2xl border border-[#333333] bg-[#141414] p-1 shadow-inner backdrop-blur-md">
+          {[
+            { id: 'hoje', label: 'Hoje (25 ago)' },
+            { id: 'amanha', label: 'Amanhã (26 ago)' },
+            { id: 'semana', label: 'Esta Semana' },
+          ].map((d) => (
             <button
+              key={d.id}
               type="button"
-              onClick={() => setViewMode('dia')}
-              className={`rounded-xl px-4 py-1.5 text-xs font-bold transition-all ${
-                viewMode === 'dia'
-                  ? 'bg-[#17372f] text-white shadow-sm'
-                  : 'text-[#60766f] hover:text-[#17372f]'
+              onClick={() => setSelectedDay(d.id as any)}
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                selectedDay === d.id
+                  ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
+                  : 'text-[#ADADAD] hover:text-white hover:bg-white/5'
               }`}
             >
-              Visão do Dia (Hoje)
+              {d.label}
             </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('semana')}
-              className={`rounded-xl px-4 py-1.5 text-xs font-bold transition-all ${
-                viewMode === 'semana'
-                  ? 'bg-[#17372f] text-white shadow-sm'
-                  : 'text-[#60766f] hover:text-[#17372f]'
-              }`}
-            >
-              Visão Semanal
-            </button>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* Filter bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dfe8e3] bg-white p-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold text-[#60766f] flex items-center gap-1 mr-2">
-            <Filter className="size-3.5" />
-            <span>Filtrar por:</span>
-          </span>
-          {[
-            { id: 'todos', label: 'Todas (5)' },
-            { id: 'confirmadas', label: 'Confirmadas (3)' },
-            { id: 'concluidas', label: 'Concluídas (1)' },
-            { id: 'atencao', label: 'Requer Atenção (1)' },
-          ].map((f) => (
+      {/* Filters Strip */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#333333] bg-[#1A1A1A] p-4 text-xs backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <Filter className="size-4 text-[#D6B270]" />
+          <span className="font-bold text-[#CCCCCC]">Modalidade:</span>
+          {(['todos', 'teleconsulta', 'presencial'] as const).map((m) => (
             <button
-              key={f.id}
+              key={m}
               type="button"
-              onClick={() => setFilterStatus(f.id)}
-              className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
-                filterStatus === f.id
-                  ? 'bg-[#e8f4f0] text-[#0b6a5b] border border-[#c2e2d8]'
-                  : 'text-[#60766f] hover:bg-[#f4f7f5]'
+              onClick={() => setModalityFilter(m)}
+              className={`rounded-lg px-2.5 py-1 text-xs font-bold capitalize transition-all cursor-pointer ${
+                modalityFilter === m
+                  ? 'bg-[#D6B270]/20 text-[#E8C391] border border-[#D6B270]/40'
+                  : 'text-[#ADADAD] hover:text-white'
               }`}
             >
-              {f.label}
+              {m}
             </button>
           ))}
         </div>
 
-        <div className="text-xs text-[#698078]">
-          Exibindo <strong>{filteredAppointments.length}</strong> consultas
-        </div>
+        <span className="text-xs text-[#ADADAD]">
+          {filteredAppointments.length} consultas nesta visualização
+        </span>
       </div>
 
-      {/* Appointments List View */}
-      {viewMode === 'dia' ? (
-        <div className="space-y-4">
-          {filteredAppointments.length === 0 ? (
-            <div className="rounded-3xl border border-[#dfe8e3] bg-white p-12 text-center text-xs text-[#60766f]">
-              Nenhuma consulta encontrada para o filtro selecionado.
-            </div>
-          ) : (
-            filteredAppointments.map((apt) => {
-              const isCurrent = apt.patient === 'Marina Costa'
-              return (
-                <article
-                  key={apt.id}
-                  className={`rounded-3xl border p-6 transition-all ${
-                    isCurrent
-                      ? 'border-[#0b7b68] bg-[#f8faf9] ring-2 ring-[#0b7b68]/20 shadow-md'
-                      : 'border-[#dfe8e3] bg-white hover:border-[#b9d8cf] shadow-sm'
-                  }`}
+      {/* Appointment Cards List */}
+      <div className="space-y-4">
+        {filteredAppointments.map((apt) => (
+          <article
+            key={apt.id}
+            className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-5 sm:p-6 shadow-sm space-y-4 hover:border-[#D6B270]/40 transition-all backdrop-blur-md"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#333333] pb-3">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="rounded-xl bg-[#D6B270]/15 text-[#E8C391] border border-[#D6B270]/30 px-2.5 py-1 font-mono text-xs font-bold">
+                  {apt.time}
+                </span>
+                <StatusBadge tone={apt.statusTone || 'green'}>{apt.status}</StatusBadge>
+                <span className="text-xs text-[#ADADAD]">• {apt.modality}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Link
+                  to={`/medico/pacientes/${apt.patientId || 'marina-costa'}`}
+                  className="flex min-h-9 items-center gap-1 rounded-xl border border-[#333333] bg-white/5 px-3 text-xs font-bold text-white hover:bg-white/10 transition-colors"
                 >
-                  <div className="grid gap-5 lg:grid-cols-[180px_1fr_auto] lg:items-center">
-                    {/* Time & status */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <Clock className="size-4 text-[#0b7b68]" />
-                        <span className="font-mono text-lg font-bold text-[#17372f]">
-                          {apt.time}
-                        </span>
-                      </div>
-                      <StatusBadge tone={apt.statusTone}>{apt.status}</StatusBadge>
-                      <p className="text-[11px] text-[#698078]">{apt.type}</p>
-                    </div>
+                  <FileText className="size-3.5 text-[#D6B270]" />
+                  <span>Prontuário</span>
+                </Link>
 
-                    {/* Patient Context & Pre-Visit Synthesis */}
-                    <div className="space-y-2 border-l border-[#edf2ef] pl-0 sm:pl-5">
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <VivansAvatar
-                          src={apt.patientAvatarUrl}
-                          name={apt.patient}
-                          initials={apt.initials}
-                          size="md"
-                          className="border border-[#dfe8e3]"
-                        />
-                        <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                          {apt.patient}
-                        </h3>
-                        <StatusBadge tone={apt.preVisitTone}>{apt.preVisit}</StatusBadge>
-                      </div>
+                <Link
+                  to={`/medico/consulta/${apt.id}`}
+                  className="flex min-h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm transition-all"
+                >
+                  <Video className="size-3.5 text-[#0F0F0F]" />
+                  <span>Entrar no Meet</span>
+                </Link>
+              </div>
+            </div>
 
-                      <p className="text-xs text-[#45655c] leading-relaxed">
-                        <strong>Objetivo relatado:</strong> {apt.objective}
-                      </p>
+            <div className="grid gap-4 sm:grid-cols-[auto_1fr_auto] items-center">
+              <VivansAvatar
+                src={
+                  apt.patient === 'Marina Costa'
+                    ? 'https://img.usecurling.com/ppl/512?gender=female&seed=88'
+                    : apt.patient === 'Ana Ribeiro'
+                      ? 'https://img.usecurling.com/ppl/512?gender=female&seed=42'
+                      : 'https://img.usecurling.com/ppl/512?gender=male&seed=33'
+                }
+                name={apt.patient}
+                initials={apt.initials}
+                size="lg"
+                className="border border-[#333333]"
+              />
 
-                      <div className="flex flex-wrap gap-2 text-[11px] text-[#698078]">
-                        <span className="rounded-md bg-[#ebf6f2] px-2 py-0.5 font-semibold text-[#075f50]">
-                          Foco Clínico: {apt.aiFocus}
-                        </span>
-                        {apt.metrics.map(([label, val, trend]) => (
-                          <span
-                            key={label}
-                            className="rounded-md bg-white border border-[#dfe8e3] px-2 py-0.5"
-                          >
-                            {label}: <strong>{val}</strong> ({trend})
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
-                      <Link
-                        to={`/medico/consulta/${apt.id}`}
-                        className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] transition-colors shadow-sm"
-                      >
-                        <Video className="size-3.5" />
-                        <span>Abrir Sala de Consulta</span>
-                      </Link>
-
-                      <Link
-                        to={`/medico/pacientes/${apt.patient.toLowerCase().replace(/\s+/g, '-')}`}
-                        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors"
-                      >
-                        <FileText className="size-3.5 text-[#60766f]" />
-                        <span>Dossiê Longitudinal</span>
-                      </Link>
-                    </div>
-                  </div>
-                </article>
-              )
-            })
-          )}
-        </div>
-      ) : (
-        /* Week View Grid */
-        <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm overflow-x-auto">
-          <div className="min-w-[700px] grid grid-cols-5 gap-4">
-            {[
-              {
-                day: 'Segunda, 24 ago',
-                count: '4 consultas',
-                list: ['Lúcia Barbosa (Concluída)', 'Ana Ribeiro'],
-              },
-              {
-                day: 'Terça, 25 ago (Hoje)',
-                count: '5 consultas',
-                list: [
-                  '09:00 Lúcia B.',
-                  '10:30 Marina C.',
-                  '11:30 Rafael L.',
-                  '14:00 Ana R.',
-                  '16:30 Paulo M.',
-                ],
-              },
-              {
-                day: 'Quarta, 26 ago',
-                count: '3 consultas',
-                list: ['09:30 Carlos S.', '11:00 Beatriz M.', '15:00 Fernanda P.'],
-              },
-              {
-                day: 'Quinta, 27 ago',
-                count: '4 consultas',
-                list: ['10:00 Jorge N.', '14:30 Marina C. (Acomp)', '16:00 Helena R.'],
-              },
-              {
-                day: 'Sexta, 28 ago',
-                count: '2 consultas',
-                list: ['09:00 Sessão Clínica', '11:00 Roberto T.'],
-              },
-            ].map((col, idx) => (
-              <div
-                key={col.day}
-                className={`rounded-2xl border p-4 space-y-3 ${
-                  idx === 1 ? 'border-[#0b7b68] bg-[#f8faf9]' : 'border-[#edf2ef] bg-white'
-                }`}
-              >
-                <div className="border-b border-[#edf2ef] pb-2">
-                  <p className="text-xs font-bold text-[#17372f]">{col.day}</p>
-                  <span className="text-[11px] text-[#0b7b68] font-semibold">{col.count}</span>
-                </div>
-                <div className="space-y-1.5">
-                  {col.list.map((item, i) => (
-                    <div
-                      key={i}
-                      className="rounded-xl border border-[#dfe8e3] bg-white p-2 text-xs font-medium text-[#45655c]"
-                    >
-                      {item}
-                    </div>
-                  ))}
+              <div className="space-y-1">
+                <h3 className="font-serif text-lg font-bold text-white">{apt.patient}</h3>
+                <p className="text-xs text-[#CCCCCC]">{apt.type}</p>
+                <div className="pt-1 flex flex-wrap gap-2 text-[11px] text-[#ADADAD]">
+                  <span>Objetivo: {apt.objective}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+
+              {/* Pre-visit status */}
+              <div className="rounded-2xl border border-[#D6B270]/30 bg-[#0F0F0F] p-3 text-xs space-y-1 text-right">
+                <span className="font-bold text-[#E8C391] block">{apt.preVisit}</span>
+                <span className="text-[11px] text-[#888888]">
+                  {apt.preVisitTone === 'green'
+                    ? '✓ Resumo estruturado pronto'
+                    : 'Pendente de envio'}
+                </span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   )
 }

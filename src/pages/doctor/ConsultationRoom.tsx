@@ -126,11 +126,11 @@ export default function DoctorConsultationRoom() {
       <SimulationDisclaimer text="Ambiente de Teleconsulta Simulado (Google Meet Integrado) · Instituto Vivans Telehealth" />
 
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfe8e3] pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#333333] pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="size-2 rounded-full bg-[#e67e76] animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider text-[#e67e76]">
+            <span className="size-2 rounded-full bg-[#EF4444] animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-wider text-[#FCA5A5]">
               {consultationStage === 'in_call'
                 ? 'Consulta em Andamento (Google Meet · 00:14:32)'
                 : 'Consulta Encerrada · Síntese Final'}
@@ -140,12 +140,12 @@ export default function DoctorConsultationRoom() {
               {isNewOrTempPatient ? 'Primeira Consulta' : 'Retorno 30 min'}
             </StatusBadge>
             {currentPatient?.email && (
-              <span className="hidden sm:inline text-xs text-[#60766f]">
+              <span className="hidden sm:inline text-xs text-[#ADADAD]">
                 ({currentPatient.email})
               </span>
             )}
           </div>
-          <h2 className="font-serif text-2xl font-bold text-[#17372f]">
+          <h2 className="font-serif text-2xl font-bold text-white">
             Atendimento Clínico · Dr. Guilherme Martins
           </h2>
         </div>
@@ -155,7 +155,7 @@ export default function DoctorConsultationRoom() {
             <button
               type="button"
               onClick={() => setConsultationStage('post_call')}
-              className="min-h-10 rounded-xl bg-[#e67e76] px-4 text-xs font-bold text-white hover:bg-[#c96159] transition-colors flex items-center gap-1.5"
+              className="min-h-10 rounded-xl bg-[#EF4444] px-4 text-xs font-bold text-white hover:brightness-110 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
               <PhoneOff className="size-3.5" />
               <span>Encerrar Atendimento</span>
@@ -164,7 +164,7 @@ export default function DoctorConsultationRoom() {
             <button
               type="button"
               onClick={() => navigate('/medico')}
-              className="min-h-10 rounded-xl bg-[#17372f] px-5 text-xs font-bold text-white hover:bg-[#0e2721]"
+              className="min-h-10 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-5 text-xs font-bold text-[#0F0F0F] hover:brightness-110 cursor-pointer shadow-sm"
             >
               Voltar ao Painel Geral
             </button>
@@ -176,9 +176,9 @@ export default function DoctorConsultationRoom() {
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         {/* Left Side: Mock Video Call */}
         <div className="space-y-4">
-          <article className="overflow-hidden rounded-3xl bg-[#17372f] shadow-lg relative min-h-[420px] flex flex-col justify-between p-4">
+          <article className="overflow-hidden rounded-3xl bg-[#141414] border border-[#333333] shadow-lg relative min-h-[420px] flex flex-col justify-between p-4 backdrop-blur-md">
             {/* Patient Video Preview Screen */}
-            <div className="relative flex-1 rounded-2xl overflow-hidden bg-black/40 grid place-items-center">
+            <div className="relative flex-1 rounded-2xl overflow-hidden bg-black/60 grid place-items-center border border-white/10">
               {isVideoOn ? (
                 <div className="relative w-full h-full">
                   <img
@@ -186,25 +186,25 @@ export default function DoctorConsultationRoom() {
                     alt={`${currentPatient?.name || 'Paciente'} (Vídeo Demonstrativo)`}
                     className="w-full h-full object-cover opacity-90"
                   />
-                  <div className="absolute bottom-3 left-3 rounded-xl bg-black/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                  <div className="absolute bottom-3 left-3 rounded-xl bg-black/70 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md border border-white/10">
                     {currentPatient?.name || 'Paciente'} (Paciente)
                   </div>
                 </div>
               ) : (
-                <div className="text-center text-white/70 space-y-2">
-                  <VideoOff className="size-12 mx-auto text-white/40" />
+                <div className="text-center text-[#ADADAD] space-y-2">
+                  <VideoOff className="size-12 mx-auto text-[#777777]" />
                   <p className="text-xs font-medium">Câmera desativada na simulação</p>
                 </div>
               )}
 
               {/* Doctor PiP preview */}
-              <div className="absolute top-3 right-3 w-28 h-20 rounded-xl border border-white/20 bg-[#0e2721] overflow-hidden shadow-md relative">
+              <div className="absolute top-3 right-3 w-28 h-20 rounded-xl border border-[#D6B270]/40 bg-[#0F0F0F] overflow-hidden shadow-md relative">
                 <img
                   src={DOCTOR_PROFILE.avatarUrl}
                   alt={DOCTOR_PROFILE.name}
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1 text-[9px] text-white">
+                <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1 text-[9px] text-white">
                   Você ({DOCTOR_PROFILE.name})
                 </span>
               </div>
@@ -215,40 +215,52 @@ export default function DoctorConsultationRoom() {
               <button
                 type="button"
                 onClick={() => setIsMicOn(!isMicOn)}
-                className={`grid size-11 place-items-center rounded-2xl transition-colors ${
-                  isMicOn ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#e67e76] text-white'
+                className={`grid size-11 place-items-center rounded-2xl transition-all cursor-pointer ${
+                  isMicOn
+                    ? 'bg-white/15 text-white hover:bg-white/25 border border-white/10'
+                    : 'bg-[#EF4444] text-white'
                 }`}
               >
-                {isMicOn ? <Mic className="size-5" /> : <MicOff className="size-5" />}
+                {isMicOn ? (
+                  <Mic className="size-5 text-[#E8C391]" />
+                ) : (
+                  <MicOff className="size-5" />
+                )}
               </button>
 
               <button
                 type="button"
                 onClick={() => setIsVideoOn(!isVideoOn)}
-                className={`grid size-11 place-items-center rounded-2xl transition-colors ${
-                  isVideoOn ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#e67e76] text-white'
+                className={`grid size-11 place-items-center rounded-2xl transition-all cursor-pointer ${
+                  isVideoOn
+                    ? 'bg-white/15 text-white hover:bg-white/25 border border-white/10'
+                    : 'bg-[#EF4444] text-white'
                 }`}
               >
-                {isVideoOn ? <Video className="size-5" /> : <VideoOff className="size-5" />}
+                {isVideoOn ? (
+                  <Video className="size-5 text-[#E8C391]" />
+                ) : (
+                  <VideoOff className="size-5" />
+                )}
               </button>
 
-              <div className="rounded-2xl bg-white/10 px-4 py-2 text-xs font-bold text-[#9fe0ce]">
+              <div className="rounded-2xl bg-[#D6B270]/10 border border-[#D6B270]/30 px-4 py-2 text-xs font-bold text-[#E8C391] backdrop-blur-sm">
                 HD · Conexão Criptografada (Demonstração)
               </div>
             </div>
           </article>
 
           {/* Patient Objective and Pre-visit summary in view during call */}
-          <div className="rounded-3xl border border-[#dfe8e3] bg-white p-5 shadow-sm space-y-3">
+          <div className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-5 shadow-sm space-y-3 backdrop-blur-md">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
                 {isNewOrTempPatient ? 'Foco da Primeira Consulta' : 'Contexto da Pré-Consulta'}
               </span>
               <StatusBadge tone="green">
                 {isNewOrTempPatient ? 'Novo Cadastro' : 'Recebida'}
               </StatusBadge>
             </div>
-            <p className="text-xs text-[#45655c] leading-relaxed italic bg-[#f8faf9] p-3 rounded-xl border border-[#edf2ef]">
+            <p className="text-xs text-[#CCCCCC] leading-relaxed italic bg-[#0F0F0F] p-3 rounded-xl border border-[#333333]">
               {isNewOrTempPatient
                 ? `“Avaliação inicial com o Dr. Guilherme Martins. Mapeamento longitudinal de metabolismo e hábitos.”`
                 : `“${currentPatient?.report?.summary || preConsultation.objective}”`}
@@ -258,11 +270,11 @@ export default function DoctorConsultationRoom() {
 
         {/* Right Side: Copilot Structuring & Plan Builder */}
         <div className="space-y-5">
-          <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-5">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+          <article className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-5 backdrop-blur-md">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#333333] pb-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="size-4 text-[#0b7b68]" />
-                <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                <Sparkles className="size-4 text-[#D6B270]" />
+                <h3 className="font-serif text-lg font-bold text-white">
                   Registro Clínico e Síntese de Apoio
                 </h3>
               </div>
@@ -272,28 +284,28 @@ export default function DoctorConsultationRoom() {
             {/* Notes Section 1: Free Notes by Doctor with Quick Notes Reference */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-[#17372f] flex items-center gap-1.5">
-                  <PenLine className="size-3.5 text-[#0b7b68]" />
+                <label className="block text-xs font-bold text-white flex items-center gap-1.5">
+                  <PenLine className="size-3.5 text-[#D6B270]" />
                   <span>Anotações clínicas do médico durante o atendimento:</span>
                 </label>
-                <span className="text-[10px] text-[#60766f]">Salvas no histórico</span>
+                <span className="text-[10px] text-[#ADADAD]">Salvas no histórico</span>
               </div>
               <textarea
                 rows={3}
                 value={freeNotes}
                 onChange={(e) => setFreeNotes(e.target.value)}
-                className="w-full rounded-2xl border border-[#dfe8e3] p-3 text-xs leading-relaxed text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-3 text-xs leading-relaxed text-white focus:border-[#D6B270] focus:outline-none"
               />
             </div>
 
             {/* Previous Quick Notes Snippet */}
             {currentPatient?.quickNotes && currentPatient.quickNotes.length > 0 && (
-              <div className="rounded-xl border border-[#bfe4d8] bg-[#f0f8f5] p-2.5 text-xs text-[#075f50]">
-                <div className="flex items-center justify-between font-bold text-[10px] uppercase">
+              <div className="rounded-xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-2.5 text-xs text-[#E8C391]">
+                <div className="flex items-center justify-between font-bold text-[10px] uppercase text-[#D6B270]">
                   <span>Última anotação pré-consulta:</span>
                   <span>{currentPatient.quickNotes[0].createdAt}</span>
                 </div>
-                <p className="mt-1 text-[11px] text-[#17372f] leading-snug">
+                <p className="mt-1 text-[11px] text-white leading-snug">
                   {currentPatient.quickNotes[0].content}
                 </p>
               </div>
@@ -302,37 +314,37 @@ export default function DoctorConsultationRoom() {
             {/* Notes Section 2: AI Structured Notes (Draft) */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-[#0b6a5b]">
+                <label className="block text-xs font-bold text-[#E8C391]">
                   Estruturação de dados para apoio à tomada de decisão:
                 </label>
-                <span className="text-[10px] text-[#698078]">Texto editável pelo médico</span>
+                <span className="text-[10px] text-[#888888]">Texto editável pelo médico</span>
               </div>
               <textarea
                 rows={4}
                 value={structuredCopilot}
                 onChange={(e) => setStructuredCopilot(e.target.value)}
-                className="w-full rounded-2xl border border-[#b9d8cf] bg-[#f8faf9] p-3 text-xs leading-relaxed text-[#3b534b] focus:border-[#0b7b68] focus:outline-none"
+                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-3 text-xs leading-relaxed text-[#CCCCCC] focus:border-[#D6B270] focus:outline-none"
               />
             </div>
 
-            {/* Plan Builder: Adjust Care Plan & Activate Return Journey directly for Marina */}
-            <div className="rounded-2xl border border-[#bfe4d8] bg-[#f8fcfb] p-4 space-y-3">
+            {/* Plan Builder: Adjust Care Plan & Activate Return Journey directly */}
+            <div className="rounded-2xl border border-[#D6B270]/30 bg-[#141414] p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#17372f]">
-                  Ativação do Plano de Retorno & Check-ins
+                <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                  Ativação do Plano de Retorno &amp; Check-ins
                 </p>
                 <StatusBadge tone="amber">Requer Validação Médica</StatusBadge>
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[#60766f] mb-1">
+                <label className="block text-[11px] font-semibold text-[#ADADAD] mb-1">
                   Orientação acordada para a jornada de retorno:
                 </label>
                 <input
                   type="text"
                   value={newAction}
                   onChange={(e) => setNewAction(e.target.value)}
-                  className="w-full rounded-xl border border-[#dfe8e3] bg-white px-3 py-2 text-xs font-bold text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+                  className="w-full rounded-xl border border-[#333333] bg-[#0F0F0F] px-3 py-2 text-xs font-bold text-white focus:border-[#D6B270] focus:outline-none"
                 />
               </div>
 
@@ -340,14 +352,14 @@ export default function DoctorConsultationRoom() {
                 <button
                   type="button"
                   onClick={handleSaveDraft}
-                  className="min-h-10 rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
+                  className="min-h-10 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 text-xs font-bold text-[#ADADAD] hover:bg-white/5 hover:text-white transition-colors cursor-pointer"
                 >
                   Salvar Rascunho Clínico
                 </button>
 
                 {approvedAndSent ? (
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#0b6a5b] py-2">
-                    <CheckCircle2 className="size-4" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#E8C391] py-2">
+                    <CheckCircle2 className="size-4 text-[#D6B270]" />
                     <span>
                       Plano de Retorno Ativado no App de {currentPatient?.name || 'Paciente'}!
                     </span>
@@ -356,7 +368,7 @@ export default function DoctorConsultationRoom() {
                   <button
                     type="button"
                     onClick={() => setConfirmModalOpen(true)}
-                    className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm flex items-center gap-1.5"
+                    className="min-h-10 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-5 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm flex items-center gap-1.5 cursor-pointer"
                   >
                     <CheckCircle2 className="size-3.5" />
                     <span>Aprovar &amp; Ativar Check-ins de Retorno</span>
@@ -366,38 +378,39 @@ export default function DoctorConsultationRoom() {
             </div>
 
             {/* Safety rule message */}
-            <div className="rounded-xl border border-[#dfe8e3] bg-[#f8faf9] p-3 text-[11px] text-[#698078]">
-              <strong>Governança Clínica:</strong> Toda síntese gerada por IA funciona como rascunho
-              de apoio documental; o plano e as orientações só entram em vigor após deliberação e
-              validação médica.
+            <div className="rounded-xl border border-[#333333] bg-[#0F0F0F] p-3 text-[11px] text-[#888888]">
+              <strong className="text-[#ADADAD]">Governança Clínica:</strong> Toda síntese gerada
+              por IA funciona como rascunho de apoio documental; o plano e as orientações só entram
+              em vigor após deliberação e validação médica.
             </div>
           </article>
         </div>
       </div>
+
       {/* Confirmation Modal for Clinical Approval */}
       {confirmModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-2xl animate-fade-in-up space-y-4">
-            <div className="flex items-center gap-3 border-b border-[#edf2ef] pb-3">
-              <div className="grid size-10 place-items-center rounded-2xl bg-[#ebf6f2] text-[#075f50]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+          <div className="w-full max-w-md rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-2xl animate-fade-in-up space-y-4 text-white">
+            <div className="flex items-center gap-3 border-b border-[#333333] pb-3">
+              <div className="grid size-10 place-items-center rounded-2xl bg-[#D6B270]/20 text-[#D6B270] border border-[#D6B270]/30">
                 <CheckCircle2 className="size-5" />
               </div>
               <div>
-                <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                <h3 className="font-serif text-lg font-bold text-white">
                   Confirmar Validação Médica
                 </h3>
-                <p className="text-xs text-[#698078]">
+                <p className="text-xs text-[#ADADAD]">
                   Publicação no perfil de {currentPatient?.name || 'Paciente'}
                 </p>
               </div>
             </div>
 
-            <div className="text-xs text-[#45655c] leading-relaxed space-y-2">
+            <div className="text-xs text-[#CCCCCC] leading-relaxed space-y-2">
               <p>Você está prestes a aprovar e publicar oficialmente a orientação clínica:</p>
-              <div className="rounded-xl border border-[#bfe4d8] bg-[#ebf6f2] p-3 text-xs font-bold text-[#075f50]">
+              <div className="rounded-xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-3 text-xs font-bold text-[#E8C391]">
                 "{newAction}"
               </div>
-              <p className="text-[11px] text-[#698078]">
+              <p className="text-[11px] text-[#888888]">
                 Esta ação substituirá o rascunho de IA e ficará visível imediatamente na aba "Plano"
                 e "Hoje" do aplicativo da paciente.
               </p>
@@ -407,14 +420,14 @@ export default function DoctorConsultationRoom() {
               <button
                 type="button"
                 onClick={() => setConfirmModalOpen(false)}
-                className="min-h-10 rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
+                className="min-h-10 rounded-xl border border-[#333333] px-4 text-xs font-bold text-[#ADADAD] hover:bg-white/5 hover:text-white cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleApproveAndPublishToPatient}
-                className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm"
+                className="min-h-10 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-5 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm cursor-pointer"
               >
                 Confirmar e Publicar
               </button>

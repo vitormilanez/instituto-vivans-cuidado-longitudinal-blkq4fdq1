@@ -1,325 +1,226 @@
 import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import {
+  StatusBadge,
+  AiDraftBadge,
+  SimulationDisclaimer,
+  EvidenceModal,
+} from '@/components/CommonUI'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import {
   FileText,
-  CheckCircle2,
+  Sparkles,
   Download,
+  Share2,
+  CheckCircle2,
+  Check,
+  Search,
   Filter,
   Eye,
-  Sparkles,
-  Printer,
-  Share2,
+  Send,
+  BookOpen,
 } from 'lucide-react'
 
 export default function DoctorReports() {
-  const { reports, approveReport, scheduledCheckins, notify } = useVivans()
-  const [selectedReportId, setSelectedReportId] = useState<string>('rep-marina-biweekly')
-  const [statusFilter, setStatusFilter] = useState<'todos' | 'em_revisao' | 'aprovado'>('todos')
-  const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false)
-  const [confirmApproveModal, setConfirmApproveModal] = useState<string | null>(null)
+  const { reports, approveReport, notify } = useVivans()
 
-  const selectedReport = reports.find((r) => r.id === selectedReportId) || reports[0]
+  const [selectedReportId, setSelectedReportId] = useState<string>(reports[0]?.id || '')
+  const [evidenceModalOpen, setEvidenceModalOpen] = useState(false)
+  const [selectedEvidence, setSelectedEvidence] = useState<any | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredReports = reports.filter((r) => {
-    if (statusFilter === 'todos') return true
-    return r.status === statusFilter
-  })
+  const activeReport = reports.find((r) => r.id === selectedReportId) || reports[0]
 
-  const handleApprove = (reportId: string) => {
-    approveReport(reportId, 'Dr. Guilherme Martins')
-    setConfirmApproveModal(null)
-    notify('Relatório aprovado e disponibilizado para compartilhamento seguro.')
+  const handleSimulateExport = () => {
+    notify('Simulação: Relatório clínico exportado em formato PDF com assinatura digital.')
   }
 
-  const handleSimulatePdfExport = () => {
-    setPdfPreviewOpen(true)
-    notify('Exportação de PDF compilada com sucesso.')
+  const handleSendToPatient = () => {
+    if (activeReport) {
+      approveReport(activeReport.id, 'Relatório aprovado e enviado')
+    }
   }
+
+  const filteredReports = reports.filter(
+    (r) =>
+      r.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Central de Relatórios Clínicos e Sínteses · Instituto Vivans" />
+      <SimulationDisclaimer text="Relatórios Clínicos e Sínteses para Validação Médica · Instituto Vivans" />
 
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-            Relatórios Clínicos Longitudinal
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+            Governança e Documentação Clínica
           </p>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-[#17372f]">
-            Relatórios e Sínteses Periódicas
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-white">
+            Relatórios e Sínteses de Acompanhamento
           </h1>
-          <p className="text-sm text-[#60766f]">
-            Revisão, aprovação médica e compartilhamento de relatórios semanais, quinzenais e
-            mensais.
+          <p className="text-sm text-[#ADADAD]">
+            Rascunhos gerados por IA organizados em camadas para deliberação e envio aos pacientes.
           </p>
         </div>
+
+        <button
+          type="button"
+          onClick={handleSimulateExport}
+          className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#333333] bg-[#1A1A1A] px-4 text-xs font-bold text-white hover:bg-white/10 transition-colors shadow-sm cursor-pointer"
+        >
+          <Download className="size-4 text-[#D6B270]" />
+          <span>Exportar Dossiê (PDF)</span>
+        </button>
       </section>
 
-      {/* Filter tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dfe8e3] bg-white p-4">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-[#60766f] mr-1">Status:</span>
-          {[
-            { id: 'todos', label: 'Todos (4)' },
-            { id: 'em_revisao', label: 'Em Revisão (2)' },
-            { id: 'aprovado', label: 'Aprovados (1)' },
-          ].map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => setStatusFilter(f.id as any)}
-              className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
-                statusFilter === f.id
-                  ? 'bg-[#17372f] text-white shadow-sm'
-                  : 'text-[#60766f] hover:bg-[#f4f7f5]'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Main Layout: Reports Selector (Left) vs Active Report Canvas (Right) */}
+      <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+        {/* Reports Index */}
+        <aside className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-4 shadow-sm space-y-3 backdrop-blur-md">
+          <div className="border-b border-[#333333] pb-2 px-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+              Relatórios em Aberto ({reports.length})
+            </span>
+          </div>
 
-      {/* Grid: Reports List (Left) vs Report Preview & Approval (Right) */}
-      <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
-        {/* Left List */}
-        <div className="space-y-3">
-          {filteredReports.map((rep) => {
-            const isSelected = selectedReport.id === rep.id
-            return (
-              <article
-                key={rep.id}
-                onClick={() => setSelectedReportId(rep.id)}
-                className={`cursor-pointer rounded-3xl border p-5 transition-all shadow-sm ${
-                  isSelected
-                    ? 'border-[#0b7b68] bg-[#f8faf9] ring-2 ring-[#0b7b68]/20'
-                    : 'border-[#dfe8e3] bg-white hover:border-[#b9d8cf]'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-[#17372f]">{rep.patientName}</span>
-                  <StatusBadge
-                    tone={
-                      rep.status === 'aprovado'
-                        ? 'green'
-                        : rep.status === 'em_revisao'
-                          ? 'blue'
-                          : 'amber'
-                    }
-                  >
-                    {rep.status === 'aprovado'
-                      ? 'Aprovado'
-                      : rep.status === 'em_revisao'
-                        ? 'Em Revisão'
-                        : 'Rascunho'}
+          <div className="space-y-2">
+            {filteredReports.map((rep) => {
+              const isSelected = rep.id === activeReport?.id
+              const tone = rep.status === 'aprovado' ? 'green' : 'amber'
+              return (
+                <button
+                  key={rep.id}
+                  type="button"
+                  onClick={() => setSelectedReportId(rep.id)}
+                  className={`w-full rounded-2xl p-3.5 text-left transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#D6B270]/15 border border-[#D6B270]/40 shadow-sm'
+                      : 'border border-[#333333] hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <strong className="text-xs text-white">{rep.patientName}</strong>
+                    <StatusBadge tone={tone}>{rep.status}</StatusBadge>
+                  </div>
+                  <p className="font-serif text-xs font-bold text-[#E8C391] leading-snug">
+                    {rep.title}
+                  </p>
+                  <span className="text-[10px] text-[#888888] mt-1 block">{rep.period}</span>
+                </button>
+              )
+            })}
+          </div>
+        </aside>
+
+        {/* Active Report Canvas */}
+        {activeReport && (
+          <article className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 sm:p-8 shadow-sm space-y-6 backdrop-blur-md">
+            {/* Header of the document */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#333333] pb-5">
+              <div className="space-y-2 max-w-xl">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-[#D6B270]/20 text-[#E8C391] border border-[#D6B270]/30 px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                    Dossiê Clínico Estruturado
+                  </span>
+                  <StatusBadge tone={activeReport.status === 'aprovado' ? 'green' : 'amber'}>
+                    {activeReport.status}
                   </StatusBadge>
                 </div>
 
-                <h3 className="font-serif text-sm font-bold text-[#17372f] leading-snug">
-                  {rep.title}
-                </h3>
-                <p className="text-[11px] text-[#698078] mt-1">{rep.period}</p>
-              </article>
-            )
-          })}
-        </div>
-
-        {/* Right Preview Card */}
-        <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf2ef] pb-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <StatusBadge tone={selectedReport.status === 'aprovado' ? 'green' : 'blue'}>
-                  {selectedReport.status === 'aprovado'
-                    ? 'Aprovado e Compartilhado'
-                    : 'Aguardando Aprovação do Dr. Guilherme'}
-                </StatusBadge>
-                <span className="text-xs text-[#698078]">{selectedReport.period}</span>
+                <h2 className="font-serif text-2xl font-bold text-white leading-tight">
+                  {activeReport.title}
+                </h2>
+                <p className="text-xs text-[#ADADAD]">
+                  Paciente: <strong className="text-white">{activeReport.patientName}</strong> ·
+                  Ciclo de 90 Dias · {activeReport.period}
+                </p>
               </div>
-              <h2 className="font-serif text-2xl font-bold text-[#17372f]">
-                {selectedReport.title}
-              </h2>
-              <p className="text-xs text-[#0b7b68] font-semibold mt-0.5">
-                Paciente: {selectedReport.patientName}
+
+              {/* Approval Button */}
+              <div>
+                {activeReport.status === 'aprovado' ? (
+                  <div className="flex items-center gap-1.5 rounded-2xl bg-[#D6B270]/15 border border-[#D6B270]/30 px-4 py-2.5 text-xs font-bold text-[#E8C391]">
+                    <CheckCircle2 className="size-4 text-[#D6B270]" />
+                    <span>Aprovado &amp; Enviado ao Paciente</span>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSendToPatient}
+                    className="flex min-h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all cursor-pointer"
+                  >
+                    <CheckCircle2 className="size-4" />
+                    <span>Aprovar e Enviar ao Paciente</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Mandatory AI Draft Notice Banner */}
+            <div className="rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
+              </div>
+              <p className="text-xs text-[#E8C391] leading-relaxed">
+                Este relatório foi sintetizado automaticamente a partir dos biossinais (peso, sono,
+                adesão) e relatos pré-consulta. O médico deve revisar a adequação dos tópicos antes
+                de disponibilizar ao paciente.
               </p>
             </div>
 
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleSimulatePdfExport}
-                className="flex min-h-10 items-center gap-1.5 rounded-xl border border-[#dfe8e3] px-3.5 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5]"
-              >
-                <Download className="size-3.5" />
-                <span>Exportar PDF (Demo)</span>
-              </button>
-            </div>
-          </div>
-
-          {/* AI Banner */}
-          <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
-
-          {/* Alignment with return journey for Marina */}
-          {selectedReport.patientName === 'Marina Costa' && (
-            <div className="rounded-2xl border border-[#dfe8e3] bg-[#f8faf9] p-4 text-xs text-[#45655c] space-y-1">
-              <span className="font-bold uppercase tracking-wider text-[#0b7b68] text-[11px]">
-                Status dos Check-ins de Retorno Pós-Consulta:
-              </span>
-              <p>
-                {scheduledCheckins.filter((c) => c.status === 'concluido').length} de{' '}
-                {scheduledCheckins.length} check-ins concluídos na quinzena em curso.
-              </p>
-            </div>
-          )}
-
-          {/* Report body */}
-          <div className="space-y-4 text-xs leading-relaxed text-[#45655c]">
-            <div className="rounded-2xl bg-[#f8faf9] border border-[#dfe8e3] p-5 space-y-2">
-              <p className="font-bold text-[#17372f] uppercase tracking-wider text-[11px]">
-                Síntese Clínica Executiva:
-              </p>
-              <p className="text-sm text-[#17372f] leading-relaxed">{selectedReport.summary}</p>
-            </div>
-
-            {/* Metrics table in report */}
-            <div className="grid grid-cols-3 gap-3">
-              {selectedReport.metrics.map(([label, val]) => (
-                <div key={label} className="rounded-2xl border border-[#dfe8e3] p-4 text-center">
-                  <p className="text-[11px] text-[#698078] font-bold">{label}</p>
-                  <p className="text-xl font-bold text-[#17372f] mt-1">{val}</p>
+            {/* Content Sections */}
+            <div className="space-y-5">
+              <div>
+                <h3 className="font-serif text-lg font-bold text-white mb-2">
+                  1. Resumo Executivo da Evolução
+                </h3>
+                <div className="rounded-2xl bg-[#0F0F0F] p-4 text-xs text-[#CCCCCC] leading-relaxed border border-[#333333]">
+                  {activeReport.summary ||
+                    'A paciente manteve excelente adesão aos hábitos matinais e vespertinos, com redução ponderal constante. Ponto focal para o próximo ciclo: estabilização do sono através da antecipação do jantar e suplementação.'}
                 </div>
-              ))}
+              </div>
+
+              <div>
+                <h3 className="font-serif text-lg font-bold text-white mb-2">
+                  2. Conduta Terapêutica Validada
+                </h3>
+                <div className="rounded-2xl bg-[#0F0F0F] p-4 text-xs text-[#CCCCCC] leading-relaxed border border-[#333333] space-y-2">
+                  <p>
+                    • <strong>Crononutrição:</strong> Jantar antecipado às 19h30 para reduzir
+                    despertares por volta das 3h.
+                  </p>
+                  <p>
+                    • <strong>Suplementação:</strong> Magnésio Bisglicinato 350mg 1h antes de
+                    deitar.
+                  </p>
+                  <p>
+                    • <strong>Acompanhamento:</strong> Check-ins programados aos dias 3, 7 e 14.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Approval History Box */}
-          <div className="rounded-2xl border border-[#dfe8e3] bg-[#fcfdfc] p-4 text-xs text-[#698078] space-y-1">
-            <p className="font-bold text-[#17372f]">Histórico de Auditoria Clínica:</p>
-            {selectedReport.status === 'aprovado' ? (
-              <p className="text-[#0b7b68]">
-                ✓ Aprovado e assinado por: <strong>{selectedReport.approvedBy}</strong> em{' '}
-                {selectedReport.approvedAt}.
-              </p>
-            ) : (
-              <p>Rascunho preparado pela IA em 24 de agosto. Aguardando assinatura médica.</p>
-            )}
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#edf2ef]">
-            <span className="text-xs text-[#698078]">
-              O paciente visualiza este documento na aba Prontuário/Consultas.
-            </span>
-
-            {selectedReport.status !== 'aprovado' && (
-              <button
-                type="button"
-                onClick={() => setConfirmApproveModal(selectedReport.id)}
-                className="min-h-11 rounded-2xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#096656] shadow-md flex items-center gap-1.5"
-              >
-                <CheckCircle2 className="size-4" />
-                <span>Aprovar Relatório e Compartilhar com Paciente</span>
-              </button>
-            )}
-          </div>
-        </article>
+            {/* Footer with Medical Signature */}
+            <div className="border-t border-[#333333] pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#ADADAD]">
+              <div>
+                <p className="font-bold text-white">Dr. Guilherme Martins</p>
+                <p className="text-[11px] font-mono text-[#D6B270]">CRM/SP 184.920 · RQE 92.110</p>
+              </div>
+              <span className="text-[11px] text-[#888888]">
+                Instituto Vivans · Sistema de Prontuário Eletrônico Auditado
+              </span>
+            </div>
+          </article>
+        )}
       </div>
 
-      {/* Confirmation Modal for Approving Report */}
-      {confirmApproveModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-2xl animate-fade-in-up space-y-4">
-            <div className="flex items-center gap-3 border-b border-[#edf2ef] pb-3">
-              <div className="grid size-10 place-items-center rounded-2xl bg-[#ebf6f2] text-[#075f50]">
-                <CheckCircle2 className="size-5" />
-              </div>
-              <div>
-                <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                  Aprovação de Relatório Clínico
-                </h3>
-                <p className="text-xs text-[#698078]">Assinatura e liberação para o paciente</p>
-              </div>
-            </div>
-
-            <p className="text-xs text-[#45655c] leading-relaxed">
-              Você revisou a síntese gerada pela IA e atesta a precisão clínica dos dados
-              apresentados. Após a aprovação, o documento ficará visível no aplicativo do paciente.
-            </p>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setConfirmApproveModal(null)}
-                className="min-h-10 rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => handleApprove(confirmApproveModal)}
-                className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm"
-              >
-                Aprovar &amp; Compartilhar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Simulated PDF Preview Modal */}
-      {pdfPreviewOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="w-full max-w-2xl rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-2xl space-y-5 animate-fade-in-up">
-            <div className="flex items-center justify-between border-b border-[#edf2ef] pb-3">
-              <div className="flex items-center gap-2">
-                <FileText className="size-5 text-[#0b7b68]" />
-                <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                  Visualização de Impressão / PDF Demonstrativo
-                </h3>
-              </div>
-              <button
-                onClick={() => setPdfPreviewOpen(false)}
-                className="p-1 text-[#60766f] hover:bg-[#f4f7f5] rounded-full"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="rounded-2xl border border-[#dfe8e3] p-6 bg-[#fdfbf7] font-serif space-y-4 text-xs">
-              <div className="flex justify-between border-b border-[#b9d8cf] pb-3 font-sans">
-                <div>
-                  <strong className="text-base text-[#17372f]">Instituto Vivans</strong>
-                  <p className="text-[11px] text-[#698078]">Cuidado Longitudinal e Longevidade</p>
-                </div>
-                <div className="text-right text-[11px] text-[#698078]">
-                  <p>Dr. Guilherme Martins · CRM 123456</p>
-                  <p>Data: 25 de agosto de 2026</p>
-                </div>
-              </div>
-
-              <h4 className="text-lg font-bold text-[#17372f]">
-                {selectedReport.title} · {selectedReport.patientName}
-              </h4>
-              <p className="text-xs text-[#3b534b] leading-relaxed">{selectedReport.summary}</p>
-
-              <div className="border-t border-dashed border-[#b9d8cf] pt-3 text-[10px] text-[#8a9c96] font-sans">
-                Documento gerado em ambiente de protótipo demonstrativo.
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setPdfPreviewOpen(false)}
-                className="min-h-10 rounded-xl bg-[#17372f] px-5 text-xs font-bold text-white hover:bg-[#0e2721]"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <EvidenceModal
+        isOpen={evidenceModalOpen}
+        onClose={() => setEvidenceModalOpen(false)}
+        evidence={selectedEvidence}
+      />
     </div>
   )
 }

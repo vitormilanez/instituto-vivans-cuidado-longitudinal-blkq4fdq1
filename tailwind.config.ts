@@ -27,10 +27,23 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter var', 'SF Pro Display', 'system-ui', 'sans-serif'],
-        display: ['SF Pro Display', 'Inter var', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter var', 'system-ui', 'sans-serif'],
+        serif: ['Lora', 'Georgia', 'serif'],
+        display: ['Lora', 'Georgia', 'serif'],
       },
       colors: {
+        gold: {
+          DEFAULT: '#D6B270',
+          light: '#E8C391',
+          dark: '#B8935A',
+        },
+        dark: {
+          bg: '#0F0F0F',
+          card: '#1A1A1A',
+          cardHover: '#222222',
+          border: '#333333',
+          borderSubtle: '#262626',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
