@@ -4,7 +4,7 @@ import { NavigationHeader, DoctorSidebar, PatientBottomNav } from '@/components/
 import { useVivans } from '@/context/VivansContext'
 
 export function Layout() {
-  const { role, toastMessage } = useVivans()
+  const { toastMessage } = useVivans()
   const location = useLocation()
 
   const isDoctorRoute = location.pathname.startsWith('/medico')
@@ -34,7 +34,7 @@ export function Layout() {
       {/* Main Body */}
       <div className="mx-auto flex w-full max-w-[1540px] flex-1 min-h-[calc(100vh-72px)]">
         {/* Desktop Doctor Sidebar */}
-        {(isDoctorRoute || (!isPatientRoute && role === 'doctor')) && <DoctorSidebar />}
+        {isDoctorRoute && <DoctorSidebar />}
 
         {/* Content Container */}
         <main
@@ -47,7 +47,7 @@ export function Layout() {
       </div>
 
       {/* Mobile Patient Bottom Navigation */}
-      <PatientBottomNav />
+      {isPatientRoute && <PatientBottomNav />}
     </div>
   )
 }
