@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import {
   Role,
   PatientProfile,
+  QuickNote,
   Appointment,
   CarePlanItem,
   MealRecord,
@@ -31,6 +32,11 @@ interface VivansContextType {
   setSelectedPatientId: (id: string) => void
   selectedPatient: PatientProfile
   registerQuickPatient: (name: string, email: string) => PatientProfile
+  addPatientQuickNote: (
+    patientId: string,
+    noteContent: string,
+    category?: QuickNote['category'],
+  ) => void
   appointments: Appointment[]
   carePlans: CarePlanItem[]
   toggleCarePlan: (id: string) => void
@@ -283,6 +289,49 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
     return newPatient
   }
 
+  const addPatientQuickNote = (
+    patientId: string,
+    noteContent: string,
+    category: QuickNote['category'] = 'observacao',
+  ) => {
+    if (!noteContent.trim()) return
+    const nowTime =
+      'Hoje · ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    const newNote: QuickNote = {
+      id: `qn-${Date.now()}`,
+      patientId,
+      content: noteContent.trim(),
+      createdAt: nowTime,
+      author: 'Dr. Guilherme Martins',
+      category,
+    }
+
+    setPatients((prev) =>
+      prev.map((p) => {
+        if (p.id === patientId) {
+          const updatedNotes = [newNote, ...(p.quickNotes || [])]
+          const updatedActivity: Array<[string, string]> = [
+            [
+              nowTime,
+              `Anotação rápida registrada: "${noteContent.trim().slice(0, 45)}${noteContent.trim().length > 45 ? '...' : ''}"`,
+            ],
+            ...p.activity,
+          ]
+          return {
+            ...p,
+            quickNotes: updatedNotes,
+            activity: updatedActivity,
+            lastContact: nowTime,
+          }
+        }
+        return p
+      }),
+    )
+
+    const targetPatient = patients.find((p) => p.id === patientId)
+    notify(`Anotação rápida salva com sucesso para ${targetPatient?.name || 'o paciente'}.`)
+  }
+
   const nudgeDelayedPatients = () => {
     setNudged(true)
     notify('Lembrete (cutucão) enviado com sucesso para 5 pacientes.')
@@ -300,6 +349,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         setSelectedPatientId,
         selectedPatient,
         registerQuickPatient,
+        addPatientQuickNote,
         appointments,
         carePlans,
         toggleCarePlan,

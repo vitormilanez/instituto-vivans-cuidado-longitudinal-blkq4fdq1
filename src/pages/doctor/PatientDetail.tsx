@@ -25,7 +25,10 @@ import {
   ArrowLeft,
   ShieldCheck,
   ExternalLink,
+  PenLine,
+  Plus,
 } from 'lucide-react'
+import { QuickConsultationModal } from '@/components/QuickConsultationModal'
 
 export default function DoctorPatientDetail() {
   const { id } = useParams<{ id: string }>()
@@ -40,6 +43,7 @@ export default function DoctorPatientDetail() {
   const [activeTab, setActiveTab] = useState<
     'dossie' | 'retorno' | 'preconsulta' | 'plano' | 'refeicoes' | 'linha_tempo' | 'evidencias'
   >('dossie')
+  const [isQuickNoteModalOpen, setIsQuickNoteModalOpen] = useState(false)
   const [selectedEvidence, setSelectedEvidence] = useState<(typeof medicalEvidences)[0] | null>(
     null,
   )
@@ -79,8 +83,17 @@ export default function DoctorPatientDetail() {
           </div>
 
           <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setIsQuickNoteModalOpen(true)}
+              className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors cursor-pointer"
+            >
+              <PenLine className="size-3.5 text-[#0b7b68]" />
+              <span>+ Anotação Rápida</span>
+            </button>
+
             <Link
-              to="/medico/consulta/apt-marina"
+              to={`/medico/consulta/${patient.id}`}
               className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm transition-colors"
             >
               <Video className="size-4" />
@@ -341,6 +354,40 @@ export default function DoctorPatientDetail() {
                   ✓ Plano publicado e vinculado ao aplicativo da paciente em 25 ago 2026.
                 </p>
               </div>
+
+              {/* Patient Quick Notes Sub-section */}
+              {patient.quickNotes && patient.quickNotes.length > 0 && (
+                <div className="mt-3 rounded-2xl bg-[#fafdfc] p-4 border border-[#bfe4d8]/70 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#075f50] flex items-center gap-1.5">
+                      <PenLine className="size-3.5 text-[#0b7b68]" />
+                      Anotações Clínicas Registradas ({patient.quickNotes.length})
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsQuickNoteModalOpen(true)}
+                      className="text-[11px] font-bold text-[#0b7b68] hover:underline cursor-pointer"
+                    >
+                      + Nova anotação
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {patient.quickNotes.map((note) => (
+                      <div
+                        key={note.id}
+                        className="rounded-xl border border-[#dfe8e3] bg-white p-3 text-xs space-y-1"
+                      >
+                        <div className="flex items-center justify-between text-[10px] text-[#60766f]">
+                          <span className="font-bold text-[#17372f]">{note.author}</span>
+                          <span>{note.createdAt}</span>
+                        </div>
+                        <p className="text-xs text-[#2c3e38] leading-relaxed">{note.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </article>
           </div>
         </section>
@@ -512,39 +559,47 @@ export default function DoctorPatientDetail() {
       {/* TAB 5: LINHA DO TEMPO */}
       {activeTab === 'linha_tempo' && (
         <section className="rounded-3xl border border-[#dfe8e3] bg-white p-6 sm:p-8 shadow-sm space-y-4 animate-fade-in">
-          <h3 className="font-serif text-lg font-bold text-[#17372f]">
-            Linha do Tempo Longitudinal
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-serif text-lg font-bold text-[#17372f]">
+              Linha do Tempo Longitudinal
+            </h3>
+            <button
+              type="button"
+              onClick={() => setIsQuickNoteModalOpen(true)}
+              className="text-xs font-bold text-[#0b7b68] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <PenLine className="size-3.5" />
+              <span>Registrar evento / anotação</span>
+            </button>
+          </div>
           <div className="space-y-4 border-l-2 border-[#b9d8cf] pl-6 ml-2">
-            {[
-              {
-                date: 'Hoje · 09:18',
-                title: 'Pré-consulta por voz enviada',
-                desc: 'Marina completou as 4 perguntas e revisou a transcrição.',
-              },
-              {
-                date: 'Ontem · 20:08',
-                title: 'Refeição registrada com saciedade 4/5',
-                desc: 'Foto do jantar enviada com notas de contexto.',
-              },
-              {
-                date: '24 ago · 16:42',
-                title: 'Relatório quinzenal revisado pelo Dr. Guilherme',
-                desc: 'Identificado padrão de sono curto em 4 noites.',
-              },
-              {
-                date: '12 ago · 11:14',
-                title: 'Primeira consulta realizada',
-                desc: 'Definição do plano inicial de emagrecimento saudável.',
-              },
-            ].map((t, idx) => (
-              <div key={idx} className="relative space-y-1 text-xs">
-                <div className="absolute -left-[31px] top-1 size-3 rounded-full bg-[#0b7b68]" />
-                <span className="font-bold text-[#0b7b68]">{t.date}</span>
-                <strong className="block text-sm text-[#17372f]">{t.title}</strong>
-                <p className="text-[#60766f]">{t.desc}</p>
-              </div>
-            ))}
+            {patient.activity && patient.activity.length > 0
+              ? patient.activity.map(([date, desc], idx) => (
+                  <div key={idx} className="relative space-y-0.5 text-xs">
+                    <div className="absolute -left-[31px] top-1 size-3 rounded-full bg-[#0b7b68]" />
+                    <span className="font-bold text-[#0b7b68]">{date}</span>
+                    <p className="text-xs text-[#17372f] font-medium leading-relaxed">{desc}</p>
+                  </div>
+                ))
+              : [
+                  {
+                    date: 'Hoje · 09:18',
+                    title: 'Pré-consulta por voz enviada',
+                    desc: 'Marina completou as 4 perguntas e revisou a transcrição.',
+                  },
+                  {
+                    date: 'Ontem · 20:08',
+                    title: 'Refeição registrada com saciedade 4/5',
+                    desc: 'Foto do jantar enviada com notas de contexto.',
+                  },
+                ].map((t, idx) => (
+                  <div key={idx} className="relative space-y-1 text-xs">
+                    <div className="absolute -left-[31px] top-1 size-3 rounded-full bg-[#0b7b68]" />
+                    <span className="font-bold text-[#0b7b68]">{t.date}</span>
+                    <strong className="block text-sm text-[#17372f]">{t.title}</strong>
+                    <p className="text-[#60766f]">{t.desc}</p>
+                  </div>
+                ))}
           </div>
         </section>
       )}
@@ -598,6 +653,14 @@ export default function DoctorPatientDetail() {
         isOpen={Boolean(selectedEvidence)}
         onClose={() => setSelectedEvidence(null)}
         evidence={selectedEvidence}
+      />
+
+      {/* Quick Note Modal */}
+      <QuickConsultationModal
+        isOpen={isQuickNoteModalOpen}
+        onClose={() => setIsQuickNoteModalOpen(false)}
+        initialAction="note"
+        initialPatientId={patient.id}
       />
     </div>
   )

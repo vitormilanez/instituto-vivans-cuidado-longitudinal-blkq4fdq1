@@ -2,6 +2,15 @@
 
 export type Role = 'doctor' | 'patient'
 
+export interface QuickNote {
+  id: string
+  patientId: string
+  content: string
+  createdAt: string
+  author: string
+  category?: 'evolucao' | 'observacao' | 'medicacao' | 'geral'
+}
+
 export interface PatientProfile {
   id: string
   initials: string
@@ -22,6 +31,9 @@ export interface PatientProfile {
   targetWeight: number
   startWeight: number
   isTemporary?: boolean
+  isOnlineInWaitingRoom?: boolean
+  waitingSince?: string
+  quickNotes?: QuickNote[]
   report: {
     title: string
     period: string
@@ -182,6 +194,19 @@ export const initialPatients: PatientProfile[] = [
     cycle: 'Dia 29 de 90 · Plano pós-consulta ativo',
     lastContact: 'Hoje · 09:18',
     nextConsultation: 'Hoje · 10:30 (Retorno agendado)',
+    isOnlineInWaitingRoom: true,
+    waitingSince: 'Há 4 min',
+    quickNotes: [
+      {
+        id: 'qn-init-1',
+        patientId: 'marina-costa',
+        content:
+          'Paciente solicitou revisão sobre horário de jantar x despertares noturnos. Relatou excelente saciedade com omelete.',
+        createdAt: 'Hoje · 09:20',
+        author: 'Dr. Guilherme Martins',
+        category: 'observacao',
+      },
+    ],
     adherence: '82%',
     weightLoss: '−1,8 kg',
     currentWeight: 78.2,
@@ -339,6 +364,8 @@ export const initialPatients: PatientProfile[] = [
     cycle: 'Pré-cuidado',
     lastContact: 'Ontem · 11:05',
     nextConsultation: 'Hoje · 11:30',
+    isOnlineInWaitingRoom: false,
+    quickNotes: [],
     adherence: '0%',
     weightLoss: '0,0 kg',
     currentWeight: 88.0,

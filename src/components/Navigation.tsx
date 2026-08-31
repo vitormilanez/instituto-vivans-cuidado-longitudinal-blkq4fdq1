@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { cn } from '@/lib/utils'
-import { QuickConsultationModal } from '@/components/QuickConsultationModal'
+import { QuickConsultationModal, QuickActionType } from '@/components/QuickConsultationModal'
 import {
   Sparkles,
   LayoutDashboard,
@@ -18,6 +18,10 @@ import {
   AlertTriangle,
   ArrowRightLeft,
   Check,
+  PenLine,
+  UserCheck,
+  Clock,
+  Radio,
 } from 'lucide-react'
 
 export function NavigationHeader() {
@@ -104,9 +108,25 @@ export function NavigationHeader() {
 }
 
 export function DoctorSidebar() {
-  const { nudged, nudgeDelayedPatients } = useVivans()
+  const { patients, nudged, nudgeDelayedPatients } = useVivans()
   const location = useLocation()
   const [isQuickConsultationOpen, setIsQuickConsultationOpen] = useState(false)
+  const [quickActionType, setQuickActionType] = useState<QuickActionType>('video')
+  const [quickTargetPatientId, setQuickTargetPatientId] = useState<string>('marina-costa')
+
+  // Detect patients currently waiting in the virtual waiting room
+  const waitingPatients = patients.filter((p) => p.isOnlineInWaitingRoom)
+  const primaryWaitingPatient = waitingPatients[0] || patients.find((p) => p.id === 'marina-costa')
+
+  const openQuickAction = (action: QuickActionType, patientId?: string) => {
+    setQuickActionType(action)
+    if (patientId) {
+      setQuickTargetPatientId(patientId)
+    } else if (primaryWaitingPatient) {
+      setQuickTargetPatientId(primaryWaitingPatient.id)
+    }
+    setIsQuickConsultationOpen(true)
+  }
 
   const links = [
     { label: 'Visão geral', path: '/medico', icon: LayoutDashboard },
@@ -126,20 +146,19 @@ export function DoctorSidebar() {
   return (
     <>
       <aside className="hidden min-h-[calc(100vh-72px)] border-r border-[#dfe8e3] bg-white px-3.5 py-5 lg:block w-[260px] shrink-0">
-        {/* Prominent Doctor Profile & Quick Google Meet Card */}
-        <div className="mb-5 rounded-[22px] bg-[#111827] p-4 text-white shadow-[0_12px_28px_rgba(17,24,39,0.22)] border border-[#1f2937]">
+        {/* Prominent Doctor Profile & Quick Actions Card */}
+        <div className="mb-5 rounded-[24px] bg-gradient-to-b from-[#111827] to-[#16202e] p-4 text-white shadow-[0_12px_28px_rgba(17,24,39,0.22)] border border-[#1f2937]">
           {/* Doctor Info Row */}
           <div className="flex items-start gap-3">
-            {/* Square avatar / check badge box */}
-            <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#1f2937] border border-white/10 text-[#b59e7f] shadow-inner">
+            <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#1f2937] border border-white/10 text-[#b59e7f] shadow-inner">
               <Check className="size-5 stroke-[2.5] text-[#b59e7f]" />
             </div>
 
             <div className="min-w-0 flex-1">
-              <h2 className="truncate font-serif text-[15px] font-bold text-white tracking-tight leading-tight">
+              <h2 className="truncate font-serif text-sm font-bold text-white tracking-tight leading-tight">
                 Dr. Guilherme Martins
               </h2>
-              <p className="mt-0.5 text-[11px] font-mono tracking-wide text-[#b59e7f]">
+              <p className="mt-0.5 text-[10px] font-mono tracking-wide text-[#b59e7f]">
                 CRM/SP 184.920
               </p>
               <div className="mt-1 flex items-center gap-1.5">
@@ -151,15 +170,72 @@ export function DoctorSidebar() {
             </div>
           </div>
 
-          {/* Quick Meet Action Button */}
+          {/* Real-time Virtual Waiting Room Status Indicator */}
+          <div className="mt-3.5 rounded-xl border border-[#23483f] bg-[#0c2e27]/80 p-2.5 backdrop-blur-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#7ae0c8]">
+                <Radio className="size-3 text-[#55e0be] animate-pulse" />
+                <span>Sala de Espera Virtual</span>
+              </div>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#13493e] px-2 py-0.5 text-[10px] font-bold text-[#bbf7e8]">
+                <span className="size-1.5 rounded-full bg-[#40e0be] animate-ping" />1 online
+              </span>
+            </div>
+
+            {primaryWaitingPatient && (
+              <div className="mt-2 flex items-center justify-between gap-2 border-t border-[#1a443b] pt-2">
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-bold text-white">
+                    {primaryWaitingPatient.name}
+                  </p>
+                  <p className="truncate text-[10px] text-[#8ea79f]">
+                    Aguardando na sala · {primaryWaitingPatient.waitingSince || 'Há 4 min'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openQuickAction('video', primaryWaitingPatient.id)}
+                  title={`Atender ${primaryWaitingPatient.name} agora`}
+                  className="grid size-7 shrink-0 place-items-center rounded-lg bg-[#b59e7f] text-[#111827] hover:bg-[#c9b293] transition-colors cursor-pointer"
+                >
+                  <Video className="size-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Primary Quick Meet Action Button */}
           <button
             type="button"
-            onClick={() => setIsQuickConsultationOpen(true)}
-            className="mt-3.5 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#b59e7f] px-4 text-xs font-bold text-[#111827] shadow-sm transition-all hover:bg-[#a68f70] active:scale-[0.98] cursor-pointer"
+            onClick={() => openQuickAction('video')}
+            className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-2xl bg-[#b59e7f] px-3 text-xs font-bold text-[#111827] shadow-sm transition-all hover:bg-[#a68f70] active:scale-[0.98] cursor-pointer"
           >
             <Video className="size-4 shrink-0 text-[#111827]" />
-            <span>Iniciar Google Meet</span>
+            <span>Iniciar Teleconsulta (Meet)</span>
           </button>
+
+          {/* Two Secondary Quick Shortcuts: Consultar Histórico & Anotação Rápida */}
+          <div className="mt-2 grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              onClick={() => openQuickAction('history')}
+              className="flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-[11px] font-semibold text-[#d1d5db] hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+              title="Consultar prontuário ou histórico clínico sem iniciar vídeo"
+            >
+              <FileText className="size-3.5 text-[#b59e7f]" />
+              <span>Histórico</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => openQuickAction('note')}
+              className="flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-[11px] font-semibold text-[#d1d5db] hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+              title="Registrar nota clínica rápida no prontuário do paciente"
+            >
+              <PenLine className="size-3.5 text-[#b59e7f]" />
+              <span>Anotação</span>
+            </button>
+          </div>
         </div>
         {/* Section Header: Navegação Principal */}
         <div className="px-2 pb-2">
@@ -239,10 +315,12 @@ export function DoctorSidebar() {
         </div>
       </aside>
 
-      {/* Quick Consultation Modal */}
+      {/* Quick Consultation Modal with Dynamic Initial Action */}
       <QuickConsultationModal
         isOpen={isQuickConsultationOpen}
         onClose={() => setIsQuickConsultationOpen(false)}
+        initialAction={quickActionType}
+        initialPatientId={quickTargetPatientId}
       />
     </>
   )

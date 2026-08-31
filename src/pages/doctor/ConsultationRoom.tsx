@@ -16,11 +16,14 @@ import {
   ShieldAlert,
   Send,
   Save,
+  PenLine,
+  UserCheck,
 } from 'lucide-react'
 
 export default function DoctorConsultationRoom() {
   const { id } = useParams<{ id: string }>()
-  const { patients, appointments, preConsultation, addCarePlanItem, notify } = useVivans()
+  const { patients, appointments, preConsultation, addCarePlanItem, addPatientQuickNote, notify } =
+    useVivans()
   const navigate = useNavigate()
 
   // Find matching patient or appointment
@@ -52,7 +55,11 @@ export default function DoctorConsultationRoom() {
   // Clinical notes state initialized dynamically
   const [freeNotes, setFreeNotes] = useState(() => {
     if (isNewOrTempPatient) {
-      return `Primeira consulta de acolhimento para ${currentPatient?.name || 'Novo Paciente'}. Paciente sem registros prévios no sistema. Mapeamento de objetivos de longevidade e perfil metabólico.`
+      return `Primeira consulta de acolhimento para ${currentPatient?.name || 'Novo Paciente'}. Mapeamento de objetivos de longevidade e perfil metabólico.`
+    }
+    const previousQuickNote = currentPatient?.quickNotes?.[0]?.content
+    if (previousQuickNote) {
+      return `[Anotação prévia do prontuário: "${previousQuickNote}"]\n\nPaciente ${currentPatient?.name || ''} relata adesão ao plano com evolução (${currentPatient?.progress || 'estável'}).`
     }
     return `Paciente ${currentPatient?.name || ''} relata adesão ao plano com evolução (${currentPatient?.progress || 'estável'}). Foco atual: ${currentPatient?.focus || 'rotina de longevidade'}.`
   })
@@ -75,8 +82,11 @@ export default function DoctorConsultationRoom() {
   const [approvedAndSent, setApprovedAndSent] = useState(false)
 
   const handleSaveDraft = () => {
+    if (currentPatient && freeNotes.trim()) {
+      addPatientQuickNote(currentPatient.id, freeNotes.trim(), 'evolucao')
+    }
     setSavedPlanDraft(true)
-    notify('Rascunho clínico da consulta salvo no prontuário interno.')
+    notify('Rascunho clínico e anotações gravadas no prontuário.')
   }
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false)
@@ -257,11 +267,15 @@ export default function DoctorConsultationRoom() {
               <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
             </div>
 
-            {/* Notes Section 1: Free Notes by Doctor */}
+            {/* Notes Section 1: Free Notes by Doctor with Quick Notes Reference */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#17372f]">
-                Anotações clínicas do médico durante o atendimento:
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-[#17372f] flex items-center gap-1.5">
+                  <PenLine className="size-3.5 text-[#0b7b68]" />
+                  <span>Anotações clínicas do médico durante o atendimento:</span>
+                </label>
+                <span className="text-[10px] text-[#60766f]">Salvas no histórico</span>
+              </div>
               <textarea
                 rows={3}
                 value={freeNotes}
@@ -269,6 +283,19 @@ export default function DoctorConsultationRoom() {
                 className="w-full rounded-2xl border border-[#dfe8e3] p-3 text-xs leading-relaxed text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
               />
             </div>
+
+            {/* Previous Quick Notes Snippet */}
+            {currentPatient?.quickNotes && currentPatient.quickNotes.length > 0 && (
+              <div className="rounded-xl border border-[#bfe4d8] bg-[#f0f8f5] p-2.5 text-xs text-[#075f50]">
+                <div className="flex items-center justify-between font-bold text-[10px] uppercase">
+                  <span>Última anotação pré-consulta:</span>
+                  <span>{currentPatient.quickNotes[0].createdAt}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-[#17372f] leading-snug">
+                  {currentPatient.quickNotes[0].content}
+                </p>
+              </div>
+            )}
 
             {/* Notes Section 2: AI Structured Notes (Draft) */}
             <div className="space-y-1.5">
