@@ -191,11 +191,11 @@ export default function PatientDiary() {
               <div className="rounded-xl border border-[#f0d59c] bg-[#fffbf2] p-3 text-[11px] text-[#805f24] leading-relaxed">
                 <div className="flex items-center gap-1.5 font-bold text-[#70480e] mb-0.5">
                   <AlertCircle className="size-3.5" />
-                  <span>Aviso Importante sobre Reconhecimento Visual</span>
+                  <span>Aviso: Rascunho gerado com IA - requer validação médica</span>
                 </div>
-                Uma foto não determina com precisão ingredientes ocultos (óleos, açúcar),
-                quantidades exatas ou valor nutricional absoluto. A análise serve como contexto
-                visual para o Dr. Guilherme.
+                Uma foto não determina com precisão ingredientes ocultos, porções exatas ou
+                calorias. A análise serve exclusivamente como suporte visual preliminar para a
+                conversa com o Dr. Guilherme Martins.
               </div>
             </div>
           )}

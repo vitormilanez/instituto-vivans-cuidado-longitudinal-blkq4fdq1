@@ -151,15 +151,24 @@ export interface Appointment {
   checklist: string[]
 }
 
+export type ActionPeriod = 'manha' | 'tarde' | 'noite' | 'livre'
+export type ActionTimingStatus = 'em_dia' | 'pendente_hoje' | 'atrasado' | 'concluido'
+
 export interface CarePlanItem {
   id: string
   action: string
   category: string
   type: 'medical' | 'ai_suggestion'
   completed: boolean
-  notes?: string
-  frequency?: string
+  isPrimaryToday?: boolean // High priority focus for the patient
+  period?: ActionPeriod
+  timingStatus?: ActionTimingStatus
+  frequency?: string // ex: "Diário", "3x por semana", "Antes de deitar"
   targetDays?: number
+  notes?: string
+  lastCompletedAt?: string
+  doctorRationale?: string // Explicação médica acolhedora
+  aiDraftNote?: string // Se gerado por IA
 }
 
 export type CheckinType = 'peso' | 'humor' | 'adesao' | 'diario'
@@ -1614,43 +1623,95 @@ export const initialCarePlans: CarePlanItem[] = [
   {
     id: 'plan-1',
     action: 'Ingerir 500 ml de água antes do almoço e do jantar',
-    category: 'Hábitos alimentares e hidratação',
+    category: 'Hidratação & Saciedade',
     type: 'medical',
     completed: true,
-    frequency: 'Diário',
+    isPrimaryToday: false,
+    period: 'manha',
+    timingStatus: 'concluido',
+    frequency: 'Diário (antes das principais refeições)',
+    lastCompletedAt: 'Hoje · 12:10',
+    doctorRationale:
+      'Melhora a percepção de saciedade gástrica e otimiza a absorção de nutrientes.',
   },
   {
     id: 'plan-2',
     action: 'Antecipar o horário do jantar para as 19h30',
-    category: 'Crononutrição · Ajuste pós-consulta',
+    category: 'Crononutrição & Ritmo Circadiano',
     type: 'medical',
     completed: false,
-    frequency: 'Diário',
+    isPrimaryToday: true,
+    period: 'noite',
+    timingStatus: 'pendente_hoje',
+    frequency: 'Diário (até 19h30)',
+    doctorRationale:
+      'Garante intervalo digestivo de 2h30 a 3h antes de deitar para evitar os despertares noturnos das 3h.',
   },
   {
     id: 'plan-3',
-    action: 'Registrar imagem do prato noturno com notas de saciedade',
-    category: 'Diário de acompanhamento · até 21h',
+    action: 'Registrar foto do jantar no Diário com notas de saciedade',
+    category: 'Diário & Acompanhamento',
     type: 'medical',
     completed: false,
-    frequency: 'Diário',
+    isPrimaryToday: false,
+    period: 'noite',
+    timingStatus: 'pendente_hoje',
+    frequency: 'Diário (após o jantar)',
+    doctorRationale:
+      'Permite ao Dr. Guilherme acompanhar o impacto da saciedade na qualidade do sono sem contagem de calorias.',
   },
   {
     id: 'plan-4',
-    action: 'Iniciar rotina de higiene do sono sem telas às 22h',
-    category: 'Sono e recuperação',
+    action: 'Rotina de desaceleração sem telas a partir das 22h',
+    category: 'Higiene do Sono',
     type: 'medical',
     completed: false,
-    frequency: 'Diário',
+    isPrimaryToday: false,
+    period: 'noite',
+    timingStatus: 'pendente_hoje',
+    frequency: 'Diário (22h00)',
+    doctorRationale:
+      'Estimula a liberação natural de melatonina para reduzir a latência do sono profundo.',
   },
   {
     id: 'plan-5',
-    action: 'Caminhada leve matinal de 15 minutos em luz natural',
-    category: 'Atividade física e ritmo circadiano',
+    action: 'Ajuste de lanche vespertino proteico às 16h30',
+    category: 'Estabilidade de Energia',
+    type: 'medical',
+    completed: false,
+    isPrimaryToday: false,
+    period: 'tarde',
+    timingStatus: 'atrasado',
+    frequency: 'Dias úteis (16h30)',
+    doctorRationale:
+      'Evita picos de fome ao chegar em casa e estabiliza a glicemia no final da tarde.',
+  },
+  {
+    id: 'plan-6',
+    action: 'Caminhada leve de 15 minutos em luz natural pela manhã',
+    category: 'Ritmo Circadiano & Movimento',
     type: 'ai_suggestion',
     completed: false,
-    notes: 'Rascunho organizado pelo Copiloto para avaliação médica.',
-    frequency: 'Sugestão em análise',
+    isPrimaryToday: false,
+    period: 'manha',
+    timingStatus: 'pendente_hoje',
+    frequency: 'Sugestão do Copiloto (aguarda validação médica)',
+    notes: 'Rascunho organizado pelo Copiloto para avaliação do Dr. Guilherme.',
+    aiDraftNote:
+      'Baseado no seu relato de sono fragmentado, a exposição à luz solar matinal auxilia na sincronização do ritmo circadiano.',
+  },
+  {
+    id: 'plan-7',
+    action: 'Infusão morna de camomila ou erva-doce às 21h30',
+    category: 'Sono & Relaxamento',
+    type: 'ai_suggestion',
+    completed: false,
+    isPrimaryToday: false,
+    period: 'noite',
+    timingStatus: 'pendente_hoje',
+    frequency: 'Sugestão do Copiloto (aguarda validação médica)',
+    notes: 'Rascunho gerado pelo Copiloto para discussão em consulta.',
+    aiDraftNote: 'Auxilia no relaxamento pré-sono. Sujeito à concordância do médico responsável.',
   },
 ]
 

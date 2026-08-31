@@ -98,18 +98,38 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
     patients.find((p) => p.id === selectedPatientId) || patients[0] || initialPatients[0]
 
   const toggleCarePlan = (id: string) => {
+    const nowTime =
+      'Hoje · ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
     setCarePlans((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, completed: !item.completed } : item)),
+      prev.map((item) => {
+        if (item.id === id) {
+          const nextCompleted = !item.completed
+          return {
+            ...item,
+            completed: nextCompleted,
+            timingStatus: nextCompleted ? 'concluido' : 'pendente_hoje',
+            lastCompletedAt: nextCompleted ? nowTime : undefined,
+          }
+        }
+        return item
+      }),
     )
+    const target = carePlans.find((p) => p.id === id)
+    if (target && !target.completed) {
+      notify(`Parabéns! "${target.action.slice(0, 38)}..." marcado como concluído.`)
+    } else {
+      notify('Ação desmarcada.')
+    }
   }
 
   const addCarePlanItem = (newItem: Omit<CarePlanItem, 'id'>) => {
     const item: CarePlanItem = {
       ...newItem,
       id: `plan-${Date.now()}`,
+      timingStatus: newItem.completed ? 'concluido' : 'pendente_hoje',
     }
     setCarePlans((prev) => [...prev, item])
-    notify('Ação adicionada ao plano de cuidado.')
+    notify('Ação adicionada ao plano de cuidado com sucesso.')
   }
 
   const addMealRecord = (newMeal: Omit<MealRecord, 'id'>) => {

@@ -1,31 +1,74 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
-import { CheckCircle2, Clock, Sparkles, Shield, AlertCircle, Plus } from 'lucide-react'
+import {
+  StatusBadge,
+  AiDraftBadge,
+  SimulationDisclaimer,
+  UrgentCareWarning,
+} from '@/components/CommonUI'
+import {
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  ShieldCheck,
+  AlertCircle,
+  Plus,
+  Target,
+  ArrowRight,
+  Flame,
+  Calendar,
+  ChevronRight,
+  Check,
+  HelpCircle,
+  X,
+  Info,
+  Layers,
+} from 'lucide-react'
+import { CarePlanItem } from '@/data/mockData'
 
 export default function PatientPlan() {
   const {
-    carePlans,
+    carePlans = [],
     toggleCarePlan,
     addCarePlanItem,
     returnJourney,
-    scheduledCheckins,
+    scheduledCheckins = [],
     completeScheduledCheckin,
+    preConsultation,
     notify,
   } = useVivans()
+
   const [newActionText, setNewActionText] = useState('')
   const [newActionCategory, setNewActionCategory] = useState('Hábitos alimentares')
+  const [newActionRationale, setNewActionRationale] = useState('')
   const [isAdding, setIsAdding] = useState(false)
+  const [filterType, setFilterType] = useState<'todos' | 'medico' | 'ia'>('todos')
+  const [filterPeriod, setFilterPeriod] = useState<'todos' | 'manha' | 'tarde' | 'noite'>('todos')
+  const [showAdherenceExplainModal, setShowAdherenceExplainModal] = useState(false)
 
-  const completedCount = carePlans.filter((p) => p.completed).length
-  const totalCount = carePlans.length
-  const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
+  // Separating Approved vs AI Suggestions
+  const medicalActions = carePlans.filter((p) => p.type === 'medical')
+  const aiSuggestedActions = carePlans.filter((p) => p.type === 'ai_suggestion')
+
+  // Status counts for medical actions
+  const completedMedical = medicalActions.filter((p) => p.completed).length
+  const totalMedical = medicalActions.length
+  const delayedMedical = medicalActions.filter(
+    (p) => !p.completed && p.timingStatus === 'atrasado',
+  ).length
+  const onTimeMedical = totalMedical - delayedMedical - completedMedical
+
+  const percentMedical = totalMedical > 0 ? Math.round((completedMedical / totalMedical) * 100) : 0
+
+  // Primary action of the day (highest focus recommendation)
+  const primaryAction =
+    carePlans.find((p) => p.type === 'medical' && p.isPrimaryToday && !p.completed) ||
+    carePlans.find((p) => p.type === 'medical' && !p.completed) ||
+    null
 
   const completedCheckins = scheduledCheckins.filter((c) => c.status === 'concluido').length
   const totalCheckins = scheduledCheckins.length
-
-  const medicalActions = carePlans.filter((p) => p.type === 'medical')
-  const aiSuggestedActions = carePlans.filter((p) => p.type === 'ai_suggestion')
 
   const handleAddAction = (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,302 +78,621 @@ export default function PatientPlan() {
       category: newActionCategory,
       type: 'medical',
       completed: false,
+      period: 'livre',
+      timingStatus: 'pendente_hoje',
+      frequency: 'Ação pessoal adicionada pela paciente',
+      doctorRationale:
+        newActionRationale.trim() || 'Ação pessoal de autocuidado integrada pela paciente.',
     })
     setNewActionText('')
+    setNewActionRationale('')
     setIsAdding(false)
   }
 
+  // Filtered lists
+  const filteredMedical = medicalActions.filter((item) => {
+    if (filterPeriod !== 'todos' && item.period !== filterPeriod) return false
+    return true
+  })
+
+  const filteredAi = aiSuggestedActions.filter((item) => {
+    if (filterPeriod !== 'todos' && item.period && item.period !== filterPeriod) return false
+    return true
+  })
+
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Plano de Cuidado Longitudinal · Instituto Vivans" />
+      <SimulationDisclaimer text="Programa de Cuidado Longitudinal · Instituto Vivans · Orientações Validadas vs. Sugestões de Copiloto" />
 
-      {/* Header */}
-      <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-            Plano Longitudinal
-          </p>
-          <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-[#17372f]">
-            Seu Cuidado em Passos Simples
-          </h1>
-          <p className="mt-1 text-sm text-[#60766f]">
-            Orientações validadas pelo Dr. Guilherme Martins para manter consistência sem
-            sobrecarga.
-          </p>
+      {/* Hero Header: Objetivo da Marina nas palavras dela */}
+      <section className="overflow-hidden rounded-3xl border border-[#bfe4d8] bg-gradient-to-br from-[#ebf6f2] via-[#f7faf8] to-white p-5 sm:p-7 shadow-[0_8px_24px_rgba(11,123,104,0.06)]">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0b7b68] px-3 py-1 text-xs font-bold text-white shadow-xs">
+                <Target className="size-3.5" />
+                <span>Programa Ativo · Dia 29 de 90</span>
+              </span>
+              <StatusBadge tone="green">Dr. Guilherme Martins</StatusBadge>
+            </div>
+
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#17372f]">
+              Seu Programa de Cuidado
+            </h1>
+
+            {/* Marina's objective in her own words */}
+            <div className="rounded-2xl border border-[#cbe4dc] bg-white/90 p-4 text-xs sm:text-sm text-[#1e3e34] shadow-2xs space-y-1">
+              <p className="font-bold text-[11px] uppercase tracking-wider text-[#0b7b68] flex items-center gap-1.5">
+                <Target className="size-3.5" />
+                <span>Seu objetivo declarado:</span>
+              </p>
+              <p className="italic font-serif text-sm sm:text-base text-[#17372f] leading-snug">
+                “
+                {preConsultation?.objective ||
+                  'Manter a redução ponderal gradual com preservação de disposição e regularização do sono.'}
+                ”
+              </p>
+              <p className="text-[11px] text-[#698078] pt-1">
+                Foco acordado em consulta: Crononutrição do jantar às 19h30, saciedade sem
+                restrições extremas e higiene do sono.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsAdding(!isAdding)}
+              className="flex min-h-[44px] items-center justify-center gap-2 rounded-2xl border border-[#0b7b68] bg-white px-4 text-xs font-bold text-[#0b7b68] hover:bg-[#edf7f4] transition-all shadow-xs active:scale-98 cursor-pointer"
+            >
+              <Plus className="size-4" />
+              <span>{isAdding ? 'Fechar Formulário' : 'Adicionar Ação'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowAdherenceExplainModal(true)}
+              className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-2xl bg-white/70 px-3 text-[11px] font-semibold text-[#526a62] hover:bg-white hover:text-[#17372f] transition-colors"
+            >
+              <Info className="size-3.5 text-[#0b7b68]" />
+              <span>Como funciona a adesão?</span>
+            </button>
+          </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsAdding(!isAdding)}
-          className="flex min-h-11 items-center gap-2 self-start rounded-xl border border-[#dfe8e3] bg-white px-4 text-xs font-bold text-[#17372f] hover:bg-[#f4f7f5] transition-colors"
-        >
-          <Plus className="size-4 text-[#0b7b68]" />
-          <span>{isAdding ? 'Fechar' : 'Adicionar Ação Pessoal'}</span>
-        </button>
+        {/* Global Progress Summary Strip */}
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 border-t border-[#d8ebe3] pt-4">
+          <div className="rounded-2xl bg-white p-3 border border-[#dfe8e3]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#698078]">
+              Progresso Geral
+            </p>
+            <p className="text-xl font-bold text-[#0b7b68] mt-0.5">{percentMedical}%</p>
+            <p className="text-[10px] text-[#556d66]">
+              {completedMedical} de {totalMedical} ações feitas
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white p-3 border border-[#dfe8e3]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#0b7b68]">Em Dia</p>
+            <p className="text-xl font-bold text-[#17372f] mt-0.5">{onTimeMedical} ações</p>
+            <p className="text-[10px] text-[#556d66]">Planejadas para hoje</p>
+          </div>
+
+          <div className="rounded-2xl bg-white p-3 border border-[#dfe8e3]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#a06015]">
+              Ponto de Atenção
+            </p>
+            <p className="text-xl font-bold text-[#8d4e0b] mt-0.5">
+              {delayedMedical > 0 ? `${delayedMedical} atrasada` : 'Nenhuma pendência'}
+            </p>
+            <p className="text-[10px] text-[#8d4e0b]">
+              {delayedMedical > 0 ? 'Lanche vespertino 16h30' : 'Tudo em dia'}
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white p-3 border border-[#dfe8e3]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#5e776e]">
+              Check-ins de Retorno
+            </p>
+            <p className="text-xl font-bold text-[#17372f] mt-0.5">
+              {completedCheckins}/{totalCheckins}
+            </p>
+            <p className="text-[10px] text-[#556d66]">
+              Próxima rev: {returnJourney?.nextReviewDate?.split('(')[0] || '14 dias'}
+            </p>
+          </div>
+        </div>
       </section>
 
-      {/* Add Item form */}
+      {/* Add Custom Action Form */}
       {isAdding && (
         <form
           onSubmit={handleAddAction}
-          className="rounded-3xl border border-[#b9d8cf] bg-[#edf7f4] p-5 animate-fade-in-down"
+          className="rounded-3xl border border-[#b9d8cf] bg-[#edf7f4] p-5 sm:p-6 animate-fade-in space-y-4 shadow-sm"
         >
-          <h4 className="font-serif text-sm font-bold text-[#17372f] mb-3">
-            Adicionar nova ação de autocuidado
-          </h4>
-          <div className="grid gap-3 sm:grid-cols-[1fr_200px_auto]">
+          <div className="flex items-center justify-between border-b border-[#cfe5dc] pb-2">
+            <h4 className="font-serif text-sm sm:text-base font-bold text-[#17372f]">
+              Adicionar nova ação de autocuidado ao seu plano
+            </h4>
+            <button
+              type="button"
+              onClick={() => setIsAdding(false)}
+              className="text-[#60766f] hover:text-[#17372f]"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-[1fr_200px]">
+            <div>
+              <label className="block text-[11px] font-bold text-[#17372f] mb-1">
+                Qual é a ação que você deseja acompanhar?
+              </label>
+              <input
+                type="text"
+                placeholder="Ex: Fazer chá de camomila morno às 21h30..."
+                value={newActionText}
+                onChange={(e) => setNewActionText(e.target.value)}
+                className="w-full min-h-[44px] rounded-xl border border-[#dfe8e3] bg-white px-3.5 py-2 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-[#17372f] mb-1">Categoria</label>
+              <select
+                value={newActionCategory}
+                onChange={(e) => setNewActionCategory(e.target.value)}
+                className="w-full min-h-[44px] rounded-xl border border-[#dfe8e3] bg-white px-3 py-2 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+              >
+                <option value="Hábitos alimentares">Hábitos alimentares</option>
+                <option value="Sono e recuperação">Sono e recuperação</option>
+                <option value="Atividade física">Atividade física</option>
+                <option value="Hidratação & Saciedade">Hidratação & Saciedade</option>
+                <option value="Autocuidado">Autocuidado pessoal</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-[#17372f] mb-1">
+              Por que esta ação é importante para você? (Opcional)
+            </label>
             <input
               type="text"
-              placeholder="Ex: Fazer chá de camomila às 21h30..."
-              value={newActionText}
-              onChange={(e) => setNewActionText(e.target.value)}
-              className="rounded-xl border border-[#dfe8e3] bg-white px-3.5 py-2.5 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
-              required
+              placeholder="Ex: Me ajuda a desacelerar e dormir melhor sem acordar de madrugada..."
+              value={newActionRationale}
+              onChange={(e) => setNewActionRationale(e.target.value)}
+              className="w-full min-h-[40px] rounded-xl border border-[#dfe8e3] bg-white px-3.5 py-2 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
             />
-            <select
-              value={newActionCategory}
-              onChange={(e) => setNewActionCategory(e.target.value)}
-              className="rounded-xl border border-[#dfe8e3] bg-white px-3 py-2.5 text-xs text-[#17372f] focus:border-[#0b7b68] focus:outline-none"
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setIsAdding(false)}
+              className="min-h-[44px] rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-white"
             >
-              <option value="Hábitos alimentares">Hábitos alimentares</option>
-              <option value="Sono e recuperação">Sono e recuperação</option>
-              <option value="Atividade física">Atividade física</option>
-              <option value="Hidratação">Hidratação</option>
-            </select>
+              Cancelar
+            </button>
             <button
               type="submit"
-              className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656]"
+              className="min-h-[44px] rounded-xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#096656] shadow-sm active:scale-98"
             >
-              Salvar Ação
+              Salvar Ação no Plano
             </button>
           </div>
         </form>
       )}
 
-      {/* Active Return Journey Header Card */}
-      <article className="rounded-3xl border border-[#bfe4d8] bg-[#ebf6f2] p-6 shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#cfe6dc] pb-3">
-          <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-[#0b7b68] animate-pulse" />
-            <h2 className="font-serif text-lg font-bold text-[#17372f]">{returnJourney.title}</h2>
-          </div>
-          <StatusBadge tone="green">Plano Ativo · Validação Médica OK</StatusBadge>
-        </div>
-
-        <p className="text-xs text-[#3b534b] leading-relaxed">{returnJourney.summary}</p>
-
-        {/* Check-ins timeline track */}
-        <div className="rounded-2xl bg-white p-4 border border-[#dfe8e3] space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-[#17372f] uppercase tracking-wider">
-              Check-ins Programados do Retorno ({completedCheckins}/{totalCheckins})
-            </span>
-            <span className="text-[#0b7b68] font-semibold">
-              Revisão Médica: {returnJourney.nextReviewDate}
-            </span>
-          </div>
-
-          <div className="grid gap-2 sm:grid-cols-3">
-            {scheduledCheckins.map((chk) => (
-              <div
-                key={chk.id}
-                className={`rounded-xl border p-2.5 text-xs flex flex-col justify-between ${
-                  chk.status === 'concluido'
-                    ? 'border-[#bfe4d8] bg-[#f8fcfb]'
-                    : 'border-[#dfe8e3] bg-white'
-                }`}
-              >
-                <div>
-                  <div className="flex justify-between items-center text-[11px] mb-1">
-                    <span className="font-bold text-[#0b7b68]">Dia {chk.dayOffset}</span>
-                    <StatusBadge tone={chk.status === 'concluido' ? 'green' : 'amber'}>
-                      {chk.status === 'concluido' ? 'Feito' : 'Pendente'}
-                    </StatusBadge>
-                  </div>
-                  <strong className="block text-[11px] text-[#17372f] leading-snug">
-                    {chk.title}
-                  </strong>
-                </div>
-                {chk.status !== 'concluido' && (
-                  <button
-                    type="button"
-                    onClick={() => completeScheduledCheckin(chk.id, 'Feito', 'Registro pontual')}
-                    className="mt-2 rounded-lg bg-[#0b7b68] py-1 text-[10px] font-bold text-white hover:bg-[#086555]"
-                  >
-                    Registrar Agora
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </article>
-
-      {/* Progress & Grid Layout */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-        <div className="space-y-6">
-          {/* Progress Card */}
-          <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-                  Progresso do Dia
-                </p>
-                <h3 className="font-serif text-xl font-bold text-[#17372f] mt-1">
-                  {completedCount} de {totalCount} Ações Concluídas
-                </h3>
-              </div>
-              <span className="text-3xl font-bold text-[#0b7b68]">{percent}%</span>
-            </div>
-
-            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-[#e8efe5]">
-              <div
-                className="h-full rounded-full bg-[#0b7b68] transition-all duration-500"
-                style={{ width: `${percent}%` }}
-              />
-            </div>
-          </article>
-
-          {/* Section 1: Official Medical Guidance */}
-          <section className="space-y-3">
+      {/* HIGHLIGHT: PRÓXIMA AÇÃO RECOMENDADA DO DIA (1 Toque) */}
+      {primaryAction ? (
+        <article className="overflow-hidden rounded-3xl bg-[#17372f] p-5 sm:p-7 text-white shadow-[0_12px_32px_rgba(23,55,47,0.18)]">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
             <div className="flex items-center gap-2">
-              <Shield className="size-4 text-[#0b7b68]" />
-              <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                Orientações Aprovadas pelo Médico
+              <span className="grid size-6 place-items-center rounded-full bg-[#9fe0ce] text-[#17372f] text-xs font-bold">
+                1
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-[#9fe0ce]">
+                Próxima Ação Recomendada do Dia
+              </span>
+            </div>
+            <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-[#d6e8e2]">
+              Foco Prioritário
+            </span>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1.5 max-w-xl">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-white leading-tight">
+                {primaryAction.action}
               </h3>
-              <StatusBadge tone="green">Vigentes</StatusBadge>
+              <p className="text-xs text-[#d6e8e2] leading-relaxed">
+                {primaryAction.doctorRationale ||
+                  'Orientação validada pelo Dr. Guilherme para preservar energia e otimizar o repouso.'}
+              </p>
+              <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#9cc7ba] pt-1">
+                <span>Frequência: {primaryAction.frequency || 'Diário'}</span>
+                <span>•</span>
+                <span>Categoria: {primaryAction.category}</span>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              {medicalActions.map((item) => (
-                <div
+            <button
+              type="button"
+              onClick={() => toggleCarePlan(primaryAction.id)}
+              className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-white px-6 text-xs sm:text-sm font-bold text-[#17372f] shadow-lg transition-all hover:bg-[#eaf4f1] active:scale-95 cursor-pointer shrink-0"
+              title="Concluir esta ação em 1 toque"
+            >
+              <CheckCircle2 className="size-5 text-[#0b7b68]" />
+              <span>Concluir em 1 toque</span>
+            </button>
+          </div>
+        </article>
+      ) : (
+        <article className="rounded-3xl border border-[#bfe4d8] bg-[#ebf6f2] p-5 text-center text-[#075f50] space-y-2">
+          <CheckCircle2 className="size-8 mx-auto text-[#0b7b68]" />
+          <h3 className="font-serif text-lg font-bold">
+            Todas as ações principais de hoje foram concluídas!
+          </h3>
+          <p className="text-xs text-[#3b534b] max-w-md mx-auto">
+            Excelente constância, Marina. Seu progresso foi registrado para o Dr. Guilherme
+            acompanhar no prontuário.
+          </p>
+        </article>
+      )}
+
+      {/* FILTER BUTTONS & VIEW SWITCHER */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+        {/* Type filter */}
+        <div className="flex rounded-2xl border border-[#dfe8e3] bg-white p-1 shadow-2xs">
+          <button
+            type="button"
+            onClick={() => setFilterType('todos')}
+            className={`min-h-[36px] rounded-xl px-3.5 text-xs font-bold transition-colors ${
+              filterType === 'todos'
+                ? 'bg-[#17372f] text-white shadow-xs'
+                : 'text-[#60766f] hover:text-[#17372f]'
+            }`}
+          >
+            Todas as Ações ({carePlans.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterType('medico')}
+            className={`min-h-[36px] rounded-xl px-3.5 text-xs font-bold transition-colors ${
+              filterType === 'medico'
+                ? 'bg-[#17372f] text-white shadow-xs'
+                : 'text-[#60766f] hover:text-[#17372f]'
+            }`}
+          >
+            Aprovadas pelo Médico ({medicalActions.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterType('ia')}
+            className={`min-h-[36px] rounded-xl px-3.5 text-xs font-bold transition-colors ${
+              filterType === 'ia'
+                ? 'bg-[#17372f] text-white shadow-xs'
+                : 'text-[#60766f] hover:text-[#17372f]'
+            }`}
+          >
+            Sugestões IA ({aiSuggestedActions.length})
+          </button>
+        </div>
+
+        {/* Period filter */}
+        <div className="flex items-center gap-1.5 text-xs">
+          <span className="text-[11px] text-[#698078] hidden sm:inline">Período:</span>
+          {(['todos', 'manha', 'tarde', 'noite'] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setFilterPeriod(p)}
+              className={`min-h-[32px] rounded-lg px-2.5 text-[11px] font-bold capitalize transition-all ${
+                filterPeriod === p
+                  ? 'bg-[#edf7f4] text-[#0b7b68] border border-[#b9d8cf]'
+                  : 'text-[#60766f] hover:bg-white border border-transparent'
+              }`}
+            >
+              {p === 'todos' ? 'Qualquer hora' : p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* SECTION 1: ORIENTAÇÕES APROVADAS PELO MÉDICO */}
+      {(filterType === 'todos' || filterType === 'medico') && (
+        <section className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-2">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="size-5 text-[#0b7b68]" />
+              <h2 className="font-serif text-xl font-bold text-[#17372f]">
+                Orientações Aprovadas pelo Médico
+              </h2>
+              <span className="rounded-full bg-[#ebf6f2] border border-[#bfe4d8] px-2.5 py-0.5 text-xs font-bold text-[#075f50]">
+                Vigentes ({completedMedical}/{totalMedical})
+              </span>
+            </div>
+            <p className="text-xs text-[#698078]">
+              Prescrito e validado pelo Dr. Guilherme Martins
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {filteredMedical.map((item) => {
+              const isDelayed = !item.completed && item.timingStatus === 'atrasado'
+              return (
+                <article
                   key={item.id}
-                  onClick={() => toggleCarePlan(item.id)}
-                  className={`cursor-pointer rounded-2xl border p-4.5 transition-all ${
+                  className={`rounded-3xl border p-4.5 sm:p-5 transition-all shadow-2xs ${
                     item.completed
-                      ? 'border-[#b9d8cf] bg-[#edf7f4]'
-                      : 'border-[#dfe8e3] bg-white hover:border-[#9fc9bd]'
+                      ? 'border-[#b9d8cf] bg-[#f4faf7]'
+                      : isDelayed
+                        ? 'border-[#f8deb0] bg-[#fffcf5]'
+                        : 'border-[#dfe8e3] bg-white hover:border-[#9fc9bd]'
                   }`}
                 >
                   <div className="flex items-start gap-3.5">
-                    <div
-                      className={`grid size-6 place-items-center rounded-full border text-xs font-bold shrink-0 mt-0.5 transition-colors ${
+                    {/* Interactive Checkbox with >=44px touch target */}
+                    <button
+                      type="button"
+                      onClick={() => toggleCarePlan(item.id)}
+                      className={`grid size-9 shrink-0 place-items-center rounded-2xl border transition-all cursor-pointer ${
                         item.completed
-                          ? 'border-[#0b7b68] bg-[#0b7b68] text-white'
-                          : 'border-[#b7c7c1] text-transparent'
+                          ? 'border-[#0b7b68] bg-[#0b7b68] text-white shadow-xs'
+                          : 'border-[#b7c7c1] bg-white text-transparent hover:border-[#0b7b68]'
                       }`}
+                      aria-label={`Marcar ${item.action} como ${item.completed ? 'pendente' : 'concluída'}`}
                     >
-                      ✓
-                    </div>
-                    <div className="flex-1">
-                      <p
-                        className={`text-sm font-semibold leading-snug ${
+                      <Check className="size-5 stroke-[3]" />
+                    </button>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-xs font-bold text-[#0b7b68]">{item.category}</span>
+                        <div className="flex items-center gap-1.5">
+                          {item.completed ? (
+                            <StatusBadge tone="green">
+                              Concluído {item.lastCompletedAt ? `· ${item.lastCompletedAt}` : ''}
+                            </StatusBadge>
+                          ) : isDelayed ? (
+                            <StatusBadge tone="amber">Atenção · Pendente</StatusBadge>
+                          ) : (
+                            <StatusBadge tone="blue">Em dia · Hoje</StatusBadge>
+                          )}
+                        </div>
+                      </div>
+
+                      <h3
+                        className={`mt-1 font-serif text-base sm:text-lg font-bold leading-snug ${
                           item.completed ? 'text-[#45655c] line-through' : 'text-[#17372f]'
                         }`}
                       >
                         {item.action}
-                      </p>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-[#698078]">
-                        <span className="font-medium text-[#0b7b68]">{item.category}</span>
-                        <span>•</span>
-                        <span>Dr. Guilherme Martins</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+                      </h3>
 
-          {/* Section 2: AI Suggestions (Pending Medical Approval) */}
-          {aiSuggestedActions.length > 0 && (
-            <section className="space-y-3 pt-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="size-4 text-[#e49d45]" />
-                  <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                    Sugestões em Avaliação (Copiloto IA)
-                  </h3>
-                </div>
-                <StatusBadge tone="amber">Aguardando Validação</StatusBadge>
-              </div>
-
-              <div className="space-y-3">
-                {aiSuggestedActions.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl border border-[#f0d59c] bg-[#fffbf2] p-4.5"
-                  >
-                    <div className="flex items-start gap-3.5">
-                      <div className="grid size-6 place-items-center rounded-full border border-[#d9a244] bg-[#fff4d8] text-xs font-bold text-[#825b0b] shrink-0 mt-0.5">
-                        💡
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
-                        </div>
-                        <p className="text-sm font-medium text-[#70480e]">{item.action}</p>
-                        {item.notes && (
-                          <p className="mt-1 text-xs text-[#825b0b] italic">{item.notes}</p>
-                        )}
-                        <p className="mt-2 text-[11px] text-[#a07425]">
-                          Esta sugestão permanece como rascunho até validação e assinatura pelo Dr.
-                          Guilherme Martins.
+                      {item.doctorRationale && (
+                        <p className="mt-1.5 text-xs text-[#526b63] leading-relaxed">
+                          <strong>Por que fazer:</strong> {item.doctorRationale}
                         </p>
+                      )}
+
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-black/5 pt-2 text-[11px] text-[#698078]">
+                        <span>
+                          Frequência: <strong>{item.frequency || 'Diário'}</strong>
+                        </span>
+                        <span className="text-[#0b7b68] font-medium">Validado em consulta</span>
                       </div>
                     </div>
                   </div>
-                ))}
+                </article>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* SECTION 2: SUGESTÕES DO COPILOTO (IA) — SEPARAÇÃO VISUAL TOTAL */}
+      {(filterType === 'todos' || filterType === 'ia') && (
+        <section className="space-y-4 pt-4">
+          <div className="rounded-3xl border border-[#f0d59c] bg-[#fffbf2] p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#f3deaf] pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-5 text-[#c57d19]" />
+                <h2 className="font-serif text-xl font-bold text-[#70480e]">
+                  Sugestões do Copiloto (IA) · Aguardando Validação
+                </h2>
               </div>
-            </section>
-          )}
-        </div>
-
-        {/* Sidebar Info Panels */}
-        <aside className="space-y-5">
-          <div className="rounded-3xl bg-[#17372f] p-6 text-white shadow-md">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#9cc7ba]">
-              Foco Desta Quinzena
-            </p>
-            <h3 className="font-serif text-xl font-bold mt-2 text-white">
-              Regularizar Higiene do Sono
-            </h3>
-            <p className="mt-3 text-xs text-[#d6e8e2] leading-relaxed">
-              Antes de aumentar restrições calóricas ou carga de exercícios, o Dr. Guilherme
-              prioriza recuperar seu sono para reduzir o cortisol e a fadiga vespertina.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-[#f0d59c] bg-[#fffbf2] p-5 text-xs text-[#805f24]">
-            <div className="flex items-center gap-2 font-bold mb-2 text-[#70480e]">
-              <AlertCircle className="size-4 text-[#a37628]" />
-              <span>Quando avisar a equipe</span>
+              <AiDraftBadge
+                status="Rascunho gerado com IA - requer validação médica"
+                variant="highlight"
+              />
             </div>
-            <p className="leading-relaxed">
-              Caso sinta qualquer desconforto gastrointestinal, tontura ou dor persistente, envie
-              uma mensagem pelo aplicativo sem aguardar a próxima consulta.
-            </p>
-          </div>
 
-          <div className="rounded-3xl border border-[#dfe8e3] bg-white p-5 text-xs text-[#60766f]">
-            <p className="font-bold text-[#17372f] mb-1">Como o plano é atualizado?</p>
-            <p className="leading-relaxed">
-              Após cada consulta, o médico revisa as anotações do copiloto e publica uma nova versão
-              atualizada do plano diretamente para você.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-[#dfe8e3] bg-white p-5 text-xs text-[#60766f] space-y-2">
-            <p className="font-bold text-[#17372f]">Prescrição Ativa Relacionada</p>
-            <div className="rounded-xl bg-[#f8faf9] p-3 border border-[#edf2ef] space-y-1">
-              <span className="font-bold text-[#0b7b68]">#RX-1042 · Dr. Guilherme Martins</span>
-              <p className="text-[11px] text-[#60766f]">
-                Modulação matinal e suporte celular (Válida até 26/09)
+            <div className="rounded-2xl bg-white/80 p-3.5 text-xs text-[#805f24] leading-relaxed border border-[#f0d59c]/50 space-y-1">
+              <p className="font-bold text-[#70480e] flex items-center gap-1.5">
+                <Info className="size-3.5 text-[#a37628]" />
+                <span>O que são estas sugestões?</span>
+              </p>
+              <p>
+                O copiloto clínico identificou padrões nas suas respostas de sono e diário e
+                preparou estas ideias como <strong>rascunhos de apoio</strong>. Elas ainda{' '}
+                <strong>não são orientações médicas aprovadas</strong> e serão discutidas com o Dr.
+                Guilherme Martins no seu próximo retorno.
               </p>
             </div>
+
+            <div className="space-y-3">
+              {filteredAi.map((item) => (
+                <article
+                  key={item.id}
+                  className="rounded-2xl border border-[#e6c98c] bg-white p-4.5 space-y-2.5 shadow-2xs"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-[#a06015]">{item.category}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#fef3db] text-[#8d4e0b] px-2 py-0.5">
+                      Rascunho para Consulta
+                    </span>
+                  </div>
+
+                  <h3 className="font-serif text-base font-bold text-[#17372f]">
+                    💡 {item.action}
+                  </h3>
+
+                  {item.aiDraftNote && (
+                    <p className="text-xs text-[#60766f] leading-relaxed italic">
+                      “{item.aiDraftNote}”
+                    </p>
+                  )}
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#f0ebe0] pt-2 text-[11px] text-[#825b0b]">
+                    <span>Status: Em análise pelo médico</span>
+                    <span className="font-bold">Não substitui conduta prescrita</span>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
-        </aside>
-      </div>
+        </section>
+      )}
+
+      {/* CHECK-INS PROGRAMADOS DO RETORNO */}
+      <section className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
+              Acompanhamento Pós-Consulta (14 Dias)
+            </span>
+            <h3 className="font-serif text-xl font-bold text-[#17372f]">
+              {returnJourney?.title || 'Plano de Retorno e Adaptação'}
+            </h3>
+          </div>
+          <StatusBadge tone="green">
+            {completedCheckins} de {totalCheckins} Check-ins Realizados
+          </StatusBadge>
+        </div>
+
+        <p className="text-xs text-[#526b63] leading-relaxed">
+          {returnJourney?.summary ||
+            'Check-ins periódicos para acompanhar o impacto do jantar antecipado nos despertares noturnos.'}
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {scheduledCheckins.map((chk) => (
+            <div
+              key={chk.id}
+              className={`rounded-2xl border p-4 flex flex-col justify-between ${
+                chk.status === 'concluido'
+                  ? 'border-[#bfe4d8] bg-[#f8fcfb]'
+                  : 'border-[#dfe8e3] bg-white'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <strong className="text-[#0b7b68]">Dia {chk.dayOffset}</strong>
+                  <StatusBadge tone={chk.status === 'concluido' ? 'green' : 'amber'}>
+                    {chk.status === 'concluido' ? 'Concluído' : 'Pendente'}
+                  </StatusBadge>
+                </div>
+                <h4 className="font-serif text-sm font-bold text-[#17372f] leading-snug">
+                  {chk.title}
+                </h4>
+                <p className="text-[11px] text-[#60766f] mt-1">{chk.scheduledDate}</p>
+                {chk.value && (
+                  <p className="mt-2 text-[11px] font-bold text-[#0b6a5b] rounded-lg bg-[#edf7f4] px-2 py-1">
+                    Registro: {chk.value}
+                  </p>
+                )}
+              </div>
+
+              {chk.status !== 'concluido' ? (
+                <button
+                  type="button"
+                  onClick={() => completeScheduledCheckin(chk.id, 'Realizado', 'Check-in pontual')}
+                  className="mt-3 min-h-[40px] w-full rounded-xl bg-[#0b7b68] py-2 text-xs font-bold text-white hover:bg-[#086555] transition-colors"
+                >
+                  Registrar Agora
+                </button>
+              ) : (
+                <div className="mt-3 pt-2 border-t border-black/5 text-[10px] text-[#0b7b68] font-bold flex items-center gap-1">
+                  <CheckCircle2 className="size-3.5" />
+                  <span>Concluído ({chk.completedAt})</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ADHERENCE EXPLANATION MODAL */}
+      {showAdherenceExplainModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="w-full max-w-lg rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-2xl space-y-4 animate-fade-in">
+            <div className="flex items-center justify-between border-b border-[#edf2ef] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="grid size-9 place-items-center rounded-xl bg-[#e8f4f0] text-[#0b7b68]">
+                  <Target className="size-5" />
+                </div>
+                <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                  Como a adesão ao plano funciona?
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAdherenceExplainModal(false)}
+                className="text-[#60766f] hover:text-[#17372f]"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs text-[#45655c] leading-relaxed">
+              <p>
+                A <strong>adesão</strong> no Instituto Vivans é uma métrica de consistência de
+                hábitos, <strong>não uma nota ou cobrança</strong>.
+              </p>
+              <div className="rounded-2xl bg-[#f4f7f5] p-3.5 space-y-2 text-[#17372f]">
+                <p className="font-bold text-[11px] uppercase tracking-wider text-[#0b7b68]">
+                  Como é calculada no protótipo:
+                </p>
+                <ul className="list-disc pl-4 space-y-1 text-xs text-[#45655c]">
+                  <li>
+                    <strong>Ações do dia:</strong> Percentual de orientações médicas marcadas como
+                    feitas (atualmente {percentMedical}%).
+                  </li>
+                  <li>
+                    <strong>Check-ins de retorno:</strong> Registros regulares acordados na consulta
+                    ({completedCheckins} de {totalCheckins}).
+                  </li>
+                  <li>
+                    <strong>Diário sem julgamento:</strong> Envio de fotos e avaliações de saciedade
+                    para contextualizar a evolução.
+                  </li>
+                </ul>
+              </div>
+              <p>
+                <strong>Por que importa:</strong> O Dr. Guilherme utiliza a adesão para entender se
+                o plano cabe na sua rotina real ou se precisa ser ajustado. Nada é feito de forma
+                punitiva.
+              </p>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setShowAdherenceExplainModal(false)}
+                className="min-h-[44px] rounded-xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#086555]"
+              >
+                Entendi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Safety warning */}
+      <UrgentCareWarning />
     </div>
   )
 }

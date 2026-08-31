@@ -329,13 +329,13 @@ export function DoctorSidebar() {
 export function PatientBottomNav() {
   const location = useLocation()
 
+  // 5 primary tabs for clean mobile UX (≥44px touch targets)
   const links = [
     { label: 'Hoje', path: '/paciente', icon: Home },
     { label: 'Plano', path: '/paciente/plano', icon: CheckSquare },
     { label: 'Diário', path: '/paciente/diario', icon: BookOpen },
     { label: 'Evolução', path: '/paciente/evolucao', icon: TrendingUp },
     { label: 'Mensagens', path: '/paciente/mensagens', icon: MessageSquare },
-    { label: 'Consultas', path: '/paciente/consultas', icon: Calendar },
   ]
 
   const isActive = (path: string) => {
@@ -348,9 +348,9 @@ export function PatientBottomNav() {
   return (
     <nav
       aria-label="Navegação do paciente"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-[#dfe8e3] bg-white px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 lg:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.04)]"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-[#dfe8e3] bg-white px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]"
     >
-      <div className="mx-auto grid max-w-lg grid-cols-6 gap-1">
+      <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
         {links.map((item) => {
           const Icon = item.icon
           const active = isActive(item.path)
@@ -359,12 +359,19 @@ export function PatientBottomNav() {
               key={item.path}
               to={item.path}
               className={cn(
-                'flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[10px] font-bold transition-all',
-                active ? 'bg-[#e8f4f0] text-[#0b6a5b]' : 'text-[#789087] hover:text-[#17372f]',
+                'flex min-h-[48px] flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[11px] font-bold transition-all active:scale-95',
+                active
+                  ? 'bg-[#e8f4f0] text-[#0b6a5b] shadow-2xs'
+                  : 'text-[#698078] hover:text-[#17372f] hover:bg-[#f4f7f5]',
               )}
             >
-              <Icon className={cn('size-4', active ? 'text-[#0b7b68]' : 'text-[#8ba29a]')} />
-              <span>{item.label}</span>
+              <Icon
+                className={cn(
+                  'size-5 transition-transform',
+                  active ? 'text-[#0b7b68] scale-105' : 'text-[#789087]',
+                )}
+              />
+              <span className="truncate leading-none">{item.label}</span>
             </Link>
           )
         })}
