@@ -356,13 +356,24 @@ export default function PatientDiary() {
             </div>
           </div>
 
+          <div className="rounded-3xl border border-[#f8deb0] bg-[#fffbf2] p-5 text-xs text-[#7d5308] shadow-sm space-y-2">
+            <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px] text-[#916207]">
+              <Sparkles className="size-3.5 text-[#b45309]" />
+              <span>Transparência da IA Visual</span>
+            </div>
+            <p className="leading-relaxed">
+              A identificação dos alimentos é um rascunho automatizado para apoiar o seu diário. O
+              Dr. Guilherme Martins analisa o contexto integral antes de qualquer orientação.
+            </p>
+          </div>
+
           <div className="rounded-3xl bg-[#17372f] p-5 text-white shadow-sm text-xs space-y-2">
             <p className="font-bold text-[#9cc7ba] uppercase tracking-wider text-[11px]">
-              Privacidade no Diário
+              Privacidade e Sigilo Clínico
             </p>
             <p className="text-[#d6e8e2] leading-relaxed">
-              Suas fotos são restritas à equipe médica do Instituto Vivans e não são indexadas
-              publicamente.
+              Seus registros são confidenciais e restritos à equipe do Instituto Vivans, sem
+              compartilhamento externo ou fins comerciais.
             </p>
           </div>
         </aside>

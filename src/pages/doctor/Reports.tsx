@@ -17,6 +17,7 @@ export default function DoctorReports() {
   const [selectedReportId, setSelectedReportId] = useState<string>('rep-marina-biweekly')
   const [statusFilter, setStatusFilter] = useState<'todos' | 'em_revisao' | 'aprovado'>('todos')
   const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false)
+  const [confirmApproveModal, setConfirmApproveModal] = useState<string | null>(null)
 
   const selectedReport = reports.find((r) => r.id === selectedReportId) || reports[0]
 
@@ -24,6 +25,12 @@ export default function DoctorReports() {
     if (statusFilter === 'todos') return true
     return r.status === statusFilter
   })
+
+  const handleApprove = (reportId: string) => {
+    approveReport(reportId, 'Dr. Guilherme Martins')
+    setConfirmApproveModal(null)
+    notify('Relatório aprovado e disponibilizado para compartilhamento seguro.')
+  }
 
   const handleSimulatePdfExport = () => {
     setPdfPreviewOpen(true)
@@ -209,7 +216,7 @@ export default function DoctorReports() {
             {selectedReport.status !== 'aprovado' && (
               <button
                 type="button"
-                onClick={() => approveReport(selectedReport.id, 'Dr. Guilherme Martins')}
+                onClick={() => setConfirmApproveModal(selectedReport.id)}
                 className="min-h-11 rounded-2xl bg-[#0b7b68] px-6 text-xs font-bold text-white hover:bg-[#096656] shadow-md flex items-center gap-1.5"
               >
                 <CheckCircle2 className="size-4" />
@@ -219,6 +226,47 @@ export default function DoctorReports() {
           </div>
         </article>
       </div>
+
+      {/* Confirmation Modal for Approving Report */}
+      {confirmApproveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-2xl animate-fade-in-up space-y-4">
+            <div className="flex items-center gap-3 border-b border-[#edf2ef] pb-3">
+              <div className="grid size-10 place-items-center rounded-2xl bg-[#ebf6f2] text-[#075f50]">
+                <CheckCircle2 className="size-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                  Aprovação de Relatório Clínico
+                </h3>
+                <p className="text-xs text-[#698078]">Assinatura e liberação para o paciente</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#45655c] leading-relaxed">
+              Você revisou a síntese gerada pela IA e atesta a precisão clínica dos dados
+              apresentados. Após a aprovação, o documento ficará visível no aplicativo do paciente.
+            </p>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setConfirmApproveModal(null)}
+                className="min-h-10 rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => handleApprove(confirmApproveModal)}
+                className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm"
+              >
+                Aprovar &amp; Compartilhar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Simulated PDF Preview Modal */}
       {pdfPreviewOpen && (

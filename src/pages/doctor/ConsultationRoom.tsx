@@ -46,6 +46,8 @@ export default function DoctorConsultationRoom() {
     notify('Rascunho clínico da consulta salvo no prontuário interno.')
   }
 
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false)
+
   const handleApproveAndPublishToPatient = () => {
     addCarePlanItem({
       action: newAction,
@@ -55,6 +57,7 @@ export default function DoctorConsultationRoom() {
       frequency: 'Diário',
     })
     setApprovedAndSent(true)
+    setConfirmModalOpen(false)
     notify('Plano pós-consulta aprovado e jornada de check-ins ativada para Marina Costa.')
   }
 
@@ -262,11 +265,11 @@ export default function DoctorConsultationRoom() {
                 ) : (
                   <button
                     type="button"
-                    onClick={handleApproveAndPublishToPatient}
+                    onClick={() => setConfirmModalOpen(true)}
                     className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm flex items-center gap-1.5"
                   >
                     <CheckCircle2 className="size-3.5" />
-                    <span>Aprovar & Ativar Check-ins de Retorno</span>
+                    <span>Aprovar &amp; Ativar Check-ins de Retorno</span>
                   </button>
                 )}
               </div>
@@ -281,6 +284,52 @@ export default function DoctorConsultationRoom() {
           </article>
         </div>
       </div>
+      {/* Confirmation Modal for Clinical Approval */}
+      {confirmModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-2xl animate-fade-in-up space-y-4">
+            <div className="flex items-center gap-3 border-b border-[#edf2ef] pb-3">
+              <div className="grid size-10 place-items-center rounded-2xl bg-[#ebf6f2] text-[#075f50]">
+                <CheckCircle2 className="size-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-bold text-[#17372f]">
+                  Confirmar Validação Médica
+                </h3>
+                <p className="text-xs text-[#698078]">Publicação no perfil de Marina Costa</p>
+              </div>
+            </div>
+
+            <div className="text-xs text-[#45655c] leading-relaxed space-y-2">
+              <p>Você está prestes a aprovar e publicar oficialmente a orientação clínica:</p>
+              <div className="rounded-xl border border-[#bfe4d8] bg-[#ebf6f2] p-3 text-xs font-bold text-[#075f50]">
+                "{newAction}"
+              </div>
+              <p className="text-[11px] text-[#698078]">
+                Esta ação substituirá o rascunho de IA e ficará visível imediatamente na aba "Plano"
+                e "Hoje" do aplicativo da paciente.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setConfirmModalOpen(false)}
+                className="min-h-10 rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleApproveAndPublishToPatient}
+                className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656] shadow-sm"
+              >
+                Confirmar e Publicar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -40,32 +40,40 @@ export default function DoctorOverview() {
     context: string
     tag: string
     tone: 'amber' | 'rose' | 'blue'
+    patientId: string
+    suggestedAction: string
   } | null>(null)
 
   const alerts = [
     {
       patient: 'Marina Costa',
-      title: 'Padrão de sono compilado para observação médica',
+      patientId: 'marina-costa',
+      title: 'Padrão de sono curto compilado para observação médica',
       context:
-        'Média de 5h42 com despertares por volta das 3h. Pré-consulta indica correlação a ser avaliada com horário do jantar.',
+        'Média de 5h42 com despertares às 3h. Pré-consulta vinculada indica correlação a ser avaliada com crononutrição do jantar (20h30).',
       tag: 'Revisar no retorno (10:30)',
       tone: 'amber' as const,
+      suggestedAction: 'Abrir sala de consulta às 10:30 e revisar crononutrição.',
     },
     {
       patient: 'Paulo Mendes',
-      title: 'Registro de desconforto gástrico leve',
+      patientId: 'paulo-mendes',
+      title: 'Registro de desconforto gástrico matinal',
       context:
-        'Sintoma informado no check-in matinal. Dados compilados para avaliação de tolerância pelo médico.',
-      tag: 'Observação clínica',
+        'Sintoma informado no check-in de hoje. Dados compilados para avaliação médica antes de manter posologia vigente.',
+      tag: 'Observação de sintoma',
       tone: 'rose' as const,
+      suggestedAction: 'Revisar receita digital #RX-1051 e acolher sintoma na consulta das 16:30.',
     },
     {
       patient: 'Ana Ribeiro',
-      title: 'Relatório longitudinal compilado para validação',
+      patientId: 'ana-ribeiro',
+      title: 'Relatório longitudinal compilado aguardando validação',
       context:
-        'Adesão de 88% e ganho de 12% na força funcional. Rascunho estruturado aguardando assinatura médica.',
-      tag: 'Revisão médica',
+        'Adesão de 88% e ganho de 12% na força funcional. Síntese estruturada aguardando assinatura médica para envio.',
+      tag: 'Aprovação de relatório',
       tone: 'blue' as const,
+      suggestedAction: 'Aprovar relatório mensal na central de relatórios.',
     },
   ]
 
@@ -289,34 +297,36 @@ export default function DoctorOverview() {
 
               <div className="rounded-2xl bg-[#f4f7f5] p-4 text-[#17372f] space-y-2">
                 <p className="font-bold text-[11px] uppercase tracking-wider text-[#0b7b68]">
-                  Ações Recomendadas para o Médico:
+                  Conduta Recomendada para o Médico:
+                </p>
+                <p className="text-xs text-[#17372f] font-semibold">
+                  {selectedAlert.suggestedAction}
                 </p>
                 <ul className="list-disc pl-5 space-y-1 text-[#60766f]">
-                  <li>Abrir prontuário longitudinal para cruzar dados históricos.</li>
-                  <li>
-                    Avaliar na consulta se há necessidade de ajuste de posologia ou crononutrição.
-                  </li>
-                  <li>Enviar mensagem rápida de acolhimento se for o caso.</li>
+                  <li>Cruzar dados históricos no prontuário longitudinal.</li>
+                  <li>Avaliar no atendimento clínico sem decisão autônoma prévia do sistema.</li>
                 </ul>
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end gap-2">
+            <div className="mt-6 flex flex-wrap justify-end gap-2">
               <button
+                type="button"
                 onClick={() => setSelectedAlert(null)}
-                className="min-h-10 rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f]"
+                className="min-h-10 rounded-xl border border-[#dfe8e3] px-4 text-xs font-bold text-[#60766f] hover:bg-[#f4f7f5]"
               >
                 Fechar
               </button>
               <button
+                type="button"
                 onClick={() => {
-                  const targetPatient = selectedAlert.patient
+                  const targetId = selectedAlert.patientId
                   setSelectedAlert(null)
-                  navigate(`/medico/pacientes/${targetPatient.toLowerCase().replace(/\s+/g, '-')}`)
+                  navigate(`/medico/pacientes/${targetId}`)
                 }}
                 className="min-h-10 rounded-xl bg-[#0b7b68] px-5 text-xs font-bold text-white hover:bg-[#096656]"
               >
-                Abrir Prontuário do Paciente &rarr;
+                Abrir Prontuário Longitudinal &rarr;
               </button>
             </div>
           </div>

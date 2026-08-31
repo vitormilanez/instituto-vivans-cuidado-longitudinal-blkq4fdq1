@@ -243,19 +243,19 @@ export default function PatientToday() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9cc7ba]">
-                  Próxima Ação no Plano
+                  Ação Prioritária de Hoje
                 </p>
                 <h3 className="mt-2 font-serif text-2xl font-bold sm:text-3xl text-white">
-                  Registrar foto do jantar
+                  Jantar antecipado (19:30) &amp; Foto no Diário
                 </h3>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-[#d6e8e2]">
-                Até 21:00
+                Meta: 19:30 · Diário
               </span>
             </div>
             <p className="mt-3 text-sm text-[#d6e8e2] leading-relaxed max-w-xl">
-              Tire uma foto do seu prato no diário para acompanhar grupos alimentares e saciedade,
-              sem precisar contar calorias.
+              Orientações médicas validadas: antecipar a refeição noturna e registrar a foto no
+              diário com notas de saciedade para avaliar impacto no sono.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link

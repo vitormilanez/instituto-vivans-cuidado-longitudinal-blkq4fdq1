@@ -69,6 +69,24 @@
     letter-spacing: -0.015em;
   }
 
+  /* Accessible outline for keyboard navigation */
+  :focus-visible {
+    outline: 2px solid #097260;
+    outline-offset: 2px;
+  }
+
+  /* Motion reduction respect */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   section[aria-label='Notifications alt+T'] {
     padding: 0 !important;
     margin: 0 !important;

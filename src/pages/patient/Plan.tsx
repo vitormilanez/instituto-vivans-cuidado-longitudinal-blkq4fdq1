@@ -319,6 +319,16 @@ export default function PatientPlan() {
               atualizada do plano diretamente para você.
             </p>
           </div>
+
+          <div className="rounded-3xl border border-[#dfe8e3] bg-white p-5 text-xs text-[#60766f] space-y-2">
+            <p className="font-bold text-[#17372f]">Prescrição Ativa Relacionada</p>
+            <div className="rounded-xl bg-[#f8faf9] p-3 border border-[#edf2ef] space-y-1">
+              <span className="font-bold text-[#0b7b68]">#RX-1042 · Dr. Guilherme Martins</span>
+              <p className="text-[11px] text-[#60766f]">
+                Modulação matinal e suporte celular (Válida até 26/09)
+              </p>
+            </div>
+          </div>
         </aside>
       </div>
     </div>

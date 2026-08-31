@@ -4,6 +4,7 @@ import { useVivans } from '@/context/VivansContext'
 import {
   StatusBadge,
   AiDraftBadge,
+  ClinicalLayerBadge,
   SimulationDisclaimer,
   EvidenceModal,
 } from '@/components/CommonUI'
@@ -201,72 +202,146 @@ export default function DoctorPatientDetail() {
         </section>
       )}
 
-      {/* TAB 1: DOSSIÊ LONGITUDINAL (AI ASSISTED) */}
+      {/* TAB 1: DOSSIÊ LONGITUDINAL (4 CAMADAS CLÍNICAS SEPARADAS) */}
       {activeTab === 'dossie' && (
         <section className="space-y-5 animate-fade-in">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
+              <AiDraftBadge status="Dossiê Multicamadas · IA como Copiloto Organizador" />
             </div>
             <StatusBadge tone="green">Atualizado hoje às 09:20</StatusBadge>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-            <article className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-4">
-              <h3 className="font-serif text-lg font-bold text-[#17372f]">
-                Síntese Longitudinal da Evolução
-              </h3>
-
-              <div className="rounded-2xl bg-[#f8faf9] p-4 text-xs leading-relaxed text-[#45655c] space-y-2">
-                <p>
-                  <strong>Evolução longitudinal:</strong> Redução ponderal gradual de 1,8 kg em 29
-                  dias com adesão registrada de 82% às orientações acordadas e saciedade noturna
-                  referida satisfatória.
-                </p>
-                <p>
-                  <strong>Registro para observação clínica:</strong> Queixa de despertares noturnos
-                  recorrentes (média de 5h42 de repouso em quatro noites consecutivas). Não há
-                  relato de sintomas dispépticos ou refluxo associados.
-                </p>
-                <p>
-                  <strong>Contexto compilado para o médico:</strong> Avaliar adequação do intervalo
-                  entre o jantar (atualmente às 20h30) e o repouso noturno, além da rotina de
-                  desaceleração às 22h, antes de alterações nutricionais adicionais.
-                </p>
+          {/* 4 Explicit Clinical Layers */}
+          <div className="grid gap-5">
+            {/* Camada 1: Fatos e Biossinais Observados */}
+            <article className="rounded-3xl border border-[#d8e4df] bg-white p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+                <div className="flex items-center gap-2">
+                  <ClinicalLayerBadge layer="fato" />
+                  <h3 className="font-serif text-base font-bold text-[#17372f]">
+                    Biossinais &amp; Registros Objetivos
+                  </h3>
+                </div>
+                <span className="text-xs text-[#698078]">Smartwatch &amp; Balança Conectada</span>
               </div>
-
-              <div className="border-t border-[#edf2ef] pt-3 flex items-center justify-between text-xs text-[#698078]">
-                <span>Baseado em 3 PDFs compilados, 7 conversas e biossinais do relógio.</span>
-                <span className="font-bold text-[#0b7b68]">Validação Pendente do Médico</span>
+              <div className="grid gap-3 sm:grid-cols-4 text-xs">
+                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
+                  <p className="text-[10px] text-[#698078] uppercase font-bold">
+                    Variação Ponderal
+                  </p>
+                  <p className="text-base font-bold text-[#17372f] mt-0.5">80,0 &rarr; 78,2 kg</p>
+                  <span className="text-[10px] text-[#0b7b68]">−1,8 kg em 29 dias</span>
+                </div>
+                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
+                  <p className="text-[10px] text-[#698078] uppercase font-bold">
+                    Sono Médio (4 noites)
+                  </p>
+                  <p className="text-base font-bold text-[#17372f] mt-0.5">5h42 / noite</p>
+                  <span className="text-[10px] text-[#c96a3b]">Despertares ~03:00</span>
+                </div>
+                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
+                  <p className="text-[10px] text-[#698078] uppercase font-bold">Passos Diários</p>
+                  <p className="text-base font-bold text-[#17372f] mt-0.5">6.420 passos</p>
+                  <span className="text-[10px] text-[#0b7b68]">Meta 6.000 atingida</span>
+                </div>
+                <div className="rounded-2xl bg-[#f8faf9] p-3 border border-[#edf2ef]">
+                  <p className="text-[10px] text-[#698078] uppercase font-bold">Check-ins Feitos</p>
+                  <p className="text-base font-bold text-[#17372f] mt-0.5">24 de 29 dias</p>
+                  <span className="text-[10px] text-[#0b7b68]">82% de adesão</span>
+                </div>
               </div>
             </article>
 
-            {/* Quick Metrics */}
-            <aside className="space-y-4">
-              <div className="rounded-3xl border border-[#dfe8e3] bg-white p-6 shadow-sm space-y-3">
-                <h4 className="font-serif text-sm font-bold text-[#17372f]">
-                  Indicadores Longitudinal
-                </h4>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1.5 border-b border-[#edf2ef]">
-                    <span className="text-[#60766f]">Peso Inicial:</span>
-                    <strong className="text-[#17372f]">{patient.startWeight} kg</strong>
-                  </div>
-                  <div className="flex justify-between py-1.5 border-b border-[#edf2ef]">
-                    <span className="text-[#60766f]">Peso Atual:</span>
-                    <strong className="text-[#0b7b68]">{patient.currentWeight} kg (−1,8 kg)</strong>
-                  </div>
-                  <div className="flex justify-between py-1.5 border-b border-[#edf2ef]">
-                    <span className="text-[#60766f]">Meta Estabelecida:</span>
-                    <strong className="text-[#17372f]">{patient.targetWeight} kg</strong>
-                  </div>
-                  <div className="flex justify-between py-1.5">
-                    <span className="text-[#60766f]">Adesão ao Cuidado:</span>
-                    <strong className="text-[#0b7b68]">{patient.adherence}</strong>
-                  </div>
+            {/* Camada 2: Relato Original da Paciente */}
+            <article className="rounded-3xl border border-[#c7ddf4] bg-white p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf2ef] pb-3">
+                <div className="flex items-center gap-2">
+                  <ClinicalLayerBadge layer="relato" />
+                  <h3 className="font-serif text-base font-bold text-[#17372f]">
+                    Relato Direto da Paciente (Pré-Consulta &amp; Diário)
+                  </h3>
+                </div>
+                <span className="text-xs text-[#698078]">Transcrição e Notas 1–5</span>
+              </div>
+              <div className="rounded-2xl bg-[#eff5fc]/40 p-4 text-xs text-[#1e4877] leading-relaxed space-y-2 border border-[#d3e5f8]">
+                <p className="italic">
+                  “Nos últimos quatro dias passei a acordar por volta das 3h da manhã. A saciedade
+                  no jantar tem sido ótima com a omelete, mas o cansaço à tarde aumentou. Gostaria
+                  de entender se jantar às 20h30 pode estar influenciando meu sono.”
+                </p>
+                <div className="flex flex-wrap gap-3 text-[11px] pt-1">
+                  <span>
+                    Saciedade média noturna: <strong>4,2/5</strong>
+                  </span>
+                  <span>•</span>
+                  <span>
+                    Conforto digestivo: <strong>4,6/5</strong>
+                  </span>
+                  <span>•</span>
+                  <span>
+                    Disposição matinal: <strong>3/5</strong>
+                  </span>
                 </div>
               </div>
-            </aside>
+            </article>
+
+            {/* Camada 3: Síntese Estruturada da IA */}
+            <article className="rounded-3xl border border-[#f8deb0] bg-[#fffbf2] p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#faeccf] pb-3">
+                <div className="flex items-center gap-2">
+                  <ClinicalLayerBadge layer="sintese_ia" />
+                  <h3 className="font-serif text-base font-bold text-[#70480e]">
+                    Compilação e Hipóteses de Apoio ao Médico
+                  </h3>
+                </div>
+                <AiDraftBadge
+                  status="Rascunho gerado com IA - requer validação médica"
+                  variant="compact"
+                />
+              </div>
+              <div className="space-y-2 text-xs text-[#70480e] leading-relaxed">
+                <p>
+                  <strong>Cruzamento automático:</strong> Redução ponderal satisfatória (−1,8 kg)
+                  com alta saciedade referida, porém correlacionada com sono curto (5h42) e jantar
+                  tardio (20h30).
+                </p>
+                <p>
+                  <strong>Pontos sugeridos para deliberação médica:</strong>
+                </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>
+                    Avaliar antecipação do jantar para 19h30 para aumentar intervalo antes do
+                    repouso.
+                  </li>
+                  <li>Avaliar tolerância digestiva e rotina de desaceleração às 22h.</li>
+                  <li>Ativar check-ins de retorno de 14 dias para acompanhar resposta.</li>
+                </ul>
+              </div>
+            </article>
+
+            {/* Camada 4: Decisão e Aprovação Médica */}
+            <article className="rounded-3xl border border-[#bfe4d8] bg-[#ebf6f2] p-6 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#cfe6dc] pb-3">
+                <div className="flex items-center gap-2">
+                  <ClinicalLayerBadge layer="decisao_medica" />
+                  <h3 className="font-serif text-base font-bold text-[#075f50]">
+                    Conduta e Orientações Validadas pelo Médico
+                  </h3>
+                </div>
+                <span className="text-xs font-bold text-[#075f50]">Dr. Guilherme Martins</span>
+              </div>
+              <div className="rounded-2xl bg-white p-4 text-xs text-[#17372f] leading-relaxed space-y-2 border border-[#bfe4d8]">
+                <p>
+                  <strong>Conduta acordada em consulta:</strong> Antecipação do horário da refeição
+                  noturna para 19h30 e início de higiene do sono sem telas às 22h. Manter hidratação
+                  de 500ml pré-refeições.
+                </p>
+                <p className="text-[11px] text-[#0b7b68] font-bold">
+                  ✓ Plano publicado e vinculado ao aplicativo da paciente em 25 ago 2026.
+                </p>
+              </div>
+            </article>
           </div>
         </section>
       )}

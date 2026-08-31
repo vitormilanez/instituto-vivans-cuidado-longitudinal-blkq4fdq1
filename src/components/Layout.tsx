@@ -11,7 +11,15 @@ export function Layout() {
   const isPatientRoute = location.pathname.startsWith('/paciente')
 
   return (
-    <div className="min-h-screen bg-[#f4f7f5] text-[#17372f] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f5f8f6] text-[#17372f] flex flex-col font-sans">
+      {/* Skip to Main Content Link for Accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-[#17372f] focus:text-white focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#9fe0ce]"
+      >
+        Pular para o conteúdo principal
+      </a>
+
       {/* Global Navigation Header */}
       <NavigationHeader />
 
