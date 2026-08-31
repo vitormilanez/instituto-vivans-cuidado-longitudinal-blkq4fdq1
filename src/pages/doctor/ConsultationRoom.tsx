@@ -20,24 +20,57 @@ import {
 
 export default function DoctorConsultationRoom() {
   const { id } = useParams<{ id: string }>()
-  const { preConsultation, addCarePlanItem, notify } = useVivans()
+  const { patients, appointments, preConsultation, addCarePlanItem, notify } = useVivans()
   const navigate = useNavigate()
+
+  // Find matching patient or appointment
+  const currentPatient = React.useMemo(() => {
+    if (!id) return patients[0]
+    // Check if id matches an appointment
+    const matchedApt = appointments.find((a) => a.id === id)
+    if (matchedApt) {
+      const p = patients.find(
+        (pt) =>
+          pt.name.toLowerCase() === matchedApt.patient.toLowerCase() ||
+          pt.id === matchedApt.patient.toLowerCase().replace(/\s+/g, '-'),
+      )
+      if (p) return p
+    }
+    // Check direct patient id
+    const directMatch = patients.find((p) => p.id === id)
+    if (directMatch) return directMatch
+    return patients[0]
+  }, [id, patients, appointments])
+
+  const isNewOrTempPatient = currentPatient?.isTemporary || currentPatient?.progress === 'Novo'
 
   // Consultation state
   const [isVideoOn, setIsVideoOn] = useState(true)
   const [isMicOn, setIsMicOn] = useState(true)
   const [consultationStage, setConsultationStage] = useState<'in_call' | 'post_call'>('in_call')
 
-  // Clinical notes state
-  const [freeNotes, setFreeNotes] = useState(
-    'Paciente relata boa adesão à rotina alimentar com aumento de saciedade. Registrada queixa de despertares noturnos por volta das 3h da manhã e leve cansaço vespertino.',
-  )
-  const [structuredCopilot, setStructuredCopilot] = useState(
-    '• Síntese dos relatos: Redução de 1,8 kg em 29 dias com saciedade noturna referida como adequada.\n• Observação de repouso: Média de 5h42 de sono em 4 noites; último registro com jantar às 20h30.\n• Tópicos para deliberação médica: Ajuste de crononutrição (antecipação do jantar), higiene do sono às 22h e ativação de check-ins programados.',
-  )
+  // Clinical notes state initialized dynamically
+  const [freeNotes, setFreeNotes] = useState(() => {
+    if (isNewOrTempPatient) {
+      return `Primeira consulta de acolhimento para ${currentPatient?.name || 'Novo Paciente'}. Paciente sem registros prévios no sistema. Mapeamento de objetivos de longevidade e perfil metabólico.`
+    }
+    return `Paciente ${currentPatient?.name || ''} relata adesão ao plano com evolução (${currentPatient?.progress || 'estável'}). Foco atual: ${currentPatient?.focus || 'rotina de longevidade'}.`
+  })
+
+  const [structuredCopilot, setStructuredCopilot] = useState(() => {
+    if (isNewOrTempPatient) {
+      return `• Anamnese Inicial: Avaliação de estilo de vida, queixas principais e histórico familiar de ${currentPatient?.name}.\n• Hipóteses Clínicas: Foco em longevidade ativa e adequação metabólica.\n• Próximos Passos: Solicitação de painel de exames, definição de metas graduais e retorno em 30 dias.`
+    }
+    return `• Síntese dos relatos: Evolução ponderal (${currentPatient?.progress}) e adesão de ${currentPatient?.adherence || '82%'}.\n• Observação clínica: ${currentPatient?.insight?.detail || currentPatient?.attention || 'Acompanhamento longitudinal'}.\n• Tópicos para deliberação médica: Ajuste de hábitos, validação de suplementação e ativação de check-ins programados.`
+  })
 
   // New action form for care plan
-  const [newAction, setNewAction] = useState('Antecipar o horário do jantar para as 19h30')
+  const [newAction, setNewAction] = useState(() => {
+    if (isNewOrTempPatient) {
+      return 'Iniciar protocolo de hidratação (35ml/kg) e diário alimentar'
+    }
+    return currentPatient?.nextSteps?.[0] || 'Antecipar o horário do jantar para as 19h30'
+  })
   const [savedPlanDraft, setSavedPlanDraft] = useState(false)
   const [approvedAndSent, setApprovedAndSent] = useState(false)
 
@@ -51,20 +84,34 @@ export default function DoctorConsultationRoom() {
   const handleApproveAndPublishToPatient = () => {
     addCarePlanItem({
       action: newAction,
-      category: 'Crononutrição · Ajuste pós-consulta',
+      category: isNewOrTempPatient
+        ? 'Protocolo Inicial · Instituto Vivans'
+        : 'Crononutrição · Ajuste pós-consulta',
       type: 'medical',
       completed: false,
       frequency: 'Diário',
     })
     setApprovedAndSent(true)
     setConfirmModalOpen(false)
-    notify('Plano pós-consulta aprovado e jornada de check-ins ativada para Marina Costa.')
+    notify(
+      `Plano pós-consulta aprovado e jornada ativada para ${currentPatient?.name || 'o paciente'}.`,
+    )
   }
+
+  const patientAvatarUrl = isNewOrTempPatient
+    ? 'https://img.usecurling.com/ppl/512?gender=female&seed=88'
+    : currentPatient?.name === 'Marina Costa'
+      ? 'https://img.usecurling.com/ppl/512?gender=female&seed=42'
+      : currentPatient?.name === 'Ana Ribeiro'
+        ? 'https://img.usecurling.com/ppl/512?gender=female&seed=12'
+        : currentPatient?.name === 'Paulo Mendes'
+          ? 'https://img.usecurling.com/ppl/512?gender=male&seed=33'
+          : 'https://img.usecurling.com/ppl/512?gender=female&seed=64'
 
   return (
     <div className="space-y-6">
       {/* Simulation Banner */}
-      <SimulationDisclaimer text="Ambiente de Teleconsulta Simulado · Instituto Vivans Telehealth" />
+      <SimulationDisclaimer text="Ambiente de Teleconsulta Simulado (Google Meet Integrado) · Instituto Vivans Telehealth" />
 
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfe8e3] pb-4">
@@ -73,14 +120,22 @@ export default function DoctorConsultationRoom() {
             <span className="size-2 rounded-full bg-[#e67e76] animate-pulse" />
             <span className="text-xs font-bold uppercase tracking-wider text-[#e67e76]">
               {consultationStage === 'in_call'
-                ? 'Consulta em Andamento (00:14:32)'
+                ? 'Consulta em Andamento (Google Meet · 00:14:32)'
                 : 'Consulta Encerrada · Síntese Final'}
             </span>
-            <StatusBadge tone="green">Marina Costa · Retorno 30 min</StatusBadge>
+            <StatusBadge tone="green">
+              {currentPatient?.name || 'Paciente'} ·{' '}
+              {isNewOrTempPatient ? 'Primeira Consulta' : 'Retorno 30 min'}
+            </StatusBadge>
+            {currentPatient?.email && (
+              <span className="hidden sm:inline text-xs text-[#60766f]">
+                ({currentPatient.email})
+              </span>
+            )}
           </div>
-          <h1 className="font-serif text-2xl font-bold text-[#17372f]">
+          <h2 className="font-serif text-2xl font-bold text-[#17372f]">
             Atendimento Clínico · Dr. Guilherme Martins
-          </h1>
+          </h2>
         </div>
 
         <div className="flex items-center gap-2">
@@ -115,12 +170,12 @@ export default function DoctorConsultationRoom() {
               {isVideoOn ? (
                 <div className="relative w-full h-full">
                   <img
-                    src="https://img.usecurling.com/ppl/512?gender=female&seed=42"
-                    alt="Marina Costa (Vídeo Demonstrativo)"
+                    src={patientAvatarUrl}
+                    alt={`${currentPatient?.name || 'Paciente'} (Vídeo Demonstrativo)`}
                     className="w-full h-full object-cover opacity-90"
                   />
                   <div className="absolute bottom-3 left-3 rounded-xl bg-black/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                    Marina Costa (Paciente)
+                    {currentPatient?.name || 'Paciente'} (Paciente)
                   </div>
                 </div>
               ) : (
@@ -175,12 +230,16 @@ export default function DoctorConsultationRoom() {
           <div className="rounded-3xl border border-[#dfe8e3] bg-white p-5 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-[#0b7b68]">
-                Contexto da Pré-Consulta
+                {isNewOrTempPatient ? 'Foco da Primeira Consulta' : 'Contexto da Pré-Consulta'}
               </span>
-              <StatusBadge tone="green">Recebida</StatusBadge>
+              <StatusBadge tone="green">
+                {isNewOrTempPatient ? 'Novo Cadastro' : 'Recebida'}
+              </StatusBadge>
             </div>
             <p className="text-xs text-[#45655c] leading-relaxed italic bg-[#f8faf9] p-3 rounded-xl border border-[#edf2ef]">
-              “{preConsultation.objective}”
+              {isNewOrTempPatient
+                ? `“Avaliação inicial com o Dr. Guilherme Martins. Mapeamento longitudinal de metabolismo e hábitos.”`
+                : `“${currentPatient?.report?.summary || preConsultation.objective}”`}
             </p>
           </div>
         </div>
@@ -260,7 +319,9 @@ export default function DoctorConsultationRoom() {
                 {approvedAndSent ? (
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#0b6a5b] py-2">
                     <CheckCircle2 className="size-4" />
-                    <span>Plano de Retorno Ativado no App da Paciente!</span>
+                    <span>
+                      Plano de Retorno Ativado no App de {currentPatient?.name || 'Paciente'}!
+                    </span>
                   </div>
                 ) : (
                   <button
@@ -296,7 +357,9 @@ export default function DoctorConsultationRoom() {
                 <h3 className="font-serif text-lg font-bold text-[#17372f]">
                   Confirmar Validação Médica
                 </h3>
-                <p className="text-xs text-[#698078]">Publicação no perfil de Marina Costa</p>
+                <p className="text-xs text-[#698078]">
+                  Publicação no perfil de {currentPatient?.name || 'Paciente'}
+                </p>
               </div>
             </div>
 

@@ -30,6 +30,7 @@ interface VivansContextType {
   selectedPatientId: string
   setSelectedPatientId: (id: string) => void
   selectedPatient: PatientProfile
+  registerQuickPatient: (name: string, email: string) => PatientProfile
   appointments: Appointment[]
   carePlans: CarePlanItem[]
   toggleCarePlan: (id: string) => void
@@ -199,6 +200,89 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
     notify('Check-in programado de retorno registrado com sucesso!')
   }
 
+  const registerQuickPatient = (name: string, email: string): PatientProfile => {
+    const slug =
+      name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '') || `paciente-${Date.now()}`
+
+    const initials =
+      name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((n) => n[0].toUpperCase())
+        .join('') || 'NP'
+
+    const newPatient: PatientProfile = {
+      id: slug,
+      initials,
+      name,
+      email,
+      focus: 'Avaliação inicial · Teleconsulta rápida',
+      progress: 'Novo',
+      attention: 'Primeira Consulta',
+      tone: 'green',
+      reportCount: '0',
+      prescriptionCount: 'Nenhuma',
+      cycle: 'Dia 1 · Primeira Consulta',
+      lastContact: 'Agora · Google Meet',
+      nextConsultation: 'Hoje · Em andamento',
+      adherence: '100%',
+      weightLoss: '0,0 kg',
+      currentWeight: 70.0,
+      targetWeight: 70.0,
+      startWeight: 70.0,
+      isTemporary: true,
+      report: {
+        title: 'Síntese de Primeira Consulta',
+        period: 'Consulta de Abertura',
+        status: 'Em andamento',
+        summary: `Atendimento inicial iniciado via Google Meet para o paciente ${name}.`,
+        metrics: [
+          ['Status', 'Novo cadastro'],
+          ['Canal', 'Teleconsulta Rápida'],
+        ],
+      },
+      prescription: {
+        title: 'Nenhuma receita emitida',
+        status: 'Em atendimento',
+        detail: 'Documentos clínicos serão emitidos após a avaliação médica.',
+        note: 'Sessão temporária iniciada.',
+      },
+      insight: {
+        title: 'Primeira consulta em andamento',
+        detail: 'Coletando histórico clínico e alinhando os objetivos longitudinais.',
+        basis: 'Teleconsulta ao vivo.',
+      },
+      activity: [
+        ['Hoje · Agora', 'Teleconsulta rápida iniciada via Google Meet'],
+        ['Hoje · Agora', `Cadastro gerado para ${name} (${email || 'Sem e-mail informado'})`],
+      ],
+      nextSteps: [
+        'Concluir anamnese inicial',
+        'Definir metas longitudinais',
+        'Elaborar plano pós-consulta',
+      ],
+    }
+
+    // Add to patient list and select
+    setPatients((prev) => [newPatient, ...prev])
+    setSelectedPatientId(newPatient.id)
+
+    console.log('[Vivans Quick Consultation] Simulated creation of new patient record:', {
+      name,
+      email,
+      patientId: newPatient.id,
+      timestamp: new Date().toISOString(),
+    })
+
+    return newPatient
+  }
+
   const nudgeDelayedPatients = () => {
     setNudged(true)
     notify('Lembrete (cutucão) enviado com sucesso para 5 pacientes.')
@@ -215,6 +299,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         selectedPatientId,
         setSelectedPatientId,
         selectedPatient,
+        registerQuickPatient,
         appointments,
         carePlans,
         toggleCarePlan,

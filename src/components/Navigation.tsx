@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { cn } from '@/lib/utils'
+import { QuickConsultationModal } from '@/components/QuickConsultationModal'
 import {
   Sparkles,
   LayoutDashboard,
@@ -16,6 +17,7 @@ import {
   Video,
   AlertTriangle,
   ArrowRightLeft,
+  Check,
 } from 'lucide-react'
 
 export function NavigationHeader() {
@@ -104,6 +106,7 @@ export function NavigationHeader() {
 export function DoctorSidebar() {
   const { nudged, nudgeDelayedPatients } = useVivans()
   const location = useLocation()
+  const [isQuickConsultationOpen, setIsQuickConsultationOpen] = useState(false)
 
   const links = [
     { label: 'Visão geral', path: '/medico', icon: LayoutDashboard },
@@ -121,80 +124,127 @@ export function DoctorSidebar() {
   }
 
   return (
-    <aside className="hidden min-h-[calc(100vh-72px)] border-r border-[#dfe8e3] bg-white px-4 py-6 lg:block w-[240px] shrink-0">
-      <nav aria-label="Navegação do médico" className="space-y-1.5">
-        {links.map((item) => {
-          const Icon = item.icon
-          const active = isActive(item.path)
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                'flex min-h-11 w-full items-center gap-3 rounded-2xl px-4 py-2.5 text-xs font-bold transition-colors',
-                active
-                  ? 'bg-[#e8f4f0] text-[#075f52] shadow-sm'
-                  : 'text-[#60766f] hover:bg-[#f4f7f5] hover:text-[#17372f]',
-              )}
-            >
-              <Icon
-                className={cn('size-4 shrink-0', active ? 'text-[#0b7b68]' : 'text-[#8ba29a]')}
-              />
-              <span>{item.label}</span>
-            </Link>
-          )
-        })}
-      </nav>
-      {/* Cohort status box - Light, Clean & Modern */}
-      <div className="mt-8 rounded-[20px] border border-[#DEE7E2] bg-[#FDFCFA] p-4 text-[#112822] shadow-[0_4px_16px_rgba(17,40,34,0.03)]">
-        <div className="flex items-center justify-between">
-          <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#556D66]">
-            Painel de Coorte
+    <>
+      <aside className="hidden min-h-[calc(100vh-72px)] border-r border-[#dfe8e3] bg-white px-3.5 py-5 lg:block w-[260px] shrink-0">
+        {/* Prominent Doctor Profile & Quick Google Meet Card */}
+        <div className="mb-5 rounded-[22px] bg-[#111827] p-4 text-white shadow-[0_12px_28px_rgba(17,24,39,0.22)] border border-[#1f2937]">
+          {/* Doctor Info Row */}
+          <div className="flex items-start gap-3">
+            {/* Square avatar / check badge box */}
+            <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#1f2937] border border-white/10 text-[#b59e7f] shadow-inner">
+              <Check className="size-5 stroke-[2.5] text-[#b59e7f]" />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h2 className="truncate font-serif text-[15px] font-bold text-white tracking-tight leading-tight">
+                Dr. Guilherme Martins
+              </h2>
+              <p className="mt-0.5 text-[11px] font-mono tracking-wide text-[#b59e7f]">
+                CRM/SP 184.920
+              </p>
+              <div className="mt-1 flex items-center gap-1.5">
+                <span className="size-1.5 rounded-full bg-[#b59e7f]" />
+                <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#9ca3af]">
+                  LONGEVIDADE & METABOLISMO
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Meet Action Button */}
+          <button
+            type="button"
+            onClick={() => setIsQuickConsultationOpen(true)}
+            className="mt-3.5 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#b59e7f] px-4 text-xs font-bold text-[#111827] shadow-sm transition-all hover:bg-[#a68f70] active:scale-[0.98] cursor-pointer"
+          >
+            <Video className="size-4 shrink-0 text-[#111827]" />
+            <span>Iniciar Google Meet</span>
+          </button>
+        </div>
+        {/* Section Header: Navegação Principal */}
+        <div className="px-2 pb-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8ba29a]">
+            NAVEGAÇÃO PRINCIPAL
           </p>
-          <span className="size-2 rounded-full bg-[#097260]" />
         </div>
+        <nav aria-label="Navegação do médico" className="space-y-1">
+          {links.map((item) => {
+            const Icon = item.icon
+            const active = isActive(item.path)
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  'flex min-h-11 w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-xs font-bold transition-colors',
+                  active
+                    ? 'bg-[#e8f4f0] text-[#075f50] shadow-sm'
+                    : 'text-[#60766f] hover:bg-[#f4f7f5] hover:text-[#17372f]',
+                )}
+              >
+                <Icon
+                  className={cn('size-4 shrink-0', active ? 'text-[#0b7b68]' : 'text-[#8ba29a]')}
+                />
+                <span>{item.label}</span>
+              </Link>
+            )
+          })}
+        </nav>{' '}
+        <div className="mt-8 rounded-[20px] border border-[#DEE7E2] bg-[#FDFCFA] p-4 text-[#112822] shadow-[0_4px_16px_rgba(17,40,34,0.03)]">
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#556D66]">
+              Painel de Coorte
+            </p>
+            <span className="size-2 rounded-full bg-[#097260]" />
+          </div>
 
-        <div className="mt-3 space-y-1.5">
-          <div className="flex items-center justify-between rounded-[14px] bg-[#F5F8F6] px-3 py-2 text-xs">
-            <span className="text-[#556D66]">Ativos</span>
-            <strong className="text-sm font-bold text-[#112822]">22</strong>
+          <div className="mt-3 space-y-1.5">
+            <div className="flex items-center justify-between rounded-[14px] bg-[#F5F8F6] px-3 py-2 text-xs">
+              <span className="text-[#556D66]">Ativos</span>
+              <strong className="text-sm font-bold text-[#112822]">22</strong>
+            </div>
+            <div className="flex items-center justify-between rounded-[14px] bg-[#EAF3EF]/60 px-3 py-2 text-xs">
+              <span className="text-[#097260] font-medium">Regulares</span>
+              <strong className="text-sm font-bold text-[#097260]">17</strong>
+            </div>
+            <div className="flex items-center justify-between rounded-[14px] bg-[#FEF7E7] px-3 py-2 text-xs text-[#7D5308]">
+              <span className="font-semibold">Atrasados</span>
+              <strong className="text-sm font-bold text-[#7D5308]">5</strong>
+            </div>
           </div>
-          <div className="flex items-center justify-between rounded-[14px] bg-[#EAF3EF]/60 px-3 py-2 text-xs">
-            <span className="text-[#097260] font-medium">Regulares</span>
-            <strong className="text-sm font-bold text-[#097260]">17</strong>
-          </div>
-          <div className="flex items-center justify-between rounded-[14px] bg-[#FEF7E7] px-3 py-2 text-xs text-[#7D5308]">
-            <span className="font-semibold">Atrasados</span>
-            <strong className="text-sm font-bold text-[#7D5308]">5</strong>
-          </div>
+
+          <button
+            type="button"
+            disabled={nudged}
+            onClick={nudgeDelayedPatients}
+            className={cn(
+              'mt-3 min-h-9 w-full rounded-[14px] px-3 text-xs font-bold transition-all',
+              nudged
+                ? 'bg-[#DEE7E2] text-[#556D66] cursor-default'
+                : 'bg-[#112822] text-white hover:bg-[#1e483e] shadow-2xs active:scale-[0.98]',
+            )}
+          >
+            {nudged ? 'Lembrete enviado (5)' : 'Enviar lembrete (5)'}
+          </button>
         </div>
-
-        <button
-          type="button"
-          disabled={nudged}
-          onClick={nudgeDelayedPatients}
-          className={cn(
-            'mt-3 min-h-9 w-full rounded-[14px] px-3 text-xs font-bold transition-all',
-            nudged
-              ? 'bg-[#DEE7E2] text-[#556D66] cursor-default'
-              : 'bg-[#112822] text-white hover:bg-[#1e483e] shadow-2xs active:scale-[0.98]',
-          )}
-        >
-          {nudged ? 'Lembrete enviado (5)' : 'Enviar lembrete (5)'}
-        </button>
-      </div>
-
-      {/* AI Structured Support - Secondary Notice */}
-      <div className="mt-4 rounded-[16px] border border-[#DEE7E2] bg-[#F5F8F6]/80 p-3 text-xs text-[#556D66] space-y-1">
-        <div className="flex items-center gap-1.5 font-bold text-[#097260]">
-          <Sparkles className="size-3.5 shrink-0" />
-          <span className="text-[11px]">Apoio Clínico Estruturado</span>
+        {/* AI Structured Support - Secondary Notice */}
+        <div className="mt-4 rounded-[16px] border border-[#DEE7E2] bg-[#F5F8F6]/80 p-3 text-xs text-[#556D66] space-y-1">
+          <div className="flex items-center gap-1.5 font-bold text-[#097260]">
+            <Sparkles className="size-3.5 shrink-0" />
+            <span className="text-[11px]">Apoio Clínico Estruturado</span>
+          </div>
+          <p className="text-[10px] leading-relaxed text-[#556D66]">
+            Rascunhos documentais para validação médica. Sem emissão autônoma de diagnóstico.
+          </p>
         </div>
-        <p className="text-[10px] leading-relaxed text-[#556D66]">
-          Rascunhos documentais para validação médica. Sem emissão autônoma de diagnóstico.
-        </p>
-      </div>
-    </aside>
+      </aside>
+
+      {/* Quick Consultation Modal */}
+      <QuickConsultationModal
+        isOpen={isQuickConsultationOpen}
+        onClose={() => setIsQuickConsultationOpen(false)}
+      />
+    </>
   )
 }
 
