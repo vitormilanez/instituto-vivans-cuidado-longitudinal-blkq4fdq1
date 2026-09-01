@@ -1,383 +1,260 @@
 import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import {
+  StatusBadge,
+  AiDraftBadge,
+  SimulationDisclaimer,
+  UrgentCareWarning,
+} from '@/components/CommonUI'
 import {
   Camera,
+  Plus,
   Sparkles,
-  AlertCircle,
   CheckCircle2,
-  ChevronRight,
-  UploadCloud,
+  Smile,
+  Meh,
+  Frown,
+  TrendingDown,
+  Clock,
+  Heart,
 } from 'lucide-react'
 
 export default function PatientDiary() {
   const { meals, addMealRecord, notify } = useVivans()
 
-  const [selectedMealType, setSelectedMealType] = useState('Jantar')
-  const [photoSelected, setPhotoSelected] = useState<string>(
-    'https://img.usecurling.com/p/600/600?q=salad%20omelette&color=green',
-  )
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null)
+  const [mealType, setMealType] = useState<'cafe' | 'almoco' | 'lanche' | 'jantar'>('almoco')
+  const [satietyLevel, setSatietyLevel] = useState<'leve' | 'adequada' | 'pesada'>('adequada')
+  const [description, setDescription] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [isAdding, setIsAdding] = useState(false)
 
-  // 3 context ratings (1 to 5)
-  const [satietyRating, setSatietyRating] = useState<number>(4)
-  const [comfortRating, setComfortRating] = useState<number>(4)
-  const [easeRating, setEaseRating] = useState<number>(5)
-  const [submittedCurrent, setSubmittedCurrent] = useState<boolean>(false)
-
-  const handleSimulatePhoto = (url: string, type: string) => {
-    setPhotoSelected(url)
-    setSelectedMealType(type)
-    setAnalysisResult(null)
-    setSubmittedCurrent(false)
-  }
-
-  const handleRunAiAnalysis = () => {
-    setIsAnalyzing(true)
-    setTimeout(() => {
-      setIsAnalyzing(false)
-      setAnalysisResult(
-        'Reconhecimento visual preliminar: Omelete de vegetais (aprox. 2 ovos), porção de brócolis no vapor, folhas verdes e azeite. Composição equilibrada com bom aporte protéico e de fibras.',
-      )
-      notify('Análise visual assistida por IA concluída.')
-    }, 1200)
-  }
-
-  const handleSendFeedbackToDoctor = (e: React.FormEvent) => {
+  const handleAddMeal = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!analysisResult) {
-      handleRunAiAnalysis()
+    if (!description.trim()) return
+
+    const mealNames = {
+      cafe: 'Café da Manhã',
+      almoco: 'Almoço Balanceado',
+      lanche: 'Lanche da Tarde',
+      jantar: 'Jantar Crononutrido',
+    }
+
+    const defaultImages = {
+      cafe: 'https://img.usecurling.com/p/800/600?q=breakfast+eggs+avocado',
+      almoco: 'https://img.usecurling.com/p/800/600?q=healthy+lunch+salad+salmon',
+      lanche: 'https://img.usecurling.com/p/800/600?q=healthy+snack+nuts+berries',
+      jantar: 'https://img.usecurling.com/p/800/600?q=light+dinner+soup+vegetables',
     }
 
     addMealRecord({
-      meal: selectedMealType,
-      time:
-        'Hoje, ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      image: photoSelected,
-      alt: `Prato de ${selectedMealType} registrado pela paciente.`,
-      status: 'Enviada ao Médico',
+      meal: mealNames[mealType],
+      time: 'Agora mesmo',
+      image: imageUrl.trim() || defaultImages[mealType],
+      alt: description.trim(),
+      status: 'Registrada',
       tone: 'green',
-      recognized: 'Proteína (ovos), vegetais e fibras.',
-      analysis: analysisResult || 'Composição equilibrada.',
-      confidence: 'Alta confiança nos itens visíveis',
-      ratings: [satietyRating, comfortRating, easeRating],
+      recognized: description.trim(),
+      analysis:
+        'Refeição registrada e incluída na síntese do diário alimentar para o Dr. Guilherme.',
+      confidence: 'Alta confiança no registro',
+      ratings: [satietyLevel === 'adequada' ? 5 : satietyLevel === 'leve' ? 3 : 2, 4, 5],
       feedbackSent: true,
     })
 
-    setSubmittedCurrent(true)
-    notify('Refeição e avaliações enviadas ao prontuário do Dr. Guilherme.')
+    setDescription('')
+    setImageUrl('')
+    setIsAdding(false)
+    notify('Refeição registrada com sucesso no seu Diário!')
   }
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Diário Alimentar Sem Julgamento · Instituto Vivans" />
+      <SimulationDisclaimer text="Diário Alimentar e Registro de Rotina Sem Julgamento · Instituto Vivans" />
 
       {/* Header */}
-      <section>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
-          Diário Alimentar
-        </p>
-        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-white">
-          Registre o Que Aconteceu
-        </h1>
-        <p className="mt-1 text-sm text-[#ADADAD]">
-          O objetivo é identificar padrões de saciedade e rotina, não classificar refeições como
-          "boas" ou "ruins".
-        </p>
+      <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
+              Registro Sem Julgamento
+            </span>
+            <StatusBadge tone="green">Diário Ativo</StatusBadge>
+          </div>
+          <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#1E1E1C]">
+            Seu Diário Alimentar e de Rotina
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-[#5C5C57] max-w-2xl">
+            Fotografe ou descreva suas refeições para apoiar o acompanhamento do Dr. Guilherme. O
+            objetivo é entender sua rotina real, sem contagem punitiva de calorias.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsAdding(!isAdding)}
+          className="flex min-h-11 items-center gap-2 rounded-2xl bg-[#2E5E4E] px-5 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
+        >
+          <Plus className="size-4 text-[#FFFFFF]" />
+          <span>{isAdding ? 'Fechar Registro' : 'Registrar Refeição'}</span>
+        </button>
       </section>
 
-      {/* Main Journal Layout */}
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        {/* Active Meal Registration & Analysis */}
-        <article className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm backdrop-blur-md">
-          <div className="flex items-center justify-between border-b border-[#333333] pb-4">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
-                {selectedMealType} · Registro em Andamento
-              </p>
-              <h3 className="font-serif text-xl font-bold text-white">
-                Foto e Análise da Refeição
+      {/* Add New Entry Card */}
+      {isAdding && (
+        <form
+          onSubmit={handleAddMeal}
+          className="rounded-3xl border border-[#2E5E4E]/40 bg-[#FFFFFF] p-6 shadow-card space-y-4 animate-fade-in"
+        >
+          <div className="flex items-center justify-between border-b border-[#EFECE5] pb-3">
+            <div className="flex items-center gap-2">
+              <Camera className="size-5 text-[#2E5E4E]" />
+              <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">
+                Novo Registro no Diário
               </h3>
             </div>
-            <StatusBadge tone="gray">Foto Demonstrativa</StatusBadge>
+            <button
+              type="button"
+              onClick={() => setIsAdding(false)}
+              className="text-xs text-[#8A8A84] hover:text-[#1E1E1C]"
+            >
+              Cancelar
+            </button>
           </div>
 
-          {/* Photo Selector */}
-          <div className="mt-5 space-y-3">
-            <p className="text-xs font-bold text-white">
-              Selecione uma foto demonstrativa para simular o upload:
-            </p>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                {
-                  label: 'Jantar Leve',
-                  type: 'Jantar',
-                  url: 'https://img.usecurling.com/p/600/600?q=salad%20omelette&color=green',
-                },
-                {
-                  label: 'Almoço Colorido',
-                  type: 'Almoço',
-                  url: 'https://img.usecurling.com/p/600/600?q=grilled%20chicken%20salad&color=amber',
-                },
-                {
-                  label: 'Café da Manhã',
-                  type: 'Café da manhã',
-                  url: 'https://img.usecurling.com/p/600/600?q=yogurt%20berries%20oats&color=red',
-                },
-              ].map((item) => (
-                <button
-                  key={item.label}
-                  type="button"
-                  onClick={() => handleSimulatePhoto(item.url, item.type)}
-                  className={`overflow-hidden rounded-2xl border text-left transition-all cursor-pointer ${
-                    photoSelected === item.url
-                      ? 'border-[#D6B270] ring-2 ring-[#D6B270]/30 opacity-100'
-                      : 'border-[#333333] opacity-60 hover:opacity-100'
-                  }`}
-                >
-                  <img src={item.url} alt={item.label} className="h-20 w-full object-cover" />
-                  <div className="p-2 text-[11px] font-bold text-white truncate bg-[#141414]">
-                    {item.label}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Current photo preview & AI Trigger */}
-          <div className="mt-5 grid gap-5 sm:grid-cols-[180px_1fr] items-center rounded-2xl bg-[#0F0F0F] p-4 border border-[#333333]">
-            <img
-              src={photoSelected}
-              alt="Prato selecionado"
-              className="h-36 w-full rounded-2xl object-cover shadow-sm border border-[#333333]"
-            />
-            <div className="space-y-3">
-              <p className="text-xs text-[#ADADAD]">
-                Você registrou esta refeição como{' '}
-                <strong className="text-white">{selectedMealType}</strong>. Clique abaixo para
-                executar a análise visual assistida.
-              </p>
-              <button
-                type="button"
-                onClick={handleRunAiAnalysis}
-                disabled={isAnalyzing || Boolean(analysisResult)}
-                className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 disabled:opacity-50 cursor-pointer shadow-sm"
-              >
-                <Sparkles className="size-4 text-[#0F0F0F]" />
-                <span>
-                  {isAnalyzing
-                    ? 'Processando visão computacional...'
-                    : analysisResult
-                      ? 'Análise Concluída'
-                      : 'Analisar Prato com IA'}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* AI Analysis Result box & Mandatory Medical Disclaimer */}
-          {analysisResult && (
-            <div className="mt-5 space-y-3 animate-fade-in">
-              <div className="rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                  <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
-                  <StatusBadge tone="green">Registro Arquivado</StatusBadge>
-                </div>
-                <p className="text-xs text-[#E8C391] leading-relaxed">{analysisResult}</p>
-              </div>
-
-              {/* Explicit Mandatory Warning */}
-              <div className="rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-3 text-[11px] text-[#FCD34D] leading-relaxed">
-                <div className="flex items-center gap-1.5 font-bold text-[#FCD34D] mb-0.5">
-                  <AlertCircle className="size-3.5" />
-                  <span>Aviso: Rascunho gerado com IA - requer validação médica</span>
-                </div>
-                Uma foto não determina com precisão ingredientes ocultos, porções exatas ou
-                calorias. A análise serve exclusivamente como suporte visual preliminar para a
-                conversa com o Dr. Guilherme Martins.
-              </div>
-            </div>
-          )}
-
-          {/* 3 Context Ratings (1 to 5) */}
-          <form
-            onSubmit={handleSendFeedbackToDoctor}
-            className="mt-6 border-t border-[#333333] pt-5 space-y-5"
-          >
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
-                Contexto da Refeição (Notas de 1 a 5)
-              </p>
-              <h4 className="font-serif text-base font-bold text-white mt-1">
-                Como você se sentiu com esta refeição?
-              </h4>
-            </div>
-
-            {/* Question 1: Satiety */}
-            <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-white">
-                <span>1. Nível de Saciedade ao terminar</span>
-                <span className="text-[#D6B270]">{satietyRating} de 5</span>
-              </div>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((val) => (
+              <label className="block text-xs font-bold text-[#1E1E1C] mb-1.5">
+                Qual foi a refeição?
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: 'cafe', label: 'Café da manhã' },
+                  { id: 'almoco', label: 'Almoço' },
+                  { id: 'lanche', label: 'Lanche tarde' },
+                  { id: 'jantar', label: 'Jantar' },
+                ].map((m) => (
                   <button
-                    key={val}
+                    key={m.id}
                     type="button"
-                    onClick={() => setSatietyRating(val)}
-                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                      satietyRating === val
-                        ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F] shadow-sm'
-                        : 'border-[#333333] bg-[#0F0F0F] text-[#ADADAD] hover:bg-white/5 hover:text-white'
+                    onClick={() => setMealType(m.id as any)}
+                    className={`min-h-10 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer ${
+                      mealType === m.id
+                        ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
+                        : 'border border-[#E8E3D9] bg-[#FAF8F4] text-[#5C5C57] hover:bg-[#F1EEE7]'
                     }`}
                   >
-                    {val}
+                    {m.label}
                   </button>
                 ))}
               </div>
-              <div className="flex justify-between text-[10px] text-[#888888]">
-                <span>1 · Pouco saciada</span>
-                <span>5 · Plenamente saciada</span>
-              </div>
             </div>
 
-            {/* Question 2: Comfort */}
-            <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-white">
-                <span>2. Conforto Digestivo após comer</span>
-                <span className="text-[#D6B270]">{comfortRating} de 5</span>
-              </div>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => setComfortRating(val)}
-                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                      comfortRating === val
-                        ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F] shadow-sm'
-                        : 'border-[#333333] bg-[#0F0F0F] text-[#ADADAD] hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    {val}
-                  </button>
-                ))}
-              </div>
-              <div className="flex justify-between text-[10px] text-[#888888]">
-                <span>1 · Desconfortável/Pesada</span>
-                <span>5 · Muito leve e bem</span>
-              </div>
-            </div>
-
-            {/* Question 3: Ease */}
-            <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-white">
-                <span>3. Facilidade de seguir o combinado</span>
-                <span className="text-[#D6B270]">{easeRating} de 5</span>
-              </div>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => setEaseRating(val)}
-                    className={`flex-1 min-h-10 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                      easeRating === val
-                        ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F] shadow-sm'
-                        : 'border-[#333333] bg-[#0F0F0F] text-[#ADADAD] hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    {val}
-                  </button>
-                ))}
-              </div>
-              <div className="flex justify-between text-[10px] text-[#888888]">
-                <span>1 · Muito difícil</span>
-                <span>5 · Muito natural e prático</span>
+            <div>
+              <label className="block text-xs font-bold text-[#1E1E1C] mb-1.5">
+                Como foi a sua saciedade?
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'leve', label: 'Leve fome', icon: Meh },
+                  { id: 'adequada', label: 'Ideal', icon: Smile },
+                  { id: 'pesada', label: 'Cheia', icon: Frown },
+                ].map((s) => {
+                  const Icon = s.icon
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setSatietyLevel(s.id as any)}
+                      className={`min-h-10 rounded-xl text-xs font-bold flex flex-col items-center justify-center p-1 gap-0.5 transition-all cursor-pointer ${
+                        satietyLevel === s.id
+                          ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
+                          : 'border border-[#E8E3D9] bg-[#FAF8F4] text-[#5C5C57] hover:bg-[#F1EEE7]'
+                      }`}
+                    >
+                      <Icon className="size-4" />
+                      <span className="text-[10px]">{s.label}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
+          </div>
 
-            {/* Submission button */}
-            {submittedCurrent ? (
-              <div className="rounded-2xl border border-[#D6B270]/40 bg-[#D6B270]/15 p-4 text-center backdrop-blur-sm">
-                <CheckCircle2 className="size-6 text-[#D6B270] mx-auto mb-1" />
-                <p className="text-xs font-bold text-[#E8C391]">
-                  Avaliação enviada com sucesso ao Dr. Guilherme!
-                </p>
-                <p className="text-[11px] text-[#ADADAD] mt-0.5">
-                  O registro foi compilado no seu prontuário.
-                </p>
-              </div>
-            ) : (
-              <button
-                type="submit"
-                className="min-h-12 w-full rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 transition-all shadow-md cursor-pointer"
-              >
-                Enviar Refeição e Avaliação ao Médico
-              </button>
-            )}
-          </form>
-        </article>
+          <div>
+            <label className="block text-xs font-bold text-[#1E1E1C] mb-1">
+              Descreva o que comeu e como se sentiu:
+            </label>
+            <textarea
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Ex: Salmão grelhado com legumes no vapor e azeite. Sensação de saciedade boa e sem sono pesado após..."
+              className="w-full rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-3 text-xs text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
+              required
+            />
+          </div>
 
-        {/* History of meals */}
-        <aside className="space-y-4">
-          <div className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm backdrop-blur-md">
-            <h3 className="font-serif text-lg font-bold text-white mb-4">Refeições Recentes</h3>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="submit"
+              className="min-h-11 rounded-2xl bg-[#2E5E4E] px-6 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm cursor-pointer"
+            >
+              Gravar no Diário
+            </button>
+          </div>
+        </form>
+      )}
 
-            <div className="space-y-4">
-              {meals.map((m) => (
-                <div
-                  key={m.id}
-                  className="rounded-2xl border border-[#333333] bg-[#141414] p-3.5 space-y-2 hover:border-[#D6B270]/40 transition-colors"
-                >
-                  <div className="flex gap-3">
-                    <img
-                      src={m.image}
-                      alt={m.alt}
-                      className="size-16 rounded-xl object-cover shrink-0 border border-[#333333]"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between">
-                        <strong className="text-xs text-white">{m.meal}</strong>
-                        <span className="text-[10px] text-[#888888]">{m.time}</span>
-                      </div>
-                      <p className="text-[11px] text-[#ADADAD] line-clamp-2 mt-0.5">
-                        {m.recognized}
-                      </p>
-                      <div className="mt-1 flex items-center gap-1 text-[10px] text-[#D6B270] font-semibold">
-                        <CheckCircle2 className="size-3" />
-                        <span>Avaliada (3/3)</span>
-                      </div>
-                    </div>
-                  </div>
+      {/* Diary Feed List */}
+      <div className="space-y-4">
+        {meals.map((entry) => (
+          <article
+            key={entry.id}
+            className="overflow-hidden rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] shadow-card hover:border-[#2E5E4E]/40 transition-all flex flex-col md:flex-row"
+          >
+            {/* Image Preview */}
+            <div className="md:w-64 h-48 md:h-auto shrink-0 relative bg-[#FAF8F4] overflow-hidden border-b md:border-b-0 md:border-r border-[#E8E3D9]">
+              <img
+                src={entry.image}
+                alt={entry.alt || entry.meal}
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute top-3 left-3 rounded-xl bg-[#1E1E1C]/80 backdrop-blur-md px-2.5 py-1 text-[11px] font-bold text-[#FFFFFF]">
+                {entry.time}
+              </span>
+            </div>
+
+            {/* Content Details */}
+            <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFECE5] pb-2.5">
+                  <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">{entry.meal}</h3>
+                  <StatusBadge tone={entry.tone || 'green'}>{entry.status}</StatusBadge>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="rounded-3xl border border-[#D6B270]/30 bg-[#1A1A1A] p-5 text-xs text-[#E8C391] shadow-sm space-y-2 backdrop-blur-md">
-            <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px] text-[#D6B270]">
-              <Sparkles className="size-3.5 text-[#D6B270]" />
-              <span>Transparência da IA Visual</span>
-            </div>
-            <p className="leading-relaxed text-[#CCCCCC]">
-              A identificação dos alimentos é um rascunho automatizado para apoiar o seu diário. O
-              Dr. Guilherme Martins analisa o contexto integral antes de qualquer orientação.
-            </p>
-          </div>
+                <p className="mt-3 text-xs sm:text-sm text-[#5C5C57] leading-relaxed">
+                  {entry.recognized}
+                </p>
+              </div>
 
-          <div className="rounded-3xl bg-[#141414] border border-[#333333] p-5 text-white shadow-sm text-xs space-y-2">
-            <p className="font-bold text-[#D6B270] uppercase tracking-wider text-[11px]">
-              Privacidade e Sigilo Clínico
-            </p>
-            <p className="text-[#ADADAD] leading-relaxed">
-              Seus registros são confidenciais e restritos à equipe do Instituto Vivans, sem
-              compartilhamento externo ou fins comerciais.
-            </p>
-          </div>
-        </aside>
+              {/* AI Feedback / Medical Context */}
+              {entry.analysis && (
+                <div className="rounded-2xl border border-[#C49A5B]/30 bg-[#FBF5EB] p-3 text-xs text-[#9E7A3D] space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold">
+                    <Sparkles className="size-3.5 text-[#C49A5B]" />
+                    <span>Síntese de Apoio para a Consulta:</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed italic text-[#9E7A3D]">
+                    "{entry.analysis}"
+                  </p>
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
       </div>
+
+      <UrgentCareWarning />
     </div>
   )
 }

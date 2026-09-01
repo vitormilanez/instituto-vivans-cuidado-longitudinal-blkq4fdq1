@@ -3,22 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import {
   StatusBadge,
-  AiDraftBadge,
   SimulationDisclaimer,
   ConsentModal,
   UrgentCareWarning,
 } from '@/components/CommonUI'
-import {
-  Sparkles,
-  ShieldCheck,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  ArrowRight,
-  ArrowLeft,
-  Calendar,
-  Lock,
-} from 'lucide-react'
+import { Sparkles, ShieldCheck, CheckCircle2, ArrowRight, ArrowLeft, Lock } from 'lucide-react'
 
 export default function PatientPreConsultation() {
   const { preConsultation, updatePreConsultation, submitPreConsultation, notify } = useVivans()
@@ -80,34 +69,34 @@ export default function PatientPreConsultation() {
       {/* Header */}
       <section>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
             Preparação Clínica
           </span>
           <StatusBadge tone="green">4 minutos estimados</StatusBadge>
         </div>
-        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-white">
+        <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#1E1E1C]">
           Pré-Consulta Guiada
         </h1>
-        <p className="mt-1 text-sm text-[#ADADAD] max-w-2xl">
+        <p className="mt-1 text-xs sm:text-sm text-[#5C5C57] max-w-2xl">
           Organize seus principais objetivos, dúvidas e relatos antes do atendimento com o Dr.
           Guilherme Martins.
         </p>
       </section>
 
       {/* Wizard Progress Bar */}
-      <div className="rounded-2xl border border-[#333333] bg-[#1A1A1A] p-4 shadow-sm backdrop-blur-md">
-        <div className="flex items-center justify-between text-xs font-bold text-white mb-2">
+      <div className="rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] p-4 shadow-card">
+        <div className="flex items-center justify-between text-xs font-bold text-[#1E1E1C] mb-2">
           <span>Passo {step} de 4</span>
-          <span className="text-[#D6B270]">
+          <span className="text-[#2E5E4E]">
             {step === 1 && '1. Objetivo Principal'}
             {step === 2 && '2. Principais Dúvidas'}
             {step === 3 && '3. Mudanças na Rotina'}
             {step === 4 && '4. Sintomas & Revisão'}
           </span>
         </div>
-        <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+        <div className="h-2 w-full rounded-full bg-[#FAF8F4] overflow-hidden border border-[#E8E3D9]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#B8935A] to-[#D6B270] transition-all duration-300"
+            className="h-full rounded-full bg-[#2E5E4E] transition-all duration-300"
             style={{ width: `${(step / 4) * 100}%` }}
           />
         </div>
@@ -117,19 +106,19 @@ export default function PatientPreConsultation() {
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <form
           onSubmit={handleSubmit}
-          className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 sm:p-8 shadow-sm space-y-6 backdrop-blur-md"
+          className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 sm:p-8 shadow-card space-y-6"
         >
           {/* STEP 1 */}
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
                   Passo 1
                 </span>
-                <h3 className="font-serif text-xl font-bold text-white">
+                <h3 className="font-serif text-xl font-bold text-[#1E1E1C]">
                   Qual é o seu objetivo principal para esta consulta?
                 </h3>
-                <p className="text-xs text-[#ADADAD]">
+                <p className="text-xs text-[#5C5C57]">
                   O que você mais gostaria de alinhar ou resolver durante os 45 minutos com o Dr.
                   Guilherme?
                 </p>
@@ -139,12 +128,12 @@ export default function PatientPreConsultation() {
                 rows={4}
                 value={objective}
                 onChange={(e) => setObjective(e.target.value)}
-                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4 text-xs sm:text-sm text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                className="w-full rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4 text-xs sm:text-sm text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
                 placeholder="Ex.: Gostaria de avaliar a perda de peso deste primeiro mês..."
               />
 
-              <div className="rounded-xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-3 text-xs text-[#E8C391]">
-                💡 <strong className="text-white">Dica:</strong> Seja específica. Isso orienta o
+              <div className="rounded-xl border border-[#C49A5B]/30 bg-[#FBF5EB] p-3 text-xs text-[#9E7A3D]">
+                💡 <strong className="text-[#1E1E1C]">Dica:</strong> Seja específica. Isso orienta o
                 foco inicial da teleconsulta.
               </div>
             </div>
@@ -154,13 +143,13 @@ export default function PatientPreConsultation() {
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
                   Passo 2
                 </span>
-                <h3 className="font-serif text-xl font-bold text-white">
+                <h3 className="font-serif text-xl font-bold text-[#1E1E1C]">
                   Quais são suas principais dúvidas para o médico?
                 </h3>
-                <p className="text-xs text-[#ADADAD]">
+                <p className="text-xs text-[#5C5C57]">
                   Perguntas sobre suplementação, horário de refeições, exames ou sintomas pontuais.
                 </p>
               </div>
@@ -169,7 +158,7 @@ export default function PatientPreConsultation() {
                 rows={4}
                 value={mainQuestions}
                 onChange={(e) => setMainQuestions(e.target.value)}
-                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4 text-xs sm:text-sm text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                className="w-full rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4 text-xs sm:text-sm text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
                 placeholder="Ex.: Devo mudar o horário do magnésio? Posso tomar café após o almoço?"
               />
             </div>
@@ -179,13 +168,13 @@ export default function PatientPreConsultation() {
           {step === 3 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
                   Passo 3
                 </span>
-                <h3 className="font-serif text-xl font-bold text-white">
+                <h3 className="font-serif text-xl font-bold text-[#1E1E1C]">
                   Quais mudanças você conseguiu implementar na rotina?
                 </h3>
-                <p className="text-xs text-[#ADADAD]">
+                <p className="text-xs text-[#5C5C57]">
                   Conte o que foi fácil e o que ainda está difícil de sustentar no dia a dia.
                 </p>
               </div>
@@ -194,7 +183,7 @@ export default function PatientPreConsultation() {
                 rows={4}
                 value={routineChanges}
                 onChange={(e) => setRoutineChanges(e.target.value)}
-                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4 text-xs sm:text-sm text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                className="w-full rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4 text-xs sm:text-sm text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
                 placeholder="Ex.: Aumentei o consumo de água, jantei mais cedo, mas ainda sinto sono durante a tarde..."
               />
             </div>
@@ -204,59 +193,59 @@ export default function PatientPreConsultation() {
           {step === 4 && (
             <div className="space-y-5 animate-fade-in">
               <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
                   Passo 4 · Revisão Final
                 </span>
-                <h3 className="font-serif text-xl font-bold text-white">
+                <h3 className="font-serif text-xl font-bold text-[#1E1E1C]">
                   Sintomas observados e conferência
                 </h3>
-                <p className="text-xs text-[#ADADAD]">
+                <p className="text-xs text-[#5C5C57]">
                   Revise os pontos antes do envio definitivo para o prontuário.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-white mb-1">
+                <label className="block text-xs font-bold text-[#1E1E1C] mb-1">
                   Sintomas ou sensações notadas:
                 </label>
                 <textarea
                   rows={3}
                   value={observedSymptoms}
                   onChange={(e) => setObservedSymptoms(e.target.value)}
-                  className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] p-3 text-xs sm:text-sm text-white focus:border-[#D6B270] focus:outline-none"
+                  className="w-full rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-3 text-xs sm:text-sm text-[#1E1E1C] focus:border-[#2E5E4E] focus:outline-none"
                 />
               </div>
 
               {/* Review summary cards */}
-              <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 space-y-3 text-xs">
-                <div className="border-b border-[#333333] pb-2">
-                  <strong className="text-[#D6B270]">Objetivo:</strong>
-                  <p className="text-white mt-0.5">{objective}</p>
+              <div className="rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4 space-y-3 text-xs">
+                <div className="border-b border-[#EFECE5] pb-2">
+                  <strong className="text-[#2E5E4E]">Objetivo:</strong>
+                  <p className="text-[#1E1E1C] mt-0.5">{objective}</p>
                 </div>
-                <div className="border-b border-[#333333] pb-2">
-                  <strong className="text-[#D6B270]">Dúvidas:</strong>
-                  <p className="text-white mt-0.5">{mainQuestions}</p>
+                <div className="border-b border-[#EFECE5] pb-2">
+                  <strong className="text-[#2E5E4E]">Dúvidas:</strong>
+                  <p className="text-[#1E1E1C] mt-0.5">{mainQuestions}</p>
                 </div>
                 <div>
-                  <strong className="text-[#D6B270]">Mudanças de Rotina:</strong>
-                  <p className="text-white mt-0.5">{routineChanges}</p>
+                  <strong className="text-[#2E5E4E]">Mudanças de Rotina:</strong>
+                  <p className="text-[#1E1E1C] mt-0.5">{routineChanges}</p>
                 </div>
               </div>
 
               {/* Governance & LGPD confirmation */}
-              <div className="rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-4 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-white">
-                  <ShieldCheck className="size-4 text-[#D6B270]" />
+              <div className="rounded-2xl border border-[#C3D6CC] bg-[#E7EFEA] p-4 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#2E5E4E]">
+                  <ShieldCheck className="size-4 text-[#2E5E4E]" />
                   <span>Termo de Consentimento e Governança Clínica</span>
                 </div>
-                <p className="text-xs text-[#E8C391] leading-relaxed">
+                <p className="text-xs text-[#5C5C57] leading-relaxed">
                   Ao enviar, suas respostas serão organizadas em uma síntese para o Dr. Guilherme.
                   Nenhum diagnóstico automatizado é gerado.
                 </p>
                 <button
                   type="button"
                   onClick={() => setIsConsentOpen(true)}
-                  className="text-xs text-[#D6B270] font-bold underline underline-offset-4 cursor-pointer"
+                  className="text-xs text-[#2E5E4E] font-bold underline underline-offset-4 cursor-pointer"
                 >
                   Ver termos detalhados de proteção de dados (LGPD)
                 </button>
@@ -265,12 +254,12 @@ export default function PatientPreConsultation() {
           )}
 
           {/* Navigation Controls */}
-          <div className="flex items-center justify-between pt-4 border-t border-[#333333]">
+          <div className="flex items-center justify-between pt-4 border-t border-[#EFECE5]">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={handleBack}
-                className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#333333] px-4 text-xs font-bold text-[#ADADAD] hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+                className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] px-4 text-xs font-bold text-[#5C5C57] hover:bg-[#F1EEE7] hover:text-[#1E1E1C] transition-all cursor-pointer"
               >
                 <ArrowLeft className="size-4" />
                 <span>Voltar</span>
@@ -283,7 +272,7 @@ export default function PatientPreConsultation() {
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex min-h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm transition-all cursor-pointer"
+                className="flex min-h-11 items-center gap-2 rounded-2xl bg-[#2E5E4E] px-6 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all cursor-pointer"
               >
                 <span>Avançar</span>
                 <ArrowRight className="size-4" />
@@ -291,7 +280,7 @@ export default function PatientPreConsultation() {
             ) : (
               <button
                 type="submit"
-                className="flex min-h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-7 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all cursor-pointer"
+                className="flex min-h-11 items-center gap-2 rounded-2xl bg-[#2E5E4E] px-7 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all cursor-pointer"
               >
                 <CheckCircle2 className="size-4" />
                 <span>Enviar Pré-Consulta ao Médico</span>
@@ -302,21 +291,21 @@ export default function PatientPreConsultation() {
 
         {/* Sidebar Info */}
         <aside className="space-y-4">
-          <div className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-3 backdrop-blur-md">
-            <div className="flex items-center gap-2 font-bold text-white">
-              <Sparkles className="size-4 text-[#D6B270]" />
+          <div className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 shadow-card space-y-3">
+            <div className="flex items-center gap-2 font-bold text-[#1E1E1C]">
+              <Sparkles className="size-4 text-[#2E5E4E]" />
               <h4 className="font-serif text-base">Por que preencher a pré-consulta?</h4>
             </div>
-            <ul className="space-y-2 text-xs text-[#CCCCCC] leading-relaxed list-disc pl-4">
+            <ul className="space-y-2 text-xs text-[#5C5C57] leading-relaxed list-disc pl-4">
               <li>Economiza até 15 minutos na consulta para discussões clínicas mais profundas.</li>
               <li>Garante que nenhuma dúvida importante seja esquecida.</li>
               <li>Permite ao médico revisar exames e evolução antes de abrir o vídeo.</li>
             </ul>
           </div>
 
-          <div className="rounded-3xl border border-[#333333] bg-[#141414] p-5 shadow-sm space-y-2 text-xs text-[#ADADAD]">
-            <div className="flex items-center gap-1.5 font-bold text-white">
-              <Lock className="size-3.5 text-[#D6B270]" />
+          <div className="rounded-3xl border border-[#E8E3D9] bg-[#FAF8F4] p-5 shadow-card space-y-2 text-xs text-[#5C5C57]">
+            <div className="flex items-center gap-1.5 font-bold text-[#1E1E1C]">
+              <Lock className="size-3.5 text-[#2E5E4E]" />
               <span>Privacidade Absoluta</span>
             </div>
             <p className="leading-relaxed">

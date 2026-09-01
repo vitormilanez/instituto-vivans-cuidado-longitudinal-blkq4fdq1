@@ -30,7 +30,7 @@ export function VivansAvatar({
   size = 'md',
   className,
   fallbackClassName,
-  borderClassName = 'border border-[#333333]',
+  borderClassName = 'border border-[#E8E3D9]',
 }: VivansAvatarProps) {
   const [hasError, setHasError] = useState(false)
 
@@ -42,7 +42,7 @@ export function VivansAvatar({
       className={cn(
         sizeClass,
         borderClassName,
-        'relative shrink-0 select-none shadow-2xs bg-[#1A1A1A]',
+        'relative shrink-0 select-none shadow-subtle bg-[#F1EEE7]',
         className,
       )}
     >
@@ -56,7 +56,7 @@ export function VivansAvatar({
       )}
       <AvatarFallback
         className={cn(
-          'flex size-full items-center justify-center font-bold tracking-tight bg-gradient-to-br from-[#242424] to-[#141414] text-[#D6B270] border border-[#D6B270]/20',
+          'flex size-full items-center justify-center font-bold tracking-tight bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC]',
           fallbackClassName,
         )}
       >

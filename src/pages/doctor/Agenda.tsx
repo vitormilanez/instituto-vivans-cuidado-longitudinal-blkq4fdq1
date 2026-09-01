@@ -3,22 +3,10 @@ import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
-import {
-  Calendar as CalendarIcon,
-  Clock,
-  Video,
-  FileText,
-  User,
-  Sparkles,
-  ChevronRight,
-  Filter,
-  CheckCircle2,
-  CalendarCheck,
-  Plus,
-} from 'lucide-react'
+import { Calendar as CalendarIcon, Video, FileText, Filter } from 'lucide-react'
 
 export default function DoctorAgenda() {
-  const { appointments, notify } = useVivans()
+  const { appointments } = useVivans()
   const [selectedDay, setSelectedDay] = useState<'hoje' | 'amanha' | 'semana'>('hoje')
   const [modalityFilter, setModalityFilter] = useState<'todos' | 'teleconsulta' | 'presencial'>(
     'todos',
@@ -44,21 +32,21 @@ export default function DoctorAgenda() {
       <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
               Grade de Atendimentos
             </span>
             <StatusBadge tone="green">Dr. Guilherme Martins</StatusBadge>
           </div>
-          <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#1E1E1C]">
             Agenda do Médico
           </h1>
-          <p className="mt-1 text-xs sm:text-sm text-[#ADADAD]">
+          <p className="mt-1 text-xs sm:text-sm text-[#5C5C57]">
             Gerenciamento de teleconsultas com Google Meet integrado e atendimentos presenciais.
           </p>
         </div>
 
         {/* Day Selector */}
-        <div className="flex rounded-2xl border border-[#333333] bg-[#141414] p-1 shadow-inner backdrop-blur-md">
+        <div className="flex rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] p-1 shadow-subtle">
           {[
             { id: 'hoje', label: 'Hoje (25 ago)' },
             { id: 'amanha', label: 'Amanhã (26 ago)' },
@@ -70,8 +58,8 @@ export default function DoctorAgenda() {
               onClick={() => setSelectedDay(d.id as any)}
               className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 selectedDay === d.id
-                  ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
-                  : 'text-[#ADADAD] hover:text-white hover:bg-white/5'
+                  ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
+                  : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-[#F1EEE7]'
               }`}
             >
               {d.label}
@@ -81,10 +69,10 @@ export default function DoctorAgenda() {
       </section>
 
       {/* Filters Strip */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#333333] bg-[#1A1A1A] p-4 text-xs backdrop-blur-md">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] p-4 text-xs shadow-card">
         <div className="flex items-center gap-2">
-          <Filter className="size-4 text-[#D6B270]" />
-          <span className="font-bold text-[#CCCCCC]">Modalidade:</span>
+          <Filter className="size-4 text-[#2E5E4E]" />
+          <span className="font-bold text-[#1E1E1C]">Modalidade:</span>
           {(['todos', 'teleconsulta', 'presencial'] as const).map((m) => (
             <button
               key={m}
@@ -92,8 +80,8 @@ export default function DoctorAgenda() {
               onClick={() => setModalityFilter(m)}
               className={`rounded-lg px-2.5 py-1 text-xs font-bold capitalize transition-all cursor-pointer ${
                 modalityFilter === m
-                  ? 'bg-[#D6B270]/20 text-[#E8C391] border border-[#D6B270]/40'
-                  : 'text-[#ADADAD] hover:text-white'
+                  ? 'bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC]'
+                  : 'text-[#5C5C57] hover:text-[#1E1E1C]'
               }`}
             >
               {m}
@@ -101,7 +89,7 @@ export default function DoctorAgenda() {
           ))}
         </div>
 
-        <span className="text-xs text-[#ADADAD]">
+        <span className="text-xs text-[#5C5C57]">
           {filteredAppointments.length} consultas nesta visualização
         </span>
       </div>
@@ -111,31 +99,31 @@ export default function DoctorAgenda() {
         {filteredAppointments.map((apt) => (
           <article
             key={apt.id}
-            className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-5 sm:p-6 shadow-sm space-y-4 hover:border-[#D6B270]/40 transition-all backdrop-blur-md"
+            className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-5 sm:p-6 shadow-card space-y-4 hover:border-[#2E5E4E]/40 transition-all"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#333333] pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EFECE5] pb-3">
               <div className="flex flex-wrap items-center gap-2.5">
-                <span className="rounded-xl bg-[#D6B270]/15 text-[#E8C391] border border-[#D6B270]/30 px-2.5 py-1 font-mono text-xs font-bold">
+                <span className="rounded-xl bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC] px-2.5 py-1 font-mono text-xs font-bold">
                   {apt.time}
                 </span>
                 <StatusBadge tone={apt.statusTone || 'green'}>{apt.status}</StatusBadge>
-                <span className="text-xs text-[#ADADAD]">• {apt.modality}</span>
+                <span className="text-xs text-[#5C5C57]">• {apt.modality}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Link
                   to={`/medico/pacientes/${apt.patientId || 'marina-costa'}`}
-                  className="flex min-h-9 items-center gap-1 rounded-xl border border-[#333333] bg-white/5 px-3 text-xs font-bold text-white hover:bg-white/10 transition-colors"
+                  className="flex min-h-9 items-center gap-1 rounded-xl border border-[#E8E3D9] bg-[#FAF8F4] px-3 text-xs font-bold text-[#1E1E1C] hover:bg-[#F1EEE7] transition-colors"
                 >
-                  <FileText className="size-3.5 text-[#D6B270]" />
+                  <FileText className="size-3.5 text-[#2E5E4E]" />
                   <span>Prontuário</span>
                 </Link>
 
                 <Link
                   to={`/medico/consulta/${apt.id}`}
-                  className="flex min-h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm transition-all"
+                  className="flex min-h-9 items-center gap-1.5 rounded-xl bg-[#2E5E4E] px-4 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all"
                 >
-                  <Video className="size-3.5 text-[#0F0F0F]" />
+                  <Video className="size-3.5 text-[#FFFFFF]" />
                   <span>Entrar no Meet</span>
                 </Link>
               </div>
@@ -153,21 +141,21 @@ export default function DoctorAgenda() {
                 name={apt.patient}
                 initials={apt.initials}
                 size="lg"
-                className="border border-[#333333]"
+                className="border border-[#E8E3D9]"
               />
 
               <div className="space-y-1">
-                <h3 className="font-serif text-lg font-bold text-white">{apt.patient}</h3>
-                <p className="text-xs text-[#CCCCCC]">{apt.type}</p>
-                <div className="pt-1 flex flex-wrap gap-2 text-[11px] text-[#ADADAD]">
+                <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">{apt.patient}</h3>
+                <p className="text-xs text-[#5C5C57]">{apt.type}</p>
+                <div className="pt-1 flex flex-wrap gap-2 text-[11px] text-[#8A8A84]">
                   <span>Objetivo: {apt.objective}</span>
                 </div>
               </div>
 
               {/* Pre-visit status */}
-              <div className="rounded-2xl border border-[#D6B270]/30 bg-[#0F0F0F] p-3 text-xs space-y-1 text-right">
-                <span className="font-bold text-[#E8C391] block">{apt.preVisit}</span>
-                <span className="text-[11px] text-[#888888]">
+              <div className="rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-3 text-xs space-y-1 text-right">
+                <span className="font-bold text-[#2E5E4E] block">{apt.preVisit}</span>
+                <span className="text-[11px] text-[#5C5C57]">
                   {apt.preVisitTone === 'green'
                     ? '✓ Resumo estruturado pronto'
                     : 'Pendente de envio'}

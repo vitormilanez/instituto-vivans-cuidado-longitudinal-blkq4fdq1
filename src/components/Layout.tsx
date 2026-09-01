@@ -11,11 +11,11 @@ export function Layout() {
   const isPatientRoute = location.pathname.startsWith('/paciente')
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F] text-[#FFFFFF] flex flex-col font-sans selection:bg-[#D6B270]/30 selection:text-[#FFFFFF]">
+    <div className="min-h-screen bg-[#FAF8F4] text-[#1E1E1C] flex flex-col font-sans selection:bg-[#E7EFEA] selection:text-[#2E5E4E]">
       {/* Skip to Main Content Link for Accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-[#D6B270] focus:text-[#0F0F0F] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#E8C391]"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-[#2E5E4E] focus:text-[#FFFFFF] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:shadow-elevation focus:outline-none focus:ring-2 focus:ring-[#C49A5B]"
       >
         Pular para o conteúdo principal
       </a>
@@ -25,8 +25,8 @@ export function Layout() {
 
       {/* Global in-app Toast notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-5 z-50 rounded-2xl bg-[#1A1A1A]/95 text-white px-5 py-3 text-xs font-semibold shadow-2xl backdrop-blur-md animate-fade-in-down flex items-center gap-2.5 border border-[#D6B270]/40">
-          <span className="size-2 rounded-full bg-[#D6B270] animate-pulse" />
+        <div className="fixed top-20 right-5 z-50 rounded-2xl bg-[#FFFFFF] text-[#1E1E1C] px-5 py-3 text-xs font-semibold shadow-elevation backdrop-blur-md animate-fade-in-down flex items-center gap-2.5 border border-[#E8E3D9]">
+          <span className="size-2 rounded-full bg-[#2E5E4E] animate-pulse" />
           <span>{toastMessage}</span>
         </div>
       )}

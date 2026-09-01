@@ -1,18 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Home } from 'lucide-react'
+import { Home } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-4">
-      <div className="max-w-md w-full rounded-3xl border border-[#333333] bg-[#1A1A1A] p-8 text-center space-y-6 shadow-2xl backdrop-blur-md">
-        <div className="grid size-16 mx-auto place-items-center rounded-2xl bg-[#D6B270]/20 text-[#D6B270] border border-[#D6B270]/40 font-serif text-2xl font-bold">
+      <div className="max-w-md w-full rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-8 text-center space-y-6 shadow-card">
+        <div className="grid size-16 mx-auto place-items-center rounded-2xl bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC] font-serif text-2xl font-bold">
           404
         </div>
 
         <div className="space-y-2">
-          <h1 className="font-serif text-2xl font-bold text-white">Página Não Encontrada</h1>
-          <p className="text-xs text-[#ADADAD] leading-relaxed">
+          <h1 className="font-serif text-2xl font-bold text-[#1E1E1C]">Página Não Encontrada</h1>
+          <p className="text-xs text-[#5C5C57] leading-relaxed">
             O endereço solicitado não existe ou foi movido dentro do sistema do Instituto Vivans.
           </p>
         </div>
@@ -20,7 +20,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Link
             to="/"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all cursor-pointer"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-[#2E5E4E] px-6 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all cursor-pointer"
           >
             <Home className="size-4" />
             <span>Voltar ao Início</span>

@@ -6,28 +6,15 @@ import {
   SimulationDisclaimer,
   EvidenceModal,
 } from '@/components/CommonUI'
-import { VivansAvatar } from '@/components/VivansAvatar'
-import {
-  FileText,
-  Sparkles,
-  Download,
-  Share2,
-  CheckCircle2,
-  Check,
-  Search,
-  Filter,
-  Eye,
-  Send,
-  BookOpen,
-} from 'lucide-react'
+import { Download, CheckCircle2 } from 'lucide-react'
 
 export default function DoctorReports() {
   const { reports, approveReport, notify } = useVivans()
 
   const [selectedReportId, setSelectedReportId] = useState<string>(reports[0]?.id || '')
   const [evidenceModalOpen, setEvidenceModalOpen] = useState(false)
-  const [selectedEvidence, setSelectedEvidence] = useState<any | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedEvidence] = useState<any | null>(null)
+  const [searchTerm] = useState('')
 
   const activeReport = reports.find((r) => r.id === selectedReportId) || reports[0]
 
@@ -54,13 +41,13 @@ export default function DoctorReports() {
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
             Governança e Documentação Clínica
           </p>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-white">
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-[#1E1E1C]">
             Relatórios e Sínteses de Acompanhamento
           </h1>
-          <p className="text-sm text-[#ADADAD]">
+          <p className="text-sm text-[#5C5C57]">
             Rascunhos gerados por IA organizados em camadas para deliberação e envio aos pacientes.
           </p>
         </div>
@@ -68,9 +55,9 @@ export default function DoctorReports() {
         <button
           type="button"
           onClick={handleSimulateExport}
-          className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#333333] bg-[#1A1A1A] px-4 text-xs font-bold text-white hover:bg-white/10 transition-colors shadow-sm cursor-pointer"
+          className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] px-4 text-xs font-bold text-[#1E1E1C] hover:bg-[#F1EEE7] transition-colors shadow-subtle cursor-pointer"
         >
-          <Download className="size-4 text-[#D6B270]" />
+          <Download className="size-4 text-[#2E5E4E]" />
           <span>Exportar Dossiê (PDF)</span>
         </button>
       </section>
@@ -78,9 +65,9 @@ export default function DoctorReports() {
       {/* Main Layout: Reports Selector (Left) vs Active Report Canvas (Right) */}
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
         {/* Reports Index */}
-        <aside className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-4 shadow-sm space-y-3 backdrop-blur-md">
-          <div className="border-b border-[#333333] pb-2 px-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+        <aside className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-4 shadow-card space-y-3">
+          <div className="border-b border-[#EFECE5] pb-2 px-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
               Relatórios em Aberto ({reports.length})
             </span>
           </div>
@@ -96,18 +83,18 @@ export default function DoctorReports() {
                   onClick={() => setSelectedReportId(rep.id)}
                   className={`w-full rounded-2xl p-3.5 text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#D6B270]/15 border border-[#D6B270]/40 shadow-sm'
-                      : 'border border-[#333333] hover:bg-white/5'
+                      ? 'bg-[#E7EFEA] border border-[#C3D6CC] shadow-subtle'
+                      : 'border border-[#E8E3D9] bg-[#FAF8F4] hover:bg-[#F1EEE7]'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <strong className="text-xs text-white">{rep.patientName}</strong>
+                    <strong className="text-xs text-[#1E1E1C]">{rep.patientName}</strong>
                     <StatusBadge tone={tone}>{rep.status}</StatusBadge>
                   </div>
-                  <p className="font-serif text-xs font-bold text-[#E8C391] leading-snug">
+                  <p className="font-serif text-xs font-bold text-[#2E5E4E] leading-snug">
                     {rep.title}
                   </p>
-                  <span className="text-[10px] text-[#888888] mt-1 block">{rep.period}</span>
+                  <span className="text-[10px] text-[#8A8A84] mt-1 block">{rep.period}</span>
                 </button>
               )
             })}
@@ -116,12 +103,12 @@ export default function DoctorReports() {
 
         {/* Active Report Canvas */}
         {activeReport && (
-          <article className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 sm:p-8 shadow-sm space-y-6 backdrop-blur-md">
+          <article className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 sm:p-8 shadow-card space-y-6">
             {/* Header of the document */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#333333] pb-5">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#EFECE5] pb-5">
               <div className="space-y-2 max-w-xl">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[#D6B270]/20 text-[#E8C391] border border-[#D6B270]/30 px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                  <span className="rounded-full bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC] px-3 py-1 text-xs font-bold uppercase tracking-wider">
                     Dossiê Clínico Estruturado
                   </span>
                   <StatusBadge tone={activeReport.status === 'aprovado' ? 'green' : 'amber'}>
@@ -129,11 +116,11 @@ export default function DoctorReports() {
                   </StatusBadge>
                 </div>
 
-                <h2 className="font-serif text-2xl font-bold text-white leading-tight">
+                <h2 className="font-serif text-2xl font-bold text-[#1E1E1C] leading-tight">
                   {activeReport.title}
                 </h2>
-                <p className="text-xs text-[#ADADAD]">
-                  Paciente: <strong className="text-white">{activeReport.patientName}</strong> ·
+                <p className="text-xs text-[#5C5C57]">
+                  Paciente: <strong className="text-[#1E1E1C]">{activeReport.patientName}</strong> ·
                   Ciclo de 90 Dias · {activeReport.period}
                 </p>
               </div>
@@ -141,15 +128,15 @@ export default function DoctorReports() {
               {/* Approval Button */}
               <div>
                 {activeReport.status === 'aprovado' ? (
-                  <div className="flex items-center gap-1.5 rounded-2xl bg-[#D6B270]/15 border border-[#D6B270]/30 px-4 py-2.5 text-xs font-bold text-[#E8C391]">
-                    <CheckCircle2 className="size-4 text-[#D6B270]" />
+                  <div className="flex items-center gap-1.5 rounded-2xl bg-[#E7F2EC] border border-[#C3D6CC] px-4 py-2.5 text-xs font-bold text-[#2F7D5B]">
+                    <CheckCircle2 className="size-4 text-[#2F7D5B]" />
                     <span>Aprovado &amp; Enviado ao Paciente</span>
                   </div>
                 ) : (
                   <button
                     type="button"
                     onClick={handleSendToPatient}
-                    className="flex min-h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all cursor-pointer"
+                    className="flex min-h-11 items-center gap-2 rounded-2xl bg-[#2E5E4E] px-6 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all cursor-pointer"
                   >
                     <CheckCircle2 className="size-4" />
                     <span>Aprovar e Enviar ao Paciente</span>
@@ -159,11 +146,11 @@ export default function DoctorReports() {
             </div>
 
             {/* Mandatory AI Draft Notice Banner */}
-            <div className="rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/10 p-4 space-y-2">
+            <div className="rounded-2xl border border-[#C49A5B]/40 bg-[#FBF5EB] p-4 space-y-2">
               <div className="flex items-center gap-2">
                 <AiDraftBadge status="Rascunho gerado com IA - requer validação médica" />
               </div>
-              <p className="text-xs text-[#E8C391] leading-relaxed">
+              <p className="text-xs text-[#9E7A3D] leading-relaxed">
                 Este relatório foi sintetizado automaticamente a partir dos biossinais (peso, sono,
                 adesão) e relatos pré-consulta. O médico deve revisar a adequação dos tópicos antes
                 de disponibilizar ao paciente.
@@ -173,42 +160,43 @@ export default function DoctorReports() {
             {/* Content Sections */}
             <div className="space-y-5">
               <div>
-                <h3 className="font-serif text-lg font-bold text-white mb-2">
+                <h3 className="font-serif text-lg font-bold text-[#1E1E1C] mb-2">
                   1. Resumo Executivo da Evolução
                 </h3>
-                <div className="rounded-2xl bg-[#0F0F0F] p-4 text-xs text-[#CCCCCC] leading-relaxed border border-[#333333]">
+                <div className="rounded-2xl bg-[#FAF8F4] p-4 text-xs text-[#5C5C57] leading-relaxed border border-[#E8E3D9]">
                   {activeReport.summary ||
                     'A paciente manteve excelente adesão aos hábitos matinais e vespertinos, com redução ponderal constante. Ponto focal para o próximo ciclo: estabilização do sono através da antecipação do jantar e suplementação.'}
                 </div>
               </div>
 
               <div>
-                <h3 className="font-serif text-lg font-bold text-white mb-2">
+                <h3 className="font-serif text-lg font-bold text-[#1E1E1C] mb-2">
                   2. Conduta Terapêutica Validada
                 </h3>
-                <div className="rounded-2xl bg-[#0F0F0F] p-4 text-xs text-[#CCCCCC] leading-relaxed border border-[#333333] space-y-2">
+                <div className="rounded-2xl bg-[#FAF8F4] p-4 text-xs text-[#5C5C57] leading-relaxed border border-[#E8E3D9] space-y-2">
                   <p>
-                    • <strong>Crononutrição:</strong> Jantar antecipado às 19h30 para reduzir
-                    despertares por volta das 3h.
+                    • <strong className="text-[#1E1E1C]">Crononutrição:</strong> Jantar antecipado
+                    às 19h30 para reduzir despertares por volta das 3h.
                   </p>
                   <p>
-                    • <strong>Suplementação:</strong> Magnésio Bisglicinato 350mg 1h antes de
-                    deitar.
+                    • <strong className="text-[#1E1E1C]">Suplementação:</strong> Magnésio
+                    Bisglicinato 350mg 1h antes de deitar.
                   </p>
                   <p>
-                    • <strong>Acompanhamento:</strong> Check-ins programados aos dias 3, 7 e 14.
+                    • <strong className="text-[#1E1E1C]">Acompanhamento:</strong> Check-ins
+                    programados aos dias 3, 7 e 14.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Footer with Medical Signature */}
-            <div className="border-t border-[#333333] pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#ADADAD]">
+            <div className="border-t border-[#EFECE5] pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#5C5C57]">
               <div>
-                <p className="font-bold text-white">Dr. Guilherme Martins</p>
-                <p className="text-[11px] font-mono text-[#D6B270]">CRM/SP 184.920 · RQE 92.110</p>
+                <p className="font-bold text-[#1E1E1C]">Dr. Guilherme Martins</p>
+                <p className="text-[11px] font-mono text-[#2E5E4E]">CRM/SP 184.920 · RQE 92.110</p>
               </div>
-              <span className="text-[11px] text-[#888888]">
+              <span className="text-[11px] text-[#8A8A84]">
                 Instituto Vivans · Sistema de Prontuário Eletrônico Auditado
               </span>
             </div>

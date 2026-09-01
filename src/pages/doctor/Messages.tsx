@@ -2,19 +2,10 @@ import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
-import {
-  MessageSquare,
-  Send,
-  Sparkles,
-  CheckCircle2,
-  Filter,
-  User,
-  Clock,
-  AlertTriangle,
-} from 'lucide-react'
+import { Send, CheckCircle2 } from 'lucide-react'
 
 export default function DoctorMessages() {
-  const { messages, sendMessage, approveAiDraft, notify } = useVivans()
+  const { messages, sendMessage, approveAiDraft } = useVivans()
   const [inputText, setInputText] = useState('')
   const [filterPatient, setFilterPatient] = useState('Marina Costa')
 
@@ -67,13 +58,13 @@ export default function DoctorMessages() {
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
             Comunicação da Equipe Médica
           </p>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-white">
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-[#1E1E1C]">
             Mensagens com Pacientes
           </h1>
-          <p className="text-sm text-[#ADADAD]">
+          <p className="text-sm text-[#5C5C57]">
             Atendimento assíncrono com apoio de rascunhos inteligentes para aprovação médica.
           </p>
         </div>
@@ -82,9 +73,9 @@ export default function DoctorMessages() {
       {/* Main Layout: Patients Threads (Left) vs Active Chat (Right) */}
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         {/* Patient threads list */}
-        <aside className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-4 shadow-sm space-y-3 backdrop-blur-md">
-          <div className="border-b border-[#333333] pb-3 px-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+        <aside className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-4 shadow-card space-y-3">
+          <div className="border-b border-[#EFECE5] pb-3 px-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
               Conversas por Paciente
             </span>
           </div>
@@ -99,8 +90,8 @@ export default function DoctorMessages() {
                   onClick={() => setFilterPatient(pt.name)}
                   className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#D6B270]/15 border border-[#D6B270]/40 shadow-sm'
-                      : 'border border-[#333333] hover:bg-white/5'
+                      ? 'bg-[#E7EFEA] border border-[#C3D6CC] shadow-subtle'
+                      : 'border border-[#E8E3D9] bg-[#FAF8F4] hover:bg-[#F1EEE7]'
                   }`}
                 >
                   <VivansAvatar
@@ -108,14 +99,14 @@ export default function DoctorMessages() {
                     name={pt.name}
                     initials={pt.initials}
                     size="md"
-                    className="border border-[#333333] shrink-0"
+                    className="border border-[#E8E3D9] shrink-0"
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between mb-0.5">
-                      <strong className="text-xs text-white truncate">{pt.name}</strong>
-                      <span className="text-[10px] text-[#888888] shrink-0">{pt.last}</span>
+                      <strong className="text-xs text-[#1E1E1C] truncate">{pt.name}</strong>
+                      <span className="text-[10px] text-[#8A8A84] shrink-0">{pt.last}</span>
                     </div>
-                    <p className="text-[11px] text-[#ADADAD] truncate">{pt.tag}</p>
+                    <p className="text-[11px] text-[#5C5C57] truncate">{pt.tag}</p>
                   </div>
                 </button>
               )
@@ -124,9 +115,9 @@ export default function DoctorMessages() {
         </aside>
 
         {/* Active Chat Thread */}
-        <section className="rounded-3xl border border-[#333333] bg-[#1A1A1A] shadow-sm overflow-hidden flex flex-col h-[600px] backdrop-blur-md">
+        <section className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] shadow-card overflow-hidden flex flex-col h-[600px]">
           {/* Thread Header */}
-          <div className="border-b border-[#333333] bg-[#141414] px-6 py-3 flex items-center justify-between">
+          <div className="border-b border-[#EFECE5] bg-[#FAF8F4] px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <VivansAvatar
                 src={
@@ -140,11 +131,11 @@ export default function DoctorMessages() {
                   .join('')
                   .slice(0, 2)}
                 size="md"
-                className="border border-[#333333]"
+                className="border border-[#E8E3D9]"
               />
               <div>
-                <strong className="text-sm text-white block">{filterPatient}</strong>
-                <span className="text-xs text-[#ADADAD]">Em acompanhamento · Dia 29 de 90</span>
+                <strong className="text-sm text-[#1E1E1C] block">{filterPatient}</strong>
+                <span className="text-xs text-[#5C5C57]">Em acompanhamento · Dia 29 de 90</span>
               </div>
             </div>
 
@@ -152,7 +143,7 @@ export default function DoctorMessages() {
           </div>
 
           {/* Messages list */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#0F0F0F]/50">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#FAF8F4]/50">
             {messages.map((msg) => {
               const isDoctor = msg.sender === 'doctor'
               const isDraft = msg.sender === 'ai_draft'
@@ -161,7 +152,7 @@ export default function DoctorMessages() {
                 return (
                   <div
                     key={msg.id}
-                    className="mx-auto max-w-xl rounded-2xl border border-[#D6B270]/40 bg-[#D6B270]/15 p-4 space-y-3 backdrop-blur-sm"
+                    className="mx-auto max-w-xl rounded-2xl border border-[#C49A5B]/40 bg-[#FBF5EB] p-4 space-y-3 shadow-subtle"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -170,7 +161,7 @@ export default function DoctorMessages() {
                       <StatusBadge tone="amber">Aguardando Validação</StatusBadge>
                     </div>
 
-                    <p className="text-xs text-[#E8C391] italic bg-[#0F0F0F] p-3 rounded-xl border border-[#333333]">
+                    <p className="text-xs text-[#9E7A3D] italic bg-[#FFFFFF] p-3 rounded-xl border border-[#EAD7BA]">
                       "{msg.content}"
                     </p>
 
@@ -178,7 +169,7 @@ export default function DoctorMessages() {
                       <button
                         type="button"
                         onClick={() => approveAiDraft(msg.id)}
-                        className="min-h-9 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm flex items-center gap-1.5 cursor-pointer"
+                        className="min-h-9 rounded-xl bg-[#2E5E4E] px-4 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm flex items-center gap-1.5 cursor-pointer"
                       >
                         <CheckCircle2 className="size-3.5" />
                         <span>Aprovar e Enviar como Mensagem do Médico</span>
@@ -194,14 +185,14 @@ export default function DoctorMessages() {
                   className={`flex flex-col ${isDoctor ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`flex items-center gap-2 mb-1 px-1 text-[11px] text-[#ADADAD] ${isDoctor ? 'flex-row-reverse' : 'flex-row'}`}
+                    className={`flex items-center gap-2 mb-1 px-1 text-[11px] text-[#5C5C57] ${isDoctor ? 'flex-row-reverse' : 'flex-row'}`}
                   >
                     <VivansAvatar
                       src={msg.authorAvatarUrl}
                       name={msg.author}
                       initials={isDoctor ? 'GM' : 'MC'}
                       size="sm"
-                      className="border border-[#333333]"
+                      className="border border-[#E8E3D9]"
                     />
                     <span>{msg.author}</span>
                     <span>•</span>
@@ -209,10 +200,10 @@ export default function DoctorMessages() {
                   </div>
 
                   <div
-                    className={`max-w-md rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-sm ${
+                    className={`max-w-md rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-subtle ${
                       isDoctor
-                        ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] font-semibold rounded-tr-sm'
-                        : 'bg-[#141414] text-[#FFFFFF] border border-[#333333] rounded-tl-sm'
+                        ? 'bg-[#2E5E4E] text-[#FFFFFF] font-medium rounded-tr-sm'
+                        : 'bg-[#FFFFFF] text-[#1E1E1C] border border-[#E8E3D9] rounded-tl-sm'
                     }`}
                   >
                     {msg.content}
@@ -225,20 +216,20 @@ export default function DoctorMessages() {
           {/* Input Form */}
           <form
             onSubmit={handleSend}
-            className="border-t border-[#333333] p-4 bg-[#141414] flex items-center gap-2"
+            className="border-t border-[#EFECE5] p-4 bg-[#FAF8F4] flex items-center gap-2"
           >
             <input
               type="text"
               placeholder={`Escrever mensagem para ${filterPatient}...`}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="flex-1 rounded-2xl border border-[#333333] bg-[#0F0F0F] px-4 py-3 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+              className="flex-1 rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] px-4 py-3 text-xs text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
             />
             <button
               type="submit"
-              className="grid size-11 place-items-center rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] hover:brightness-110 transition-all shrink-0 shadow-sm cursor-pointer"
+              className="grid size-11 place-items-center rounded-2xl bg-[#2E5E4E] text-[#FFFFFF] hover:bg-[#24493D] transition-all shrink-0 shadow-sm cursor-pointer"
             >
-              <Send className="size-4 text-[#0F0F0F]" />
+              <Send className="size-4 text-[#FFFFFF]" />
             </button>
           </form>
         </section>

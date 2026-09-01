@@ -22,14 +22,13 @@ import {
   Clock,
   ArrowRightLeft,
 } from 'lucide-react'
-import { CarePlanItem, ActionPeriod } from '@/data/mockData'
+import { ActionPeriod } from '@/data/mockData'
 
 interface PeriodConfig {
   id: 'manha' | 'tarde' | 'noite'
   label: string
   timeRange: string
   icon: typeof Sun
-  accentColor: string
 }
 
 const PERIOD_CONFIGS: PeriodConfig[] = [
@@ -38,21 +37,18 @@ const PERIOD_CONFIGS: PeriodConfig[] = [
     label: 'Manhã',
     timeRange: '06h00 às 12h00 · Acordar e desjejum',
     icon: Sun,
-    accentColor: '#D6B270',
   },
   {
     id: 'tarde',
     label: 'Tarde',
     timeRange: '12h00 às 18h00 · Almoço e lanche vespertino',
     icon: Sunset,
-    accentColor: '#E8C391',
   },
   {
     id: 'noite',
     label: 'Noite',
     timeRange: '18h00 às 23h00 · Jantar e higiene do sono',
     icon: Moon,
-    accentColor: '#B8935A',
   },
 ]
 
@@ -166,16 +162,16 @@ export default function PatientPlan() {
       <SimulationDisclaimer text="Orientações Médicas e Ações de Cuidado · Instituto Vivans" />
 
       {/* Quick Entry Banner to Prescriptions & Exams */}
-      <div className="rounded-2xl border border-[#D6B270]/30 bg-gradient-to-r from-[#1A1A1A] via-[#1C1A14] to-[#141414] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md backdrop-blur-md">
+      <div className="rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-card">
         <div className="flex items-center gap-3">
-          <div className="grid size-9 place-items-center rounded-xl bg-[#D6B270]/20 text-[#D6B270] border border-[#D6B270]/40 shrink-0">
-            <Clock className="size-4 text-[#E8C391]" />
+          <div className="grid size-9 place-items-center rounded-xl bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC] shrink-0">
+            <Clock className="size-4 text-[#2E5E4E]" />
           </div>
           <div>
-            <p className="text-xs font-bold text-white">
+            <p className="text-xs font-bold text-[#1E1E1C]">
               Precisa consultar suas receitas ativas ou laudos de exames?
             </p>
-            <p className="text-[11px] text-[#ADADAD]">
+            <p className="text-[11px] text-[#5C5C57]">
               Acesse as formulações vigentes de magnésio, CoQ10 e biomarcadores laboratoriais.
             </p>
           </div>
@@ -183,42 +179,42 @@ export default function PatientPlan() {
 
         <Link
           to="/paciente/receitas-exames"
-          className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 transition-all shadow-sm shrink-0"
+          className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-[#2E5E4E] px-4 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm shrink-0"
         >
           <span>Ver Receitas &amp; Exames</span>
-          <Check className="size-3.5 text-[#0F0F0F]" />
+          <Check className="size-3.5 text-[#FFFFFF]" />
         </Link>
       </div>
 
-      {/* Hero Header: Objetivo da Marina nas palavras dela */}
-      <section className="overflow-hidden rounded-3xl border border-[#D6B270]/30 bg-gradient-to-br from-[#1A1A1A] via-[#141414] to-[#0F0F0F] p-5 sm:p-7 shadow-[0_12px_28px_rgba(0,0,0,0.5)] backdrop-blur-md">
+      {/* Hero Header: Objetivo da Marina */}
+      <section className="overflow-hidden rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-5 sm:p-7 shadow-card">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-3 py-1 text-xs font-bold text-[#0F0F0F] shadow-xs">
-                <Target className="size-3.5" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E7EFEA] px-3 py-1 text-xs font-bold text-[#2E5E4E]">
+                <Target className="size-3.5 text-[#2E5E4E]" />
                 <span>Programa Ativo · Dia 29 de 90</span>
               </span>
               <StatusBadge tone="green">Dr. Guilherme Martins</StatusBadge>
             </div>
 
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#1E1E1C]">
               Seu Plano de Cuidado
             </h1>
 
-            {/* Marina's objective in her own words */}
-            <div className="rounded-2xl border border-[#333333] bg-[#0F0F0F]/80 p-4 text-xs sm:text-sm text-[#E5E5E5] shadow-inner space-y-1 backdrop-blur-sm">
-              <p className="font-bold text-[11px] uppercase tracking-wider text-[#D6B270] flex items-center gap-1.5">
-                <Target className="size-3.5 text-[#D6B270]" />
+            {/* Marina's objective */}
+            <div className="rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4 text-xs sm:text-sm text-[#1E1E1C] space-y-1">
+              <p className="font-bold text-[11px] uppercase tracking-wider text-[#2E5E4E] flex items-center gap-1.5">
+                <Target className="size-3.5 text-[#2E5E4E]" />
                 <span>Seu objetivo declarado:</span>
               </p>
-              <p className="italic font-serif text-sm sm:text-base text-white leading-snug">
+              <p className="italic font-serif text-sm sm:text-base text-[#1E1E1C] leading-snug">
                 “
                 {preConsultation?.objective ||
                   'Manter a redução ponderal gradual com preservação de disposição e regularização do sono.'}
                 ”
               </p>
-              <p className="text-[11px] text-[#ADADAD] pt-1">
+              <p className="text-[11px] text-[#5C5C57] pt-1">
                 Foco acordado em consulta: Crononutrição do jantar às 19h30, saciedade sem
                 restrições extremas e higiene do sono.
               </p>
@@ -229,61 +225,61 @@ export default function PatientPlan() {
             <button
               type="button"
               onClick={() => setIsAdding(!isAdding)}
-              className="flex min-h-[44px] items-center justify-center gap-2 rounded-2xl border border-[#D6B270] bg-[#D6B270]/10 px-4 text-xs font-bold text-[#E8C391] hover:bg-[#D6B270]/20 transition-all shadow-xs active:scale-98 cursor-pointer"
+              className="flex min-h-[44px] items-center justify-center gap-2 rounded-2xl border border-[#2E5E4E] bg-[#E7EFEA] px-4 text-xs font-bold text-[#2E5E4E] hover:bg-[#2E5E4E] hover:text-[#FFFFFF] transition-all shadow-subtle cursor-pointer"
             >
-              <Plus className="size-4 text-[#D6B270]" />
+              <Plus className="size-4" />
               <span>{isAdding ? 'Fechar Formulário' : 'Adicionar Ação'}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowAdherenceExplainModal(true)}
-              className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-2xl bg-white/5 border border-white/10 px-3 text-[11px] font-semibold text-[#CCCCCC] hover:bg-white/10 hover:text-white transition-colors"
+              className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-2xl bg-[#FAF8F4] border border-[#E8E3D9] px-3 text-[11px] font-semibold text-[#5C5C57] hover:bg-[#F1EEE7] hover:text-[#1E1E1C] transition-colors cursor-pointer"
             >
-              <Info className="size-3.5 text-[#D6B270]" />
+              <Info className="size-3.5 text-[#2E5E4E]" />
               <span>Como funciona a adesão?</span>
             </button>
           </div>
         </div>
 
         {/* Global Progress Summary Strip */}
-        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 border-t border-[#333333] pt-4">
-          <div className="rounded-2xl bg-[#0F0F0F] p-3 border border-[#333333]">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#888888]">
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 border-t border-[#EFECE5] pt-4">
+          <div className="rounded-2xl bg-[#FAF8F4] p-3 border border-[#E8E3D9]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#8A8A84]">
               Progresso Geral
             </p>
-            <p className="text-xl font-bold text-[#D6B270] mt-0.5">{percentMedical}%</p>
-            <p className="text-[10px] text-[#ADADAD]">
+            <p className="text-xl font-bold text-[#2E5E4E] mt-0.5">{percentMedical}%</p>
+            <p className="text-[10px] text-[#5C5C57]">
               {completedMedical} de {totalMedical} ações feitas
             </p>
           </div>
 
-          <div className="rounded-2xl bg-[#0F0F0F] p-3 border border-[#333333]">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#D6B270]">Em Dia</p>
-            <p className="text-xl font-bold text-white mt-0.5">{onTimeMedical} ações</p>
-            <p className="text-[10px] text-[#ADADAD]">Planejadas para hoje</p>
+          <div className="rounded-2xl bg-[#FAF8F4] p-3 border border-[#E8E3D9]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#2E5E4E]">Em Dia</p>
+            <p className="text-xl font-bold text-[#1E1E1C] mt-0.5">{onTimeMedical} ações</p>
+            <p className="text-[10px] text-[#5C5C57]">Planejadas para hoje</p>
           </div>
 
-          <div className="rounded-2xl bg-[#0F0F0F] p-3 border border-[#333333]">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#F59E0B]">
+          <div className="rounded-2xl bg-[#FAF8F4] p-3 border border-[#E8E3D9]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#B7832F]">
               Ponto de Atenção
             </p>
-            <p className="text-xl font-bold text-[#FCD34D] mt-0.5">
+            <p className="text-xl font-bold text-[#B7832F] mt-0.5">
               {delayedMedical > 0 ? `${delayedMedical} atrasada` : 'Nenhuma pendência'}
             </p>
-            <p className="text-[10px] text-[#FCD34D]">
+            <p className="text-[10px] text-[#B7832F]">
               {delayedMedical > 0 ? 'Lanche vespertino 16h30' : 'Tudo em dia'}
             </p>
           </div>
 
-          <div className="rounded-2xl bg-[#0F0F0F] p-3 border border-[#333333]">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#888888]">
+          <div className="rounded-2xl bg-[#FAF8F4] p-3 border border-[#E8E3D9]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#8A8A84]">
               Check-ins de Retorno
             </p>
-            <p className="text-xl font-bold text-white mt-0.5">
+            <p className="text-xl font-bold text-[#1E1E1C] mt-0.5">
               {completedCheckins}/{totalCheckins}
             </p>
-            <p className="text-[10px] text-[#ADADAD]">
+            <p className="text-[10px] text-[#5C5C57]">
               Próxima rev: {returnJourney?.nextReviewDate?.split('(')[0] || '14 dias'}
             </p>
           </div>
@@ -294,16 +290,16 @@ export default function PatientPlan() {
       {isAdding && (
         <form
           onSubmit={handleAddAction}
-          className="rounded-3xl border border-[#D6B270]/40 bg-[#1A1A1A] p-5 sm:p-6 animate-fade-in space-y-4 shadow-xl backdrop-blur-md"
+          className="rounded-3xl border border-[#2E5E4E]/40 bg-[#FFFFFF] p-5 sm:p-6 animate-fade-in space-y-4 shadow-card"
         >
-          <div className="flex items-center justify-between border-b border-[#333333] pb-2">
-            <h4 className="font-serif text-sm sm:text-base font-bold text-white">
+          <div className="flex items-center justify-between border-b border-[#EFECE5] pb-2">
+            <h4 className="font-serif text-sm sm:text-base font-bold text-[#1E1E1C]">
               Adicionar nova ação de autocuidado ao seu plano
             </h4>
             <button
               type="button"
               onClick={() => setIsAdding(false)}
-              className="text-[#ADADAD] hover:text-white cursor-pointer"
+              className="text-[#8A8A84] hover:text-[#1E1E1C] cursor-pointer"
             >
               <X className="size-4" />
             </button>
@@ -311,7 +307,7 @@ export default function PatientPlan() {
 
           <div className="grid gap-3 sm:grid-cols-[1fr_180px_160px]">
             <div>
-              <label className="block text-[11px] font-bold text-white mb-1">
+              <label className="block text-[11px] font-bold text-[#1E1E1C] mb-1">
                 Qual é a ação que você deseja acompanhar?
               </label>
               <input
@@ -319,17 +315,19 @@ export default function PatientPlan() {
                 placeholder="Ex: Fazer chá de camomila morno às 21h30..."
                 value={newActionText}
                 onChange={(e) => setNewActionText(e.target.value)}
-                className="w-full min-h-[44px] rounded-xl border border-[#333333] bg-[#0F0F0F] px-3.5 py-2 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                className="w-full min-h-[44px] rounded-xl border border-[#E8E3D9] bg-[#FAF8F4] px-3.5 py-2 text-xs text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-white mb-1">Período do Dia</label>
+              <label className="block text-[11px] font-bold text-[#1E1E1C] mb-1">
+                Período do Dia
+              </label>
               <select
                 value={newActionPeriod}
                 onChange={(e) => setNewActionPeriod(e.target.value as any)}
-                className="w-full min-h-[44px] rounded-xl border border-[#333333] bg-[#0F0F0F] px-3 py-2 text-xs font-semibold text-white focus:border-[#D6B270] focus:outline-none"
+                className="w-full min-h-[44px] rounded-xl border border-[#E8E3D9] bg-[#FAF8F4] px-3 py-2 text-xs font-semibold text-[#1E1E1C] focus:border-[#2E5E4E] focus:outline-none"
               >
                 <option value="manha">🌅 Manhã</option>
                 <option value="tarde">🌤️ Tarde</option>
@@ -338,11 +336,11 @@ export default function PatientPlan() {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-white mb-1">Categoria</label>
+              <label className="block text-[11px] font-bold text-[#1E1E1C] mb-1">Categoria</label>
               <select
                 value={newActionCategory}
                 onChange={(e) => setNewActionCategory(e.target.value)}
-                className="w-full min-h-[44px] rounded-xl border border-[#333333] bg-[#0F0F0F] px-3 py-2 text-xs text-white focus:border-[#D6B270] focus:outline-none"
+                className="w-full min-h-[44px] rounded-xl border border-[#E8E3D9] bg-[#FAF8F4] px-3 py-2 text-xs text-[#1E1E1C] focus:border-[#2E5E4E] focus:outline-none"
               >
                 <option value="Hábitos alimentares">Hábitos alimentares</option>
                 <option value="Sono e recuperação">Sono e recuperação</option>
@@ -354,7 +352,7 @@ export default function PatientPlan() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-white mb-1">
+            <label className="block text-[11px] font-bold text-[#1E1E1C] mb-1">
               Por que esta ação é importante para você? (Opcional)
             </label>
             <input
@@ -362,7 +360,7 @@ export default function PatientPlan() {
               placeholder="Ex: Me ajuda a desacelerar e dormir melhor sem acordar de madrugada..."
               value={newActionRationale}
               onChange={(e) => setNewActionRationale(e.target.value)}
-              className="w-full min-h-[40px] rounded-xl border border-[#333333] bg-[#0F0F0F] px-3.5 py-2 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+              className="w-full min-h-[40px] rounded-xl border border-[#E8E3D9] bg-[#FAF8F4] px-3.5 py-2 text-xs text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
             />
           </div>
 
@@ -370,13 +368,13 @@ export default function PatientPlan() {
             <button
               type="button"
               onClick={() => setIsAdding(false)}
-              className="min-h-[44px] rounded-xl border border-[#333333] px-4 text-xs font-bold text-[#ADADAD] hover:bg-white/5 hover:text-white"
+              className="min-h-[44px] rounded-xl border border-[#E8E3D9] px-4 text-xs font-bold text-[#5C5C57] hover:bg-[#F1EEE7] hover:text-[#1E1E1C] cursor-pointer"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="min-h-[44px] rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 shadow-sm active:scale-98 cursor-pointer"
+              className="min-h-[44px] rounded-xl bg-[#2E5E4E] px-6 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm cursor-pointer"
             >
               Salvar Ação no Plano
             </button>
@@ -384,19 +382,19 @@ export default function PatientPlan() {
         </form>
       )}
 
-      {/* HIGHLIGHT: PRÓXIMA AÇÃO RECOMENDADA DO DIA (1 Toque) */}
+      {/* HIGHLIGHT: PRÓXIMA AÇÃO RECOMENDADA DO DIA */}
       {primaryAction ? (
-        <article className="overflow-hidden rounded-3xl border border-[#D6B270]/40 bg-[#1A1A1A] p-5 sm:p-7 text-white shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-md">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#333333] pb-3">
+        <article className="overflow-hidden rounded-3xl border border-[#C49A5B]/40 bg-[#FBF5EB] p-5 sm:p-7 text-[#1E1E1C] shadow-card">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EAD7BA] pb-3">
             <div className="flex items-center gap-2">
-              <span className="grid size-6 place-items-center rounded-full bg-[#D6B270] text-[#0F0F0F] text-xs font-bold">
+              <span className="grid size-6 place-items-center rounded-full bg-[#C49A5B] text-[#FFFFFF] text-xs font-bold">
                 1
               </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#E8C391]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#9E7A3D]">
                 Próxima Ação Recomendada do Dia
               </span>
             </div>
-            <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-[#CCCCCC] border border-white/10">
+            <span className="rounded-full bg-[#FFFFFF] px-3 py-1 text-[11px] font-semibold text-[#9E7A3D] border border-[#EAD7BA]">
               Foco Prioritário
             </span>
           </div>
@@ -404,23 +402,23 @@ export default function PatientPlan() {
           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1.5 max-w-xl">
               <div className="flex items-center gap-2">
-                <span className="rounded-md bg-[#D6B270]/20 text-[#E8C391] border border-[#D6B270]/30 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider">
+                <span className="rounded-md bg-[#FFFFFF] text-[#9E7A3D] border border-[#EAD7BA] px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider">
                   {normalizePeriod(primaryAction.period) === 'noite'
                     ? '🌙 Noite'
                     : normalizePeriod(primaryAction.period) === 'tarde'
                       ? '🌤️ Tarde'
                       : '🌅 Manhã'}
                 </span>
-                <span className="text-xs text-[#ADADAD]">• {primaryAction.category}</span>
+                <span className="text-xs text-[#5C5C57]">• {primaryAction.category}</span>
               </div>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-white leading-tight">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1E1E1C] leading-tight">
                 {primaryAction.action}
               </h3>
-              <p className="text-xs text-[#CCCCCC] leading-relaxed">
+              <p className="text-xs text-[#5C5C57] leading-relaxed">
                 {primaryAction.doctorRationale ||
                   'Orientação validada pelo Dr. Guilherme para preservar energia e otimizar o repouso.'}
               </p>
-              <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#ADADAD] pt-1">
+              <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#8A8A84] pt-1">
                 <span>Frequência: {primaryAction.frequency || 'Diário'}</span>
               </div>
             </div>
@@ -428,21 +426,21 @@ export default function PatientPlan() {
             <button
               type="button"
               onClick={() => toggleCarePlan(primaryAction.id)}
-              className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs sm:text-sm font-bold text-[#0F0F0F] shadow-lg transition-all hover:brightness-110 active:scale-95 cursor-pointer shrink-0"
+              className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-[#2E5E4E] px-6 text-xs sm:text-sm font-bold text-[#FFFFFF] shadow-sm transition-all hover:bg-[#24493D] active:scale-95 cursor-pointer shrink-0"
               title="Concluir esta ação em 1 toque"
             >
-              <CheckCircle2 className="size-5 text-[#0F0F0F]" />
+              <CheckCircle2 className="size-5 text-[#FFFFFF]" />
               <span>Concluir em 1 toque</span>
             </button>
           </div>
         </article>
       ) : (
-        <article className="rounded-3xl border border-[#D6B270]/30 bg-[#1A1A1A] p-5 text-center text-[#E8C391] space-y-2 backdrop-blur-md">
-          <CheckCircle2 className="size-8 mx-auto text-[#D6B270]" />
-          <h3 className="font-serif text-lg font-bold text-white">
+        <article className="rounded-3xl border border-[#C3D6CC] bg-[#E7EFEA] p-5 text-center text-[#2E5E4E] space-y-2">
+          <CheckCircle2 className="size-8 mx-auto text-[#2E5E4E]" />
+          <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">
             Todas as ações principais de hoje foram concluídas!
           </h3>
-          <p className="text-xs text-[#ADADAD] max-w-md mx-auto">
+          <p className="text-xs text-[#5C5C57] max-w-md mx-auto">
             Excelente constância, Marina. Seu progresso foi registrado para o Dr. Guilherme
             acompanhar no prontuário.
           </p>
@@ -452,14 +450,14 @@ export default function PatientPlan() {
       {/* FILTER BUTTONS & VIEW SWITCHER */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
         {/* Type filter */}
-        <div className="flex rounded-2xl border border-[#333333] bg-[#141414] p-1 shadow-inner backdrop-blur-md">
+        <div className="flex rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] p-1 shadow-subtle">
           <button
             type="button"
             onClick={() => setFilterType('todos')}
             className={`min-h-[36px] rounded-xl px-3.5 text-xs font-bold transition-all cursor-pointer ${
               filterType === 'todos'
-                ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
-                : 'text-[#ADADAD] hover:text-white hover:bg-white/5'
+                ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
+                : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-[#F1EEE7]'
             }`}
           >
             Todas as Ações ({carePlans.length})
@@ -469,8 +467,8 @@ export default function PatientPlan() {
             onClick={() => setFilterType('medico')}
             className={`min-h-[36px] rounded-xl px-3.5 text-xs font-bold transition-all cursor-pointer ${
               filterType === 'medico'
-                ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
-                : 'text-[#ADADAD] hover:text-white hover:bg-white/5'
+                ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
+                : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-[#F1EEE7]'
             }`}
           >
             Aprovadas pelo Médico ({medicalActions.length})
@@ -480,8 +478,8 @@ export default function PatientPlan() {
             onClick={() => setFilterType('ia')}
             className={`min-h-[36px] rounded-xl px-3.5 text-xs font-bold transition-all cursor-pointer ${
               filterType === 'ia'
-                ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] shadow-sm'
-                : 'text-[#ADADAD] hover:text-white hover:bg-white/5'
+                ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
+                : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-[#F1EEE7]'
             }`}
           >
             Sugestões IA ({aiSuggestedActions.length})
@@ -490,7 +488,7 @@ export default function PatientPlan() {
 
         {/* Period filter */}
         <div className="flex items-center gap-1.5 text-xs">
-          <span className="text-[11px] text-[#888888] hidden sm:inline">Filtrar período:</span>
+          <span className="text-[11px] text-[#8A8A84] hidden sm:inline">Filtrar período:</span>
           {(['todos', 'manha', 'tarde', 'noite'] as const).map((p) => (
             <button
               key={p}
@@ -498,8 +496,8 @@ export default function PatientPlan() {
               onClick={() => setSelectedPeriodTab(p)}
               className={`min-h-[32px] rounded-lg px-2.5 text-[11px] font-bold capitalize transition-all cursor-pointer ${
                 selectedPeriodTab === p
-                  ? 'bg-[#D6B270]/20 text-[#E8C391] border border-[#D6B270]/40'
-                  : 'text-[#ADADAD] hover:bg-white/5 border border-transparent'
+                  ? 'bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC]'
+                  : 'text-[#5C5C57] hover:bg-[#F1EEE7] border border-transparent'
               }`}
             >
               {p === 'todos'
@@ -514,20 +512,20 @@ export default function PatientPlan() {
         </div>
       </div>
 
-      {/* REORGANIZAÇÃO DE AÇÕES POR PERÍODO DO DIA */}
+      {/* ROTINA DIÁRIA POR PERÍODO */}
       <div className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#333333] pb-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFECE5] pb-2">
           <div>
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-white">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1E1E1C]">
               Rotina Diária por Período
             </h2>
-            <p className="text-xs text-[#ADADAD] mt-0.5">
+            <p className="text-xs text-[#5C5C57] mt-0.5">
               Organize suas ações conforme a sua rotina real. Arraste ou use os botões discretos
               para mover entre os períodos.
             </p>
           </div>
-          <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-[#CCCCCC] font-semibold flex items-center gap-1">
-            <ArrowRightLeft className="size-3 text-[#D6B270]" />
+          <span className="rounded-full bg-[#FAF8F4] border border-[#E8E3D9] px-3 py-1 text-xs text-[#5C5C57] font-semibold flex items-center gap-1">
+            <ArrowRightLeft className="size-3 text-[#2E5E4E]" />
             <span>Reordenação flexível</span>
           </span>
         </div>
@@ -538,7 +536,6 @@ export default function PatientPlan() {
           const PeriodIcon = periodConf.icon
           const periodId = periodConf.id
 
-          // Actions in this period
           const periodMedicalActions = medicalActions.filter(
             (item) => normalizePeriod(item.period) === periodId,
           )
@@ -557,40 +554,40 @@ export default function PatientPlan() {
               onDragOver={(e) => handleDragOver(e, periodId)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, periodId)}
-              className={`rounded-3xl border-2 transition-all p-5 sm:p-6 space-y-4 backdrop-blur-md ${
+              className={`rounded-3xl border transition-all p-5 sm:p-6 space-y-4 ${
                 isDropTarget
-                  ? 'border-[#D6B270] bg-[#D6B270]/15 shadow-lg ring-2 ring-[#D6B270]/30'
-                  : 'border-[#333333] bg-[#1A1A1A]/80 shadow-sm'
+                  ? 'border-[#2E5E4E] bg-[#E7EFEA] shadow-card ring-2 ring-[#2E5E4E]/30'
+                  : 'border-[#E8E3D9] bg-[#FFFFFF] shadow-card'
               }`}
             >
               {/* Period Header */}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#333333] pb-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EFECE5] pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="grid size-11 place-items-center rounded-2xl border border-[#D6B270]/30 bg-[#D6B270]/15 text-[#E8C391] shadow-inner">
-                    <PeriodIcon className="size-5 text-[#D6B270]" />
+                  <div className="grid size-11 place-items-center rounded-2xl border border-[#C3D6CC] bg-[#E7EFEA] text-[#2E5E4E] shadow-subtle">
+                    <PeriodIcon className="size-5 text-[#2E5E4E]" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-serif text-lg sm:text-xl font-bold text-white">
+                      <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1E1E1C]">
                         {periodConf.label}
                       </h3>
-                      <span className="rounded-full bg-white/5 border border-white/10 px-2.5 py-0.5 text-xs font-bold text-[#CCCCCC]">
+                      <span className="rounded-full bg-[#FAF8F4] border border-[#E8E3D9] px-2.5 py-0.5 text-xs font-bold text-[#5C5C57]">
                         {totalInPeriod} {totalInPeriod === 1 ? 'ação' : 'ações'}
                       </span>
                     </div>
-                    <p className="text-xs text-[#ADADAD]">{periodConf.timeRange}</p>
+                    <p className="text-xs text-[#5C5C57]">{periodConf.timeRange}</p>
                   </div>
                 </div>
 
-                <span className="hidden sm:inline text-[11px] font-medium text-[#888888]">
+                <span className="hidden sm:inline text-[11px] font-medium text-[#8A8A84]">
                   Solte aqui para mover para a {periodConf.label}
                 </span>
               </div>
 
               {/* Empty state for period */}
               {totalInPeriod === 0 && (
-                <div className="rounded-2xl border-2 border-dashed border-[#333333] bg-[#0F0F0F]/60 p-6 text-center text-xs text-[#888888] space-y-1">
-                  <p className="font-semibold text-white">
+                <div className="rounded-2xl border-2 border-dashed border-[#E8E3D9] bg-[#FAF8F4] p-6 text-center text-xs text-[#8A8A84] space-y-1">
+                  <p className="font-semibold text-[#1E1E1C]">
                     Nenhuma ação alocada para a {periodConf.label}
                   </p>
                   <p>
@@ -604,8 +601,8 @@ export default function PatientPlan() {
               {(filterType === 'todos' || filterType === 'medico') &&
                 periodMedicalActions.length > 0 && (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#D6B270]">
-                      <ShieldCheck className="size-4 text-[#D6B270]" />
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#2E5E4E]">
+                      <ShieldCheck className="size-4 text-[#2E5E4E]" />
                       <span>Orientações Aprovadas pelo Dr. Guilherme</span>
                     </div>
 
@@ -616,23 +613,22 @@ export default function PatientPlan() {
                           key={item.id}
                           draggable
                           onDragStart={(e) => handleDragStart(e, item.id)}
-                          className={`rounded-2xl border p-4 sm:p-4.5 transition-all shadow-sm cursor-grab active:cursor-grabbing backdrop-blur-md ${
+                          className={`rounded-2xl border p-4 sm:p-4.5 transition-all shadow-subtle cursor-grab active:cursor-grabbing ${
                             item.completed
-                              ? 'border-[#D6B270]/30 bg-[#D6B270]/10'
+                              ? 'border-[#C3D6CC] bg-[#E7EFEA]'
                               : isDelayed
-                                ? 'border-[#F59E0B]/40 bg-[#F59E0B]/10'
-                                : 'border-[#333333] bg-[#141414] hover:border-[#D6B270]/40'
+                                ? 'border-[#EAD7BA] bg-[#F7EFDF]'
+                                : 'border-[#E8E3D9] bg-[#FAF8F4] hover:border-[#2E5E4E]/40'
                           }`}
                         >
                           <div className="flex items-start gap-3.5">
-                            {/* Interactive Checkbox with >=44px touch target */}
                             <button
                               type="button"
                               onClick={() => toggleCarePlan(item.id)}
                               className={`grid size-9 shrink-0 place-items-center rounded-2xl border transition-all cursor-pointer ${
                                 item.completed
-                                  ? 'border-[#D6B270] bg-[#D6B270] text-[#0F0F0F] shadow-sm'
-                                  : 'border-[#444444] bg-[#0F0F0F] text-transparent hover:border-[#D6B270]'
+                                  ? 'border-[#2E5E4E] bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
+                                  : 'border-[#E8E3D9] bg-[#FFFFFF] text-transparent hover:border-[#2E5E4E]'
                               }`}
                               aria-label={`Marcar ${item.action} como ${item.completed ? 'pendente' : 'concluída'}`}
                             >
@@ -641,7 +637,7 @@ export default function PatientPlan() {
 
                             <div className="flex-1 min-w-0">
                               <div className="flex flex-wrap items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-[#D6B270]">
+                                <span className="text-xs font-bold text-[#2E5E4E]">
                                   {item.category}
                                 </span>
                                 <div className="flex items-center gap-1.5">
@@ -660,29 +656,29 @@ export default function PatientPlan() {
 
                               <h4
                                 className={`mt-1 font-serif text-base font-bold leading-snug ${
-                                  item.completed ? 'text-[#888888] line-through' : 'text-white'
+                                  item.completed ? 'text-[#8A8A84] line-through' : 'text-[#1E1E1C]'
                                 }`}
                               >
                                 {item.action}
                               </h4>
 
                               {item.doctorRationale && (
-                                <p className="mt-1.5 text-xs text-[#CCCCCC] leading-relaxed">
+                                <p className="mt-1.5 text-xs text-[#5C5C57] leading-relaxed">
                                   <strong>Por que fazer:</strong> {item.doctorRationale}
                                 </p>
                               )}
 
                               {/* Mobile-First Reorder Controls */}
-                              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-white/5 pt-2.5">
-                                <div className="text-[11px] text-[#888888]">
+                              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#EFECE5] pt-2.5">
+                                <div className="text-[11px] text-[#8A8A84]">
                                   Frequência:{' '}
-                                  <strong className="text-white">
+                                  <strong className="text-[#1E1E1C]">
                                     {item.frequency || 'Diário'}
                                   </strong>
                                 </div>
 
                                 <div className="flex items-center gap-1">
-                                  <span className="text-[11px] text-[#888888] hidden sm:inline mr-1">
+                                  <span className="text-[11px] text-[#8A8A84] hidden sm:inline mr-1">
                                     Mover para:
                                   </span>
                                   {(['manha', 'tarde', 'noite'] as const).map((targetP) => {
@@ -701,8 +697,8 @@ export default function PatientPlan() {
                                         onClick={() => handleMoveAction(item.id, targetP)}
                                         className={`min-h-[30px] rounded-lg px-2 text-[10px] font-bold transition-all cursor-pointer ${
                                           isCurrent
-                                            ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] cursor-default'
-                                            : 'border border-[#333333] bg-[#0F0F0F] text-[#CCCCCC] hover:border-[#D6B270] hover:text-[#D6B270]'
+                                            ? 'bg-[#2E5E4E] text-[#FFFFFF] cursor-default'
+                                            : 'border border-[#E8E3D9] bg-[#FFFFFF] text-[#5C5C57] hover:border-[#2E5E4E] hover:text-[#2E5E4E]'
                                         }`}
                                         title={`Mover para ${targetLabel}`}
                                       >
@@ -724,8 +720,8 @@ export default function PatientPlan() {
               {(filterType === 'todos' || filterType === 'ia') && periodAiActions.length > 0 && (
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#E8C391]">
-                      <Sparkles className="size-4 text-[#D6B270]" />
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#9E7A3D]">
+                      <Sparkles className="size-4 text-[#C49A5B]" />
                       <span>Sugestões do Copiloto (IA)</span>
                     </div>
                     <AiDraftBadge
@@ -739,33 +735,33 @@ export default function PatientPlan() {
                       key={item.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, item.id)}
-                      className="rounded-2xl border border-[#D6B270]/30 bg-[#1A1A1A]/90 p-4 space-y-2 shadow-sm cursor-grab active:cursor-grabbing backdrop-blur-md"
+                      className="rounded-2xl border border-[#C49A5B]/30 bg-[#FBF5EB] p-4 space-y-2 shadow-subtle cursor-grab active:cursor-grabbing"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-xs font-bold text-[#E8C391]">{item.category}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#D6B270]/20 text-[#E8C391] border border-[#D6B270]/30 px-2 py-0.5">
+                        <span className="text-xs font-bold text-[#9E7A3D]">{item.category}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#FFFFFF] text-[#9E7A3D] border border-[#EAD7BA] px-2 py-0.5">
                           Rascunho para Consulta
                         </span>
                       </div>
 
-                      <h4 className="font-serif text-base font-bold text-white">
+                      <h4 className="font-serif text-base font-bold text-[#1E1E1C]">
                         💡 {item.action}
                       </h4>
 
                       {item.aiDraftNote && (
-                        <p className="text-xs text-[#CCCCCC] leading-relaxed italic">
+                        <p className="text-xs text-[#5C5C57] leading-relaxed italic">
                           “{item.aiDraftNote}”
                         </p>
                       )}
 
                       {/* Move buttons for AI action */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#333333] pt-2 text-[11px] text-[#ADADAD]">
-                        <span className="font-semibold text-[#E8C391]">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#EAD7BA] pt-2 text-[11px] text-[#5C5C57]">
+                        <span className="font-semibold text-[#9E7A3D]">
                           Requer validação médica
                         </span>
 
                         <div className="flex items-center gap-1">
-                          <span className="text-[10px] text-[#888888] hidden sm:inline mr-1">
+                          <span className="text-[10px] text-[#8A8A84] hidden sm:inline mr-1">
                             Mover para:
                           </span>
                           {(['manha', 'tarde', 'noite'] as const).map((targetP) => {
@@ -784,8 +780,8 @@ export default function PatientPlan() {
                                 onClick={() => handleMoveAction(item.id, targetP)}
                                 className={`min-h-[28px] rounded-lg px-2 text-[10px] font-bold transition-all cursor-pointer ${
                                   isCurrent
-                                    ? 'bg-gradient-to-r from-[#D6B270] to-[#B8935A] text-[#0F0F0F] cursor-default'
-                                    : 'border border-[#333333] bg-[#0F0F0F] text-[#CCCCCC] hover:border-[#D6B270] hover:text-[#D6B270]'
+                                    ? 'bg-[#2E5E4E] text-[#FFFFFF] cursor-default'
+                                    : 'border border-[#E8E3D9] bg-[#FFFFFF] text-[#5C5C57] hover:border-[#2E5E4E] hover:text-[#2E5E4E]'
                                 }`}
                               >
                                 {targetLabel}
@@ -804,13 +800,13 @@ export default function PatientPlan() {
       </div>
 
       {/* CHECK-INS PROGRAMADOS DO RETORNO */}
-      <section className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-4 backdrop-blur-md">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#333333] pb-3">
+      <section className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 shadow-card space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFECE5] pb-3">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
               Acompanhamento Pós-Consulta (14 Dias)
             </span>
-            <h3 className="font-serif text-xl font-bold text-white">
+            <h3 className="font-serif text-xl font-bold text-[#1E1E1C]">
               {returnJourney?.title || 'Plano de Retorno e Adaptação'}
             </h3>
           </div>
@@ -819,7 +815,7 @@ export default function PatientPlan() {
           </StatusBadge>
         </div>
 
-        <p className="text-xs text-[#CCCCCC] leading-relaxed">
+        <p className="text-xs text-[#5C5C57] leading-relaxed">
           {returnJourney?.summary ||
             'Check-ins periódicos para acompanhar o impacto do jantar antecipado nos despertares noturnos.'}
         </p>
@@ -830,23 +826,23 @@ export default function PatientPlan() {
               key={chk.id}
               className={`rounded-2xl border p-4 flex flex-col justify-between ${
                 chk.status === 'concluido'
-                  ? 'border-[#D6B270]/30 bg-[#D6B270]/10'
-                  : 'border-[#333333] bg-[#141414]'
+                  ? 'border-[#C3D6CC] bg-[#E7EFEA]'
+                  : 'border-[#E8E3D9] bg-[#FAF8F4]'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <strong className="text-[#D6B270]">Dia {chk.dayOffset}</strong>
+                  <strong className="text-[#2E5E4E]">Dia {chk.dayOffset}</strong>
                   <StatusBadge tone={chk.status === 'concluido' ? 'green' : 'amber'}>
                     {chk.status === 'concluido' ? 'Concluído' : 'Pendente'}
                   </StatusBadge>
                 </div>
-                <h4 className="font-serif text-sm font-bold text-white leading-snug">
+                <h4 className="font-serif text-sm font-bold text-[#1E1E1C] leading-snug">
                   {chk.title}
                 </h4>
-                <p className="text-[11px] text-[#ADADAD] mt-1">{chk.scheduledDate}</p>
+                <p className="text-[11px] text-[#5C5C57] mt-1">{chk.scheduledDate}</p>
                 {chk.value && (
-                  <p className="mt-2 text-[11px] font-bold text-[#E8C391] rounded-lg bg-[#D6B270]/15 border border-[#D6B270]/25 px-2 py-1">
+                  <p className="mt-2 text-[11px] font-bold text-[#2E5E4E] rounded-lg bg-[#FFFFFF] border border-[#C3D6CC] px-2 py-1">
                     Registro: {chk.value}
                   </p>
                 )}
@@ -856,12 +852,12 @@ export default function PatientPlan() {
                 <button
                   type="button"
                   onClick={() => completeScheduledCheckin(chk.id, 'Realizado', 'Check-in pontual')}
-                  className="mt-3 min-h-[40px] w-full rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] py-2 text-xs font-bold text-[#0F0F0F] hover:brightness-110 transition-colors cursor-pointer"
+                  className="mt-3 min-h-[40px] w-full rounded-xl bg-[#2E5E4E] py-2 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-colors cursor-pointer"
                 >
                   Registrar Agora
                 </button>
               ) : (
-                <div className="mt-3 pt-2 border-t border-white/5 text-[10px] text-[#D6B270] font-bold flex items-center gap-1">
+                <div className="mt-3 pt-2 border-t border-[#C3D6CC]/60 text-[10px] text-[#2F7D5B] font-bold flex items-center gap-1">
                   <CheckCircle2 className="size-3.5" />
                   <span>Concluído ({chk.completedAt})</span>
                 </div>
@@ -873,55 +869,55 @@ export default function PatientPlan() {
 
       {/* ADHERENCE EXPLANATION MODAL */}
       {showAdherenceExplainModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
-          <div className="w-full max-w-lg rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-2xl space-y-4 animate-fade-in-up text-white">
-            <div className="flex items-center justify-between border-b border-[#333333] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1E1E1C]/40 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="w-full max-w-lg rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 shadow-elevation space-y-4 animate-fade-in-up text-[#1E1E1C]">
+            <div className="flex items-center justify-between border-b border-[#EFECE5] pb-3">
               <div className="flex items-center gap-2">
-                <div className="grid size-9 place-items-center rounded-xl bg-[#D6B270]/20 text-[#D6B270] border border-[#D6B270]/30">
+                <div className="grid size-9 place-items-center rounded-xl bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC]">
                   <Target className="size-5" />
                 </div>
-                <h3 className="font-serif text-lg font-bold text-white">
+                <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">
                   Como a adesão ao plano funciona?
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowAdherenceExplainModal(false)}
-                className="text-[#ADADAD] hover:text-white cursor-pointer"
+                className="text-[#8A8A84] hover:text-[#1E1E1C] cursor-pointer"
               >
                 <X className="size-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-[#CCCCCC] leading-relaxed">
+            <div className="space-y-3 text-xs text-[#5C5C57] leading-relaxed">
               <p>
-                A <strong className="text-white">adesão</strong> no Instituto Vivans é uma métrica
-                de consistência de hábitos,{' '}
-                <strong className="text-white">não uma nota ou cobrança</strong>.
+                A <strong className="text-[#1E1E1C]">adesão</strong> no Instituto Vivans é uma
+                métrica de consistência de hábitos,{' '}
+                <strong className="text-[#1E1E1C]">não uma nota ou cobrança</strong>.
               </p>
-              <div className="rounded-2xl bg-[#0F0F0F] border border-[#333333] p-3.5 space-y-2 text-white">
-                <p className="font-bold text-[11px] uppercase tracking-wider text-[#D6B270]">
+              <div className="rounded-2xl bg-[#FAF8F4] border border-[#E8E3D9] p-3.5 space-y-2 text-[#1E1E1C]">
+                <p className="font-bold text-[11px] uppercase tracking-wider text-[#2E5E4E]">
                   Como é calculada no protótipo:
                 </p>
-                <ul className="list-disc pl-4 space-y-1 text-xs text-[#ADADAD]">
+                <ul className="list-disc pl-4 space-y-1 text-xs text-[#5C5C57]">
                   <li>
-                    <strong className="text-white">Ações do dia:</strong> Percentual de orientações
-                    médicas marcadas como feitas (atualmente {percentMedical}%).
+                    <strong className="text-[#1E1E1C]">Ações do dia:</strong> Percentual de
+                    orientações médicas marcadas como feitas (atualmente {percentMedical}%).
                   </li>
                   <li>
-                    <strong className="text-white">Check-ins de retorno:</strong> Registros
+                    <strong className="text-[#1E1E1C]">Check-ins de retorno:</strong> Registros
                     regulares acordados na consulta ({completedCheckins} de {totalCheckins}).
                   </li>
                   <li>
-                    <strong className="text-white">Diário sem julgamento:</strong> Envio de fotos e
-                    avaliações de saciedade para contextualizar a evolução.
+                    <strong className="text-[#1E1E1C]">Diário sem julgamento:</strong> Envio de
+                    fotos e avaliações de saciedade para contextualizar a evolução.
                   </li>
                 </ul>
               </div>
               <p>
-                <strong className="text-white">Por que importa:</strong> O Dr. Guilherme utiliza a
-                adesão para entender se o plano cabe na sua rotina real ou se precisa ser ajustado.
-                Nada é feito de forma punitiva.
+                <strong className="text-[#1E1E1C]">Por que importa:</strong> O Dr. Guilherme utiliza
+                a adesão para entender se o plano cabe na sua rotina real ou se precisa ser
+                ajustado. Nada é feito de forma punitiva.
               </p>
             </div>
 
@@ -929,7 +925,7 @@ export default function PatientPlan() {
               <button
                 type="button"
                 onClick={() => setShowAdherenceExplainModal(false)}
-                className="min-h-[44px] rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs font-bold text-[#0F0F0F] hover:brightness-110 cursor-pointer"
+                className="min-h-[44px] rounded-xl bg-[#2E5E4E] px-6 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] cursor-pointer"
               >
                 Entendi
               </button>

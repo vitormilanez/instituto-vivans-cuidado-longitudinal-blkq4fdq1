@@ -6,50 +6,62 @@
 
 @layer base {
   :root {
-    /* Near-Black & Gold Aesthetic Design Tokens */
-    --background: 0 0% 6%; /* #0F0F0F */
-    --foreground: 0 0% 100%; /* #FFFFFF */
+    /* Instituto Vivans — Identidade Visual Definitiva: Clara, Acolhedora e Editorial */
+    /* Fundo geral: #FAF8F4 (marfim quente) */
+    --background: 40 33% 97%;
+    /* Texto primário: #1E1E1C (quase-preto quente) */
+    --foreground: 60 4% 12%;
 
-    --card: 0 0% 10%; /* #1A1A1A */
-    --card-foreground: 0 0% 100%; /* #FFFFFF */
+    /* Cards e Superfícies: #FFFFFF */
+    --card: 0 0% 100%;
+    --card-foreground: 60 4% 12%;
 
-    --popover: 0 0% 10%; /* #1A1A1A */
-    --popover-foreground: 0 0% 100%; /* #FFFFFF */
+    /* Popover: #FFFFFF */
+    --popover: 0 0% 100%;
+    --popover-foreground: 60 4% 12%;
 
-    --primary: 37 54% 64%; /* #D6B270 Accent Gold */
-    --primary-foreground: 0 0% 6%; /* #0F0F0F */
+    /* Primário: #2E5E4E (verde sálvia profundo) */
+    --primary: 161 34% 27%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 14%; /* #242424 */
-    --secondary-foreground: 37 54% 74%; /* #E8C391 */
+    /* Superfície secundária: #F1EEE7 (bege-claro) */
+    --secondary: 42 21% 93%;
+    --secondary-foreground: 161 34% 27%;
 
-    --muted: 0 0% 15%; /* #262626 */
-    --muted-foreground: 0 0% 68%; /* #ADADAD High contrast secondary text */
+    /* Muted: #F1EEE7 */
+    --muted: 42 21% 93%;
+    /* Muted foreground: #5C5C57 (texto secundário) */
+    --muted-foreground: 60 3% 36%;
 
-    --accent: 37 54% 64%; /* #D6B270 */
-    --accent-foreground: 0 0% 6%;
+    /* Accent: Dourado sutil #C49A5B */
+    --accent: 36 47% 56%;
+    --accent-foreground: 60 4% 12%;
 
-    --destructive: 0 72% 51%; /* #DC2626 */
+    /* Status Destructive: #B4553F */
+    --destructive: 11 49% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%; /* #333333 */
-    --input: 0 0% 20%; /* #333333 */
-    --ring: 37 54% 64%; /* #D6B270 */
+    /* Borda padrão: #E8E3D9 */
+    --border: 39 23% 88%;
+    --input: 39 23% 88%;
+    --ring: 161 34% 27%;
 
     --radius: 1.125rem;
 
-    --sidebar-background: 0 0% 8%; /* #141414 */
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 37 54% 64%;
-    --sidebar-primary-foreground: 0 0% 6%;
-    --sidebar-accent: 0 0% 14%;
-    --sidebar-accent-foreground: 37 54% 74%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 37 54% 64%;
+    /* Sidebar: #FAF8F4 / #FFFFFF */
+    --sidebar-background: 40 33% 97%;
+    --sidebar-foreground: 60 4% 12%;
+    --sidebar-primary: 161 34% 27%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 42 21% 93%;
+    --sidebar-accent-foreground: 161 34% 27%;
+    --sidebar-border: 39 23% 88%;
+    --sidebar-ring: 161 34% 27%;
   }
 
   body {
-    background-color: #0f0f0f;
-    color: #ffffff;
+    background-color: #faf8f4;
+    color: #1e1e1c;
     font-family:
       'Plus Jakarta Sans',
       -apple-system,
@@ -71,24 +83,24 @@
 
   /* Accessible outline for keyboard navigation */
   :focus-visible {
-    outline: 2px solid #d6b270;
+    outline: 2px solid #2e5e4e;
     outline-offset: 2px;
   }
 
-  /* Scrollbars styling for dark theme */
+  /* Scrollbars styling for light warm theme */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0f0f0f;
+    background: #faf8f4;
   }
   ::-webkit-scrollbar-thumb {
-    background: #333333;
+    background: #e8e3d9;
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #d6b270;
+    background: #c49a5b;
   }
 
   /* Motion reduction respect */

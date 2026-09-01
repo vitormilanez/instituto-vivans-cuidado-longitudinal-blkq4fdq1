@@ -4,17 +4,7 @@ import { useVivans } from '@/context/VivansContext'
 import { StatusBadge, SimulationDisclaimer, UrgentCareWarning } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { DOCTOR_PROFILE } from '@/data/mockData'
-import {
-  Calendar,
-  Clock,
-  Video,
-  MapPin,
-  Sparkles,
-  ChevronRight,
-  ShieldCheck,
-  CheckCircle2,
-  FileCheck,
-} from 'lucide-react'
+import { Calendar, Clock, Video, Sparkles, ChevronRight } from 'lucide-react'
 
 export default function PatientAppointments() {
   const { preConsultation } = useVivans()
@@ -24,81 +14,83 @@ export default function PatientAppointments() {
       <SimulationDisclaimer text="Agendamentos e Jornada de Consultas · Instituto Vivans" />
 
       <section>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#D6B270]">Suas Consultas</p>
-        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-white">
+        <p className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">Suas Consultas</p>
+        <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#1E1E1C]">
           Agenda e Acompanhamento Clínico
         </h1>
-        <p className="mt-1 text-sm text-[#ADADAD]">
+        <p className="mt-1 text-xs sm:text-sm text-[#5C5C57]">
           Consultas presenciais e por telemedicina estruturadas para o cuidado longitudinal.
         </p>
       </section>
 
       {/* Main Appointment Highlight */}
-      <article className="overflow-hidden rounded-3xl border border-[#D6B270]/30 bg-gradient-to-br from-[#1A1A1A] via-[#141414] to-[#0F0F0F] p-6 sm:p-8 text-white shadow-xl space-y-6 backdrop-blur-md">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#333333] pb-4">
+      <article className="overflow-hidden rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 sm:p-8 text-[#1E1E1C] shadow-card space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EFECE5] pb-4">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-3 py-1 text-xs font-bold text-[#0F0F0F]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#E7EFEA] border border-[#C3D6CC] px-3 py-1 text-xs font-bold text-[#2E5E4E]">
               <Calendar className="size-3.5" />
               <span>Próxima Consulta · Hoje</span>
             </span>
             <StatusBadge tone="green">Confirmada</StatusBadge>
           </div>
-          <span className="text-xs text-[#ADADAD]">Telemedicina Segura</span>
+          <span className="text-xs text-[#5C5C57]">Telemedicina Segura</span>
         </div>
 
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-2 max-w-xl">
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1E1E1C]">
               Retorno de 30 Dias · Longevidade &amp; Metabolismo
             </h2>
-            <p className="text-xs sm:text-sm text-[#CCCCCC] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#5C5C57] leading-relaxed">
               Avaliação de adesão ao plano, resposta ao ajuste nutricional vespertino e alinhamento
               dos próximos 30 dias de acompanhamento.
             </p>
 
-            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#ADADAD]">
-              <div className="flex items-center gap-1.5 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5">
-                <Clock className="size-4 text-[#D6B270]" />
-                <span className="font-bold text-white">Hoje, às 10:30 (45 min)</span>
+            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#5C5C57]">
+              <div className="flex items-center gap-1.5 rounded-xl bg-[#FAF8F4] border border-[#E8E3D9] px-3 py-1.5">
+                <Clock className="size-4 text-[#2E5E4E]" />
+                <span className="font-bold text-[#1E1E1C]">Hoje, às 10:30 (45 min)</span>
               </div>
-              <div className="flex items-center gap-1.5 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5">
-                <Video className="size-4 text-[#D6B270]" />
-                <span className="font-bold text-white">Sala Virtual Google Meet</span>
+              <div className="flex items-center gap-1.5 rounded-xl bg-[#FAF8F4] border border-[#E8E3D9] px-3 py-1.5">
+                <Video className="size-4 text-[#2E5E4E]" />
+                <span className="font-bold text-[#1E1E1C]">Sala Virtual Google Meet</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 rounded-2xl border border-[#333333] bg-[#0F0F0F] p-4">
+          <div className="flex items-center gap-3.5 rounded-2xl border border-[#C3D6CC] bg-[#E7EFEA] p-4">
             <VivansAvatar
               src={DOCTOR_PROFILE.avatarUrl}
               name={DOCTOR_PROFILE.name}
               initials={DOCTOR_PROFILE.initials}
               size="lg"
-              className="border-2 border-[#D6B270]/50"
+              className="border-2 border-[#2E5E4E]/40"
             />
             <div>
-              <p className="text-xs font-bold text-white">{DOCTOR_PROFILE.name}</p>
-              <p className="text-[11px] font-mono text-[#D6B270]">{DOCTOR_PROFILE.crm}</p>
-              <p className="text-[10px] text-[#ADADAD]">Médico Responsável</p>
+              <p className="text-xs font-bold text-[#1E1E1C]">{DOCTOR_PROFILE.name}</p>
+              <p className="text-[11px] font-mono text-[#2E5E4E] font-semibold">
+                {DOCTOR_PROFILE.crm}
+              </p>
+              <p className="text-[10px] text-[#5C5C57]">Médico Responsável</p>
             </div>
           </div>
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-[#333333]">
+        <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-[#EFECE5]">
           <Link
             to="/medico/consulta/apt-marina"
-            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-6 text-xs sm:text-sm font-bold text-[#0F0F0F] hover:brightness-110 shadow-md transition-all active:scale-98"
+            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#2E5E4E] px-6 text-xs sm:text-sm font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all active:scale-95"
           >
-            <Video className="size-4.5" />
+            <Video className="size-4" />
             <span>Entrar na Sala de Teleconsulta</span>
           </Link>
 
           <Link
             to="/paciente/pre-consulta"
-            className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-[#333333] bg-white/5 px-6 text-xs sm:text-sm font-bold text-white hover:bg-white/10 transition-all"
+            className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] px-6 text-xs sm:text-sm font-bold text-[#1E1E1C] hover:bg-[#F1EEE7] transition-all"
           >
-            <Sparkles className="size-4 text-[#D6B270]" />
+            <Sparkles className="size-4 text-[#2E5E4E]" />
             <span>
               {preConsultation.completed
                 ? 'Ver Síntese de Pré-Consulta Enviada'
@@ -109,11 +101,11 @@ export default function PatientAppointments() {
       </article>
 
       {/* Pre-Consultation Status Card */}
-      <section className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-4 backdrop-blur-md">
-        <div className="flex items-center justify-between border-b border-[#333333] pb-3">
+      <section className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 shadow-card space-y-4">
+        <div className="flex items-center justify-between border-b border-[#EFECE5] pb-3">
           <div className="flex items-center gap-2">
-            <Sparkles className="size-5 text-[#D6B270]" />
-            <h3 className="font-serif text-lg font-bold text-white">
+            <Sparkles className="size-5 text-[#2E5E4E]" />
+            <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">
               Status da Pré-Consulta Guiada
             </h3>
           </div>
@@ -124,7 +116,7 @@ export default function PatientAppointments() {
           )}
         </div>
 
-        <p className="text-xs text-[#CCCCCC] leading-relaxed">
+        <p className="text-xs text-[#5C5C57] leading-relaxed">
           {preConsultation.completed
             ? 'Suas respostas foram compiladas em uma síntese clínica estruturada que já está disponível no prontuário do Dr. Guilherme.'
             : 'A pré-consulta leva menos de 4 minutos e permite que o médico inicie o atendimento conhecendo suas principais dúvidas e sintomas.'}
@@ -133,7 +125,7 @@ export default function PatientAppointments() {
         <div className="flex justify-end">
           <Link
             to="/paciente/pre-consulta"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D6B270] hover:underline underline-offset-4"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#2E5E4E] hover:underline underline-offset-4"
           >
             <span>
               {preConsultation.completed
@@ -146,21 +138,23 @@ export default function PatientAppointments() {
       </section>
 
       {/* Past History */}
-      <section className="rounded-3xl border border-[#333333] bg-[#1A1A1A] p-6 shadow-sm space-y-4 backdrop-blur-md">
-        <h3 className="font-serif text-lg font-bold text-white">Histórico de Atendimentos</h3>
+      <section className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 shadow-card space-y-4">
+        <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">Histórico de Atendimentos</h3>
 
         <div className="space-y-3">
-          <div className="rounded-2xl border border-[#333333] bg-[#141414] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-white">Consulta de Abertura do Ciclo</span>
-                <span className="text-[10px] text-[#888888]">Presencial · Instituto Vivans</span>
+                <span className="text-xs font-bold text-[#1E1E1C]">
+                  Consulta de Abertura do Ciclo
+                </span>
+                <span className="text-[10px] text-[#8A8A84]">Presencial · Instituto Vivans</span>
               </div>
-              <p className="text-xs text-[#ADADAD]">
+              <p className="text-xs text-[#5C5C57]">
                 28 de julho de 2024 · Definição do plano de longevidade de 90 dias
               </p>
             </div>
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-[#CCCCCC] self-start sm:self-auto">
+            <span className="rounded-full bg-[#E7EFEA] border border-[#C3D6CC] px-3 py-1 text-xs font-semibold text-[#2E5E4E] self-start sm:self-auto">
               Realizada (100%)
             </span>
           </div>

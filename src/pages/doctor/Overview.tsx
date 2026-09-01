@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import {
-  StatusBadge,
-  AiDraftBadge,
-  ClinicalLayerBadge,
-  SimulationDisclaimer,
-} from '@/components/CommonUI'
+import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { DOCTOR_PROFILE } from '@/data/mockData'
 import { QuickConsultationModal } from '@/components/QuickConsultationModal'
@@ -15,37 +10,17 @@ import {
   Users,
   Calendar,
   Clock,
-  TrendingDown,
   AlertTriangle,
-  ArrowRight,
-  ShieldCheck,
   CheckCircle2,
   FileText,
-  Activity,
-  Send,
-  UserCheck,
   Video,
-  PenLine,
   Search,
-  Filter,
-  Check,
   Radio,
   ChevronRight,
-  HeartPulse,
 } from 'lucide-react'
 
 export default function DoctorOverview() {
-  const {
-    patients,
-    appointments,
-    reports,
-    nudged,
-    nudgeDelayedPatients,
-    nudgeSinglePatient,
-    nudgedPatientIds,
-    setSelectedPatientId,
-    notify,
-  } = useVivans()
+  const { patients, appointments, setSelectedPatientId, notify } = useVivans()
   const navigate = useNavigate()
 
   const [activeSegment, setActiveSegment] = useState<
@@ -86,29 +61,27 @@ export default function DoctorOverview() {
       <SimulationDisclaimer text="Painel Clínico Longitudinal · Instituto Vivans" />
 
       {/* Hero Welcome Banner */}
-      <section className="relative overflow-hidden rounded-[28px] border border-[#D6B270]/30 bg-gradient-to-br from-[#1A1A1A] via-[#141414] to-[#0F0F0F] p-6 sm:p-8 text-white shadow-[0_16px_40px_rgba(0,0,0,0.5)] backdrop-blur-md">
-        <div className="absolute -right-20 -top-20 size-72 rounded-full bg-[#D6B270]/10 blur-3xl pointer-events-none" />
-
+      <section className="relative overflow-hidden rounded-[28px] border border-[#E8E3D9] bg-[#FFFFFF] p-6 sm:p-8 text-[#1E1E1C] shadow-card">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between relative z-10">
           <div className="space-y-3 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-3 py-1 text-xs font-bold text-[#0F0F0F] shadow-sm">
-                <Sparkles className="size-3.5" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E7EFEA] px-3 py-1 text-xs font-bold text-[#2E5E4E]">
+                <Sparkles className="size-3.5 text-[#2E5E4E]" />
                 <span>Painel de Longevidade</span>
               </span>
               <StatusBadge tone="green">Coorte Ativa: {totalPatients} Pacientes</StatusBadge>
             </div>
 
-            <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-[#1E1E1C] leading-tight">
               Bem-vindo, {DOCTOR_PROFILE.name}
             </h1>
 
-            <p className="text-xs sm:text-sm text-[#CCCCCC] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#5C5C57] leading-relaxed">
               Hoje você tem{' '}
-              <strong className="text-[#D6B270]">
+              <strong className="text-[#2E5E4E]">
                 {appointments.filter((a) => a.date.includes('Hoje')).length} consultas agendadas
               </strong>
-              . A paciente <strong className="text-white">Marina Costa</strong> enviou a
+              . A paciente <strong className="text-[#1E1E1C]">Marina Costa</strong> enviou a
               pré-consulta e aguarda na sala virtual.
             </p>
 
@@ -116,46 +89,46 @@ export default function DoctorOverview() {
               <button
                 type="button"
                 onClick={() => setIsQuickConsultationOpen(true)}
-                className="flex min-h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-5 font-bold text-[#0F0F0F] hover:brightness-110 transition-all shadow-md active:scale-95 cursor-pointer"
+                className="flex min-h-11 items-center gap-2 rounded-2xl bg-[#2E5E4E] px-5 font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm active:scale-95 cursor-pointer"
               >
-                <Video className="size-4 text-[#0F0F0F]" />
+                <Video className="size-4 text-[#FFFFFF]" />
                 <span>Iniciar Teleconsulta Rápida (Meet)</span>
               </button>
 
               <Link
                 to="/medico/agenda"
-                className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#333333] bg-white/5 px-4 font-semibold text-white hover:bg-white/10 transition-colors"
+                className="flex min-h-11 items-center gap-1.5 rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] px-4 font-semibold text-[#1E1E1C] hover:bg-[#F1EEE7] transition-colors"
               >
-                <Calendar className="size-4 text-[#D6B270]" />
+                <Calendar className="size-4 text-[#2E5E4E]" />
                 <span>Ver Agenda do Dia</span>
               </Link>
             </div>
           </div>
 
           {/* Virtual Waiting Room Status Card */}
-          <div className="rounded-2xl border border-[#D6B270]/30 bg-[#1A1A1A]/90 p-5 lg:w-80 shadow-inner backdrop-blur-md space-y-3">
+          <div className="rounded-2xl border border-[#C3D6CC] bg-[#E7EFEA] p-5 lg:w-80 shadow-subtle space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#E8C391]">
-                <Radio className="size-3.5 text-[#D6B270] animate-pulse" />
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
+                <Radio className="size-3.5 text-[#2E5E4E] animate-pulse" />
                 <span>Sala de Espera Virtual</span>
               </div>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#D6B270]/20 px-2 py-0.5 text-[10px] font-bold text-[#E8C391] border border-[#D6B270]/30">
-                <span className="size-1.5 rounded-full bg-[#D6B270] animate-ping" />1 online
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#FFFFFF] px-2 py-0.5 text-[10px] font-bold text-[#2E5E4E] border border-[#C3D6CC]">
+                <span className="size-1.5 rounded-full bg-[#2E5E4E] animate-ping" />1 online
               </span>
             </div>
 
             {primaryWaitingPatient && (
-              <div className="rounded-xl bg-[#0F0F0F] p-3 border border-[#333333] space-y-2">
+              <div className="rounded-xl bg-[#FFFFFF] p-3 border border-[#C3D6CC] space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-bold text-white">{primaryWaitingPatient.name}</p>
-                    <p className="text-[10px] text-[#ADADAD]">
+                    <p className="text-xs font-bold text-[#1E1E1C]">{primaryWaitingPatient.name}</p>
+                    <p className="text-[10px] text-[#5C5C57]">
                       Aguardando há {primaryWaitingPatient.waitingSince || '4 min'}
                     </p>
                   </div>
                   <Link
                     to={`/medico/consulta/${primaryWaitingPatient.id}`}
-                    className="flex min-h-8 items-center gap-1 rounded-lg bg-[#D6B270] px-2.5 text-[11px] font-bold text-[#0F0F0F] hover:bg-[#E8C391] transition-colors"
+                    className="flex min-h-8 items-center gap-1 rounded-lg bg-[#2E5E4E] px-2.5 text-[11px] font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-colors shadow-sm"
                   >
                     <span>Atender</span>
                     <ChevronRight className="size-3" />
@@ -172,106 +145,108 @@ export default function DoctorOverview() {
         <button
           type="button"
           onClick={() => setActiveSegment('todos')}
-          className={`rounded-3xl border p-5 text-left transition-all backdrop-blur-md cursor-pointer ${
+          className={`rounded-3xl border p-5 text-left transition-all cursor-pointer shadow-subtle ${
             activeSegment === 'todos'
-              ? 'border-[#D6B270] bg-[#D6B270]/15 ring-2 ring-[#D6B270]/30'
-              : 'border-[#333333] bg-[#1A1A1A] hover:border-[#D6B270]/40'
+              ? 'border-[#2E5E4E] bg-[#E7EFEA] ring-2 ring-[#2E5E4E]/30'
+              : 'border-[#E8E3D9] bg-[#FFFFFF] hover:border-[#2E5E4E]/40'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#ADADAD]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#5C5C57]">
               Coorte Ativa
             </span>
-            <Users className="size-4 text-[#D6B270]" />
+            <Users className="size-4 text-[#2E5E4E]" />
           </div>
-          <p className="font-serif text-3xl font-bold text-white mt-2">{totalPatients}</p>
-          <span className="text-[11px] text-[#D6B270] font-semibold">100% monitorados</span>
+          <p className="font-serif text-3xl font-bold text-[#1E1E1C] mt-2">{totalPatients}</p>
+          <span className="text-[11px] text-[#2E5E4E] font-semibold">100% monitorados</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveSegment('regulares')}
-          className={`rounded-3xl border p-5 text-left transition-all backdrop-blur-md cursor-pointer ${
+          className={`rounded-3xl border p-5 text-left transition-all cursor-pointer shadow-subtle ${
             activeSegment === 'regulares'
-              ? 'border-[#D6B270] bg-[#D6B270]/15 ring-2 ring-[#D6B270]/30'
-              : 'border-[#333333] bg-[#1A1A1A] hover:border-[#D6B270]/40'
+              ? 'border-[#2F7D5B] bg-[#E7F2EC] ring-2 ring-[#2F7D5B]/30'
+              : 'border-[#E8E3D9] bg-[#FFFFFF] hover:border-[#2F7D5B]/40'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#E8C391]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#2F7D5B]">
               Adesão Regular
             </span>
-            <CheckCircle2 className="size-4 text-[#D6B270]" />
+            <CheckCircle2 className="size-4 text-[#2F7D5B]" />
           </div>
-          <p className="font-serif text-3xl font-bold text-white mt-2">{regularPatients.length}</p>
-          <span className="text-[11px] text-[#E8C391] font-semibold">&ge; 80% consistência</span>
+          <p className="font-serif text-3xl font-bold text-[#1E1E1C] mt-2">
+            {regularPatients.length}
+          </p>
+          <span className="text-[11px] text-[#2F7D5B] font-semibold">&ge; 80% consistência</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveSegment('atrasados')}
-          className={`rounded-3xl border p-5 text-left transition-all backdrop-blur-md cursor-pointer ${
+          className={`rounded-3xl border p-5 text-left transition-all cursor-pointer shadow-subtle ${
             activeSegment === 'atrasados'
-              ? 'border-[#F59E0B] bg-[#F59E0B]/20 ring-2 ring-[#F59E0B]/40'
-              : 'border-[#333333] bg-[#1A1A1A] hover:border-[#F59E0B]/40'
+              ? 'border-[#B7832F] bg-[#F7EFDF] ring-2 ring-[#B7832F]/40'
+              : 'border-[#E8E3D9] bg-[#FFFFFF] hover:border-[#B7832F]/40'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#FCD34D]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#B7832F]">
               Atrasados
             </span>
-            <Clock className="size-4 text-[#F59E0B]" />
+            <Clock className="size-4 text-[#B7832F]" />
           </div>
-          <p className="font-serif text-3xl font-bold text-[#FCD34D] mt-2">
+          <p className="font-serif text-3xl font-bold text-[#B7832F] mt-2">
             {delayedPatients.length}
           </p>
-          <span className="text-[11px] text-[#FCD34D] font-semibold">Requerem lembrete</span>
+          <span className="text-[11px] text-[#B7832F] font-semibold">Requerem lembrete</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveSegment('atencao')}
-          className={`rounded-3xl border p-5 text-left transition-all backdrop-blur-md cursor-pointer ${
+          className={`rounded-3xl border p-5 text-left transition-all cursor-pointer shadow-subtle ${
             activeSegment === 'atencao'
-              ? 'border-[#EF4444] bg-[#EF4444]/20 ring-2 ring-[#EF4444]/40'
-              : 'border-[#333333] bg-[#1A1A1A] hover:border-[#EF4444]/40'
+              ? 'border-[#B4553F] bg-[#F6E7E2] ring-2 ring-[#B4553F]/40'
+              : 'border-[#E8E3D9] bg-[#FFFFFF] hover:border-[#B4553F]/40'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#FCA5A5]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#B4553F]">
               Atenção Clínica
             </span>
-            <AlertTriangle className="size-4 text-[#EF4444]" />
+            <AlertTriangle className="size-4 text-[#B4553F]" />
           </div>
-          <p className="font-serif text-3xl font-bold text-[#FCA5A5] mt-2">
+          <p className="font-serif text-3xl font-bold text-[#B4553F] mt-2">
             {attentionPatients.length}
           </p>
-          <span className="text-[11px] text-[#FCA5A5] font-semibold">Sintoma / queixa recente</span>
+          <span className="text-[11px] text-[#B4553F] font-semibold">Sintoma / queixa recente</span>
         </button>
       </div>
 
       {/* Main Grid: Cohort Patients & Next Appointment */}
       <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
         {/* Left Column: Patients List */}
-        <section className="space-y-4 rounded-3xl border border-[#333333] bg-[#1A1A1A] p-5 sm:p-6 shadow-sm backdrop-blur-md">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#333333] pb-4">
+        <section className="space-y-4 rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-5 sm:p-6 shadow-card">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EFECE5] pb-4">
             <div>
-              <h2 className="font-serif text-xl font-bold text-white">
+              <h2 className="font-serif text-xl font-bold text-[#1E1E1C]">
                 Pacientes em Acompanhamento
               </h2>
-              <p className="text-xs text-[#ADADAD]">
+              <p className="text-xs text-[#5C5C57]">
                 Clique no paciente para abrir o prontuário completo
               </p>
             </div>
 
             <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#888888]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[#8A8A84]" />
               <input
                 type="text"
                 placeholder="Buscar por nome ou foco..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-2xl border border-[#333333] bg-[#0F0F0F] pl-9 pr-4 py-2 text-xs text-white placeholder-[#777777] focus:border-[#D6B270] focus:outline-none"
+                className="w-full rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] pl-9 pr-4 py-2 text-xs text-[#1E1E1C] placeholder-[#8A8A84] focus:border-[#2E5E4E] focus:outline-none"
               />
             </div>
           </div>
@@ -279,12 +254,11 @@ export default function DoctorOverview() {
           {/* Patient Cards */}
           <div className="space-y-3">
             {filteredPatients.map((p) => {
-              const hasNudge = nudgedPatientIds.includes(p.id)
               return (
                 <div
                   key={p.id}
                   onClick={() => navigate(`/medico/pacientes/${p.id}`)}
-                  className="rounded-2xl border border-[#333333] bg-[#141414] p-4.5 hover:border-[#D6B270]/50 hover:bg-[#1A1A1A] transition-all cursor-pointer shadow-sm group"
+                  className="rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4.5 hover:border-[#2E5E4E]/50 hover:bg-[#F1EEE7] transition-all cursor-pointer shadow-subtle group"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3.5 min-w-0">
@@ -293,33 +267,33 @@ export default function DoctorOverview() {
                         name={p.name}
                         initials={p.initials}
                         size="md"
-                        className="border border-[#333333] shrink-0"
+                        className="border border-[#E8E3D9] shrink-0"
                       />
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-bold text-sm text-white group-hover:text-[#D6B270] transition-colors truncate">
+                          <h3 className="font-bold text-sm text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors truncate">
                             {p.name}
                           </h3>
                           <StatusBadge tone={p.tone}>{p.attention}</StatusBadge>
                         </div>
-                        <p className="text-xs text-[#ADADAD] truncate">{p.focus}</p>
-                        <span className="text-[10px] text-[#888888]">{p.cycle}</span>
+                        <p className="text-xs text-[#5C5C57] truncate">{p.focus}</p>
+                        <span className="text-[10px] text-[#8A8A84]">{p.cycle}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto text-xs">
                       <div className="text-right hidden sm:block">
-                        <p className="font-bold text-white">{p.adherence} adesão</p>
-                        <p className="text-[10px] text-[#ADADAD]">{p.nextConsultation}</p>
+                        <p className="font-bold text-[#1E1E1C]">{p.adherence} adesão</p>
+                        <p className="text-[10px] text-[#5C5C57]">{p.nextConsultation}</p>
                       </div>
 
                       <Link
                         to={`/medico/pacientes/${p.id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="flex min-h-9 items-center gap-1 rounded-xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-3.5 text-xs font-bold text-[#0F0F0F] hover:brightness-110 transition-all shadow-sm"
+                        className="flex min-h-9 items-center gap-1 rounded-xl bg-[#2E5E4E] px-3.5 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm"
                       >
                         <span>Prontuário</span>
-                        <ChevronRight className="size-3.5 text-[#0F0F0F]" />
+                        <ChevronRight className="size-3.5 text-[#FFFFFF]" />
                       </Link>
                     </div>
                   </div>
@@ -328,11 +302,11 @@ export default function DoctorOverview() {
             })}
           </div>
 
-          <div className="flex justify-between items-center pt-2 text-xs text-[#ADADAD]">
+          <div className="flex justify-between items-center pt-2 text-xs text-[#5C5C57]">
             <span>
               Exibindo {filteredPatients.length} de {patients.length} pacientes
             </span>
-            <Link to="/medico/pacientes" className="text-[#D6B270] font-bold hover:underline">
+            <Link to="/medico/pacientes" className="text-[#2E5E4E] font-bold hover:underline">
               Ver carteira completa &rarr;
             </Link>
           </div>
@@ -341,11 +315,11 @@ export default function DoctorOverview() {
         {/* Right Column: Next Appointment & Action Shortcut */}
         <aside className="space-y-4">
           {nextApt && (
-            <article className="rounded-3xl border border-[#D6B270]/30 bg-[#1A1A1A] p-6 shadow-md space-y-4 backdrop-blur-md">
-              <div className="flex items-center justify-between border-b border-[#333333] pb-3">
+            <article className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 shadow-card space-y-4">
+              <div className="flex items-center justify-between border-b border-[#EFECE5] pb-3">
                 <div className="flex items-center gap-2">
-                  <Calendar className="size-4 text-[#D6B270]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#E8C391]">
+                  <Calendar className="size-4 text-[#2E5E4E]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
                     Próxima Consulta de Hoje
                   </span>
                 </div>
@@ -353,18 +327,18 @@ export default function DoctorOverview() {
               </div>
 
               <div>
-                <h3 className="font-serif text-lg font-bold text-white">
+                <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">
                   {nextApt.patient} · {nextApt.time}
                 </h3>
-                <p className="text-xs text-[#ADADAD] mt-0.5">{nextApt.type}</p>
+                <p className="text-xs text-[#5C5C57] mt-0.5">{nextApt.type}</p>
               </div>
 
-              <div className="rounded-2xl bg-[#0F0F0F] p-3.5 border border-[#333333] space-y-2 text-xs">
+              <div className="rounded-2xl bg-[#FAF8F4] p-3.5 border border-[#E8E3D9] space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <strong className="text-[#E8C391]">Pré-consulta recebida:</strong>
-                  <span className="text-[10px] font-bold text-[#D6B270]">✓ Estruturada</span>
+                  <strong className="text-[#2E5E4E]">Pré-consulta recebida:</strong>
+                  <span className="text-[10px] font-bold text-[#2F7D5B]">✓ Estruturada</span>
                 </div>
-                <p className="text-[#CCCCCC] leading-relaxed italic text-[11px]">
+                <p className="text-[#5C5C57] leading-relaxed italic text-[11px]">
                   “{nextApt.reported}”
                 </p>
               </div>
@@ -372,7 +346,7 @@ export default function DoctorOverview() {
               <div className="flex flex-col gap-2 pt-1">
                 <Link
                   to={`/medico/consulta/${nextApt.id}`}
-                  className="flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D6B270] to-[#B8935A] px-4 text-xs font-bold text-[#0F0F0F] hover:brightness-110 transition-all shadow-md"
+                  className="flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-[#2E5E4E] px-4 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm"
                 >
                   <Video className="size-4" />
                   <span>Entrar na Sala Virtual (Meet)</span>
@@ -380,9 +354,9 @@ export default function DoctorOverview() {
 
                 <Link
                   to={`/medico/pacientes/${nextApt.patientId || 'marina-costa'}`}
-                  className="flex min-h-10 items-center justify-center gap-1.5 rounded-2xl border border-[#333333] bg-white/5 px-3 text-xs font-bold text-white hover:bg-white/10 transition-all"
+                  className="flex min-h-10 items-center justify-center gap-1.5 rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] px-3 text-xs font-bold text-[#1E1E1C] hover:bg-[#F1EEE7] transition-all"
                 >
-                  <FileText className="size-3.5 text-[#D6B270]" />
+                  <FileText className="size-3.5 text-[#2E5E4E]" />
                   <span>Abrir Prontuário Longitudinal</span>
                 </Link>
               </div>
@@ -390,12 +364,12 @@ export default function DoctorOverview() {
           )}
 
           {/* Quick AI Governance Card */}
-          <div className="rounded-3xl border border-[#333333] bg-[#141414] p-5 text-xs text-[#ADADAD] space-y-2 backdrop-blur-sm">
-            <div className="flex items-center gap-1.5 font-bold text-[#D6B270]">
-              <Sparkles className="size-4 text-[#D6B270]" />
+          <div className="rounded-3xl border border-[#E8E3D9] bg-[#FAF8F4] p-5 text-xs text-[#5C5C57] space-y-2">
+            <div className="flex items-center gap-1.5 font-bold text-[#2E5E4E]">
+              <Sparkles className="size-4 text-[#2E5E4E]" />
               <span className="text-xs">Copiloto Clínico Vivans</span>
             </div>
-            <p className="leading-relaxed text-[#888888]">
+            <p className="leading-relaxed text-[#5C5C57]">
               Todas as sugestões diagnósticas e posológicas são compiladas como rascunhos de apoio.
               A validação médica humana permanece como premissa mandatória.
             </p>
