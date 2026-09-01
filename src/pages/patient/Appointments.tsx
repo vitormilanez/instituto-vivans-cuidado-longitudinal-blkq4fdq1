@@ -60,7 +60,7 @@ export default function PatientAppointments() {
 
           <div className="flex items-center gap-3.5 rounded-2xl border border-[#C3D6CC] bg-[#E7EFEA] p-4">
             <VivansAvatar
-              src={DOCTOR_PROFILE.avatarUrl}
+              src={DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl}
               name={DOCTOR_PROFILE.name}
               initials={DOCTOR_PROFILE.initials}
               size="lg"

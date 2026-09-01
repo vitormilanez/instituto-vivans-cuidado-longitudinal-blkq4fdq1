@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 
-interface VivansAvatarProps {
+export interface VivansAvatarProps {
   src?: string | null
   alt?: string
   name?: string
-  initials: string
+  initials?: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
   className?: string
   fallbackClassName?: string
@@ -34,33 +34,53 @@ export function VivansAvatar({
 }: VivansAvatarProps) {
   const [hasError, setHasError] = useState(false)
 
+  // Reset error state if src changes
+  useEffect(() => {
+    setHasError(false)
+  }, [src])
+
   const sizeClass = sizeClasses[size] || sizeClasses.md
-  const computedAlt = alt || name || initials || 'Avatar'
+
+  // Safe fallback calculation for initials
+  const computedInitials =
+    initials ||
+    (name
+      ? name
+          .split(' ')
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((n) => n[0].toUpperCase())
+          .join('')
+      : 'IV')
+
+  const computedAlt =
+    alt || (name ? `Retrato de ${name}` : undefined) || `Avatar ${computedInitials}`
 
   return (
     <Avatar
       className={cn(
         sizeClass,
         borderClassName,
-        'relative shrink-0 select-none shadow-subtle bg-[#F1EEE7]',
+        'relative shrink-0 select-none shadow-subtle bg-[#F1EEE7] overflow-hidden',
         className,
       )}
     >
-      {src && !hasError && (
+      {src && !hasError ? (
         <AvatarImage
           src={src}
           alt={computedAlt}
           onError={() => setHasError(true)}
           className="aspect-square size-full object-cover"
+          loading="lazy"
         />
-      )}
+      ) : null}
       <AvatarFallback
         className={cn(
           'flex size-full items-center justify-center font-bold tracking-tight bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC]',
           fallbackClassName,
         )}
       >
-        {initials || 'IV'}
+        {computedInitials}
       </AvatarFallback>
     </Avatar>
   )

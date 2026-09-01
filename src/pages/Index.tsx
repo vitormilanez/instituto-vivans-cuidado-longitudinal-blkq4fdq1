@@ -116,7 +116,7 @@ export default function Index() {
 
             <div className="flex items-center gap-4 pt-1">
               <VivansAvatar
-                src={DOCTOR_PROFILE.avatarUrl}
+                src={DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl}
                 name={DOCTOR_PROFILE.name}
                 initials={DOCTOR_PROFILE.initials}
                 size="xl"

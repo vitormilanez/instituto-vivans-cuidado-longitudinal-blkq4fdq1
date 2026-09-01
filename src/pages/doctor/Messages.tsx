@@ -5,7 +5,7 @@ import { VivansAvatar } from '@/components/VivansAvatar'
 import { Send, CheckCircle2 } from 'lucide-react'
 
 export default function DoctorMessages() {
-  const { messages, sendMessage, approveAiDraft } = useVivans()
+  const { messages, sendMessage, approveAiDraft, patients } = useVivans()
   const [inputText, setInputText] = useState('')
   const [filterPatient, setFilterPatient] = useState('Marina Costa')
 
@@ -16,7 +16,7 @@ export default function DoctorMessages() {
     setInputText('')
   }
 
-  const patientThreads = [
+  const defaultThreads = [
     {
       name: 'Marina Costa',
       unread: 0,
@@ -49,7 +49,24 @@ export default function DoctorMessages() {
       avatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=54',
       initials: 'RL',
     },
+    {
+      name: 'Lúcia Barbosa',
+      unread: 0,
+      tag: 'Retorno longevidade',
+      last: 'Hoje · 09:30',
+      avatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=12',
+      initials: 'LB',
+    },
   ]
+
+  const patientThreads = defaultThreads.map((dt) => {
+    const matched = patients.find((p) => p.name.toLowerCase() === dt.name.toLowerCase())
+    return {
+      ...dt,
+      avatarUrl: matched?.avatarUrl || dt.avatarUrl,
+      initials: matched?.initials || dt.initials,
+    }
+  })
 
   return (
     <div className="space-y-6">
@@ -122,14 +139,19 @@ export default function DoctorMessages() {
               <VivansAvatar
                 src={
                   patientThreads.find((p) => p.name === filterPatient)?.avatarUrl ||
+                  patients.find((p) => p.name === filterPatient)?.avatarUrl ||
                   'https://img.usecurling.com/ppl/512?gender=female&seed=88'
                 }
                 name={filterPatient}
-                initials={filterPatient
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .slice(0, 2)}
+                initials={
+                  patientThreads.find((p) => p.name === filterPatient)?.initials ||
+                  patients.find((p) => p.name === filterPatient)?.initials ||
+                  filterPatient
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                }
                 size="md"
                 className="border border-[#E8E3D9]"
               />

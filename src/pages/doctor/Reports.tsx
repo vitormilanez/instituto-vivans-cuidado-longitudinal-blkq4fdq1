@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
+import { VivansAvatar } from '@/components/VivansAvatar'
+import { DOCTOR_PROFILE } from '@/data/mockData'
 import {
   StatusBadge,
   AiDraftBadge,
@@ -9,7 +11,7 @@ import {
 import { Download, CheckCircle2 } from 'lucide-react'
 
 export default function DoctorReports() {
-  const { reports, approveReport, notify } = useVivans()
+  const { reports, approveReport, notify, patients } = useVivans()
 
   const [selectedReportId, setSelectedReportId] = useState<string>(reports[0]?.id || '')
   const [evidenceModalOpen, setEvidenceModalOpen] = useState(false)
@@ -76,6 +78,9 @@ export default function DoctorReports() {
             {filteredReports.map((rep) => {
               const isSelected = rep.id === activeReport?.id
               const tone = rep.status === 'aprovado' ? 'green' : 'amber'
+              const patientObj = patients.find(
+                (p) => p.name.toLowerCase() === rep.patientName.toLowerCase(),
+              )
               return (
                 <button
                   key={rep.id}
@@ -87,8 +92,17 @@ export default function DoctorReports() {
                       : 'border border-[#E8E3D9] bg-[#FAF8F4] hover:bg-[#F1EEE7]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <strong className="text-xs text-[#1E1E1C]">{rep.patientName}</strong>
+                  <div className="flex items-center gap-2.5 mb-1.5">
+                    <VivansAvatar
+                      src={patientObj?.avatarUrl}
+                      name={rep.patientName}
+                      initials={patientObj?.initials}
+                      size="xs"
+                      className="border border-[#E8E3D9]"
+                    />
+                    <strong className="text-xs text-[#1E1E1C] truncate flex-1">
+                      {rep.patientName}
+                    </strong>
                     <StatusBadge tone={tone}>{rep.status}</StatusBadge>
                   </div>
                   <p className="font-serif text-xs font-bold text-[#2E5E4E] leading-snug">
@@ -119,10 +133,27 @@ export default function DoctorReports() {
                 <h2 className="font-serif text-2xl font-bold text-[#1E1E1C] leading-tight">
                   {activeReport.title}
                 </h2>
-                <p className="text-xs text-[#5C5C57]">
-                  Paciente: <strong className="text-[#1E1E1C]">{activeReport.patientName}</strong> ·
-                  Ciclo de 90 Dias · {activeReport.period}
-                </p>
+                <div className="flex items-center gap-2 text-xs text-[#5C5C57] pt-1">
+                  <VivansAvatar
+                    src={
+                      patients.find(
+                        (p) => p.name.toLowerCase() === activeReport.patientName.toLowerCase(),
+                      )?.avatarUrl
+                    }
+                    name={activeReport.patientName}
+                    initials={
+                      patients.find(
+                        (p) => p.name.toLowerCase() === activeReport.patientName.toLowerCase(),
+                      )?.initials
+                    }
+                    size="xs"
+                    className="border border-[#E8E3D9]"
+                  />
+                  <span>
+                    Paciente: <strong className="text-[#1E1E1C]">{activeReport.patientName}</strong>{' '}
+                    · Ciclo de 90 Dias · {activeReport.period}
+                  </span>
+                </div>
               </div>
 
               {/* Approval Button */}
@@ -192,9 +223,20 @@ export default function DoctorReports() {
 
             {/* Footer with Medical Signature */}
             <div className="border-t border-[#EFECE5] pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#5C5C57]">
-              <div>
-                <p className="font-bold text-[#1E1E1C]">Dr. Guilherme Martins</p>
-                <p className="text-[11px] font-mono text-[#2E5E4E]">CRM/SP 184.920 · RQE 92.110</p>
+              <div className="flex items-center gap-3">
+                <VivansAvatar
+                  src={DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl}
+                  name={DOCTOR_PROFILE.name}
+                  initials={DOCTOR_PROFILE.initials}
+                  size="md"
+                  className="border-2 border-[#2E5E4E]/40 shadow-subtle"
+                />{' '}
+                <div>
+                  <p className="font-bold text-[#1E1E1C]">{DOCTOR_PROFILE.name}</p>
+                  <p className="text-[11px] font-mono text-[#2E5E4E]">
+                    CRM/SP 184.920 · RQE 92.110
+                  </p>
+                </div>
               </div>
               <span className="text-[11px] text-[#8A8A84]">
                 Instituto Vivans · Sistema de Prontuário Eletrônico Auditado

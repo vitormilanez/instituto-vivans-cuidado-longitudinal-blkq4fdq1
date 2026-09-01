@@ -131,19 +131,12 @@ export default function DoctorAgenda() {
 
             <div className="grid gap-4 sm:grid-cols-[auto_1fr_auto] items-center">
               <VivansAvatar
-                src={
-                  apt.patient === 'Marina Costa'
-                    ? 'https://img.usecurling.com/ppl/512?gender=female&seed=88'
-                    : apt.patient === 'Ana Ribeiro'
-                      ? 'https://img.usecurling.com/ppl/512?gender=female&seed=42'
-                      : 'https://img.usecurling.com/ppl/512?gender=male&seed=33'
-                }
+                src={apt.patientAvatarUrl}
                 name={apt.patient}
                 initials={apt.initials}
-                size="lg"
-                className="border border-[#E8E3D9]"
+                size="md"
+                className="border border-[#E8E3D9] shrink-0"
               />
-
               <div className="space-y-1">
                 <h3 className="font-serif text-lg font-bold text-[#1E1E1C]">{apt.patient}</h3>
                 <p className="text-xs text-[#5C5C57]">{apt.type}</p>

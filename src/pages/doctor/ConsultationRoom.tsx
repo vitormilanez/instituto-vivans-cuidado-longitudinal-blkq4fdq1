@@ -102,16 +102,11 @@ export default function DoctorConsultationRoom() {
     )
   }
 
-  const patientAvatarUrl = isNewOrTempPatient
-    ? 'https://img.usecurling.com/ppl/512?gender=female&seed=88'
-    : currentPatient?.name === 'Marina Costa'
-      ? 'https://img.usecurling.com/ppl/512?gender=female&seed=42'
-      : currentPatient?.name === 'Ana Ribeiro'
-        ? 'https://img.usecurling.com/ppl/512?gender=female&seed=12'
-        : currentPatient?.name === 'Paulo Mendes'
-          ? 'https://img.usecurling.com/ppl/512?gender=male&seed=33'
-          : 'https://img.usecurling.com/ppl/512?gender=female&seed=64'
-
+  const patientAvatarUrl =
+    currentPatient?.avatarUrl ||
+    (isNewOrTempPatient
+      ? 'https://img.usecurling.com/ppl/512?gender=female&seed=88'
+      : 'https://img.usecurling.com/ppl/512?gender=female&seed=88')
   return (
     <div className="space-y-6">
       {/* Simulation Banner */}
@@ -192,8 +187,8 @@ export default function DoctorConsultationRoom() {
               {/* Doctor PiP preview */}
               <div className="absolute top-3 right-3 w-28 h-20 rounded-xl border border-[#2E5E4E]/40 bg-[#FAF8F4] overflow-hidden shadow-card relative">
                 <img
-                  src={DOCTOR_PROFILE.avatarUrl}
-                  alt={DOCTOR_PROFILE.name}
+                  src={DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl}
+                  alt={`Retrato de ${DOCTOR_PROFILE.name}`}
                   className="w-full h-full object-cover"
                 />
                 <span className="absolute bottom-1 right-1 rounded bg-[#1E1E1C]/80 px-1 text-[9px] text-[#FFFFFF]">

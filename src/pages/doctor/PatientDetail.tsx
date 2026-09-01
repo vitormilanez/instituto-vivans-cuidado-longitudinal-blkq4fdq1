@@ -9,6 +9,7 @@ import {
   EvidenceModal,
 } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
+import { DOCTOR_PROFILE } from '@/data/mockData'
 import { Sparkles, Video, ShieldCheck, ChevronRight } from 'lucide-react'
 
 export default function DoctorPatientDetail() {
@@ -367,13 +368,29 @@ export default function DoctorPatientDetail() {
                 title: 'Consulta de Abertura de Ciclo',
                 desc: 'Início do programa de 90 dias com Dr. Guilherme Martins.',
                 tone: 'gray',
+                author: 'Dr. Guilherme Martins',
+                authorAvatar: DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl,
               },
             ].map((event, idx) => (
               <div key={idx} className="relative space-y-1">
                 <div className="absolute -left-[23px] top-1.5 size-3 rounded-full bg-[#2E5E4E] border-2 border-[#FFFFFF]" />
-                <span className="text-[11px] font-mono text-[#2E5E4E] font-semibold">
-                  {event.date}
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-[#2E5E4E] font-semibold">
+                    {event.date}
+                  </span>
+                  {event.authorAvatar && (
+                    <div className="flex items-center gap-1 text-[11px] text-[#5C5C57]">
+                      <VivansAvatar
+                        src={event.authorAvatar}
+                        name={event.author}
+                        initials="GM"
+                        size="xs"
+                        className="border border-[#E8E3D9]"
+                      />
+                      <span>{event.author}</span>
+                    </div>
+                  )}
+                </div>
                 <h3 className="font-serif text-sm font-bold text-[#1E1E1C]">{event.title}</h3>
                 <p className="text-xs text-[#5C5C57]">{event.desc}</p>
               </div>

@@ -283,11 +283,14 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         .map((n) => n[0].toUpperCase())
         .join('') || 'NP'
 
+    const avatarUrl = `https://img.usecurling.com/ppl/512?gender=female&seed=${Date.now() % 100}`
     const newPatient: PatientProfile = {
       id: slug,
       initials,
       name,
-      avatarUrl: `https://img.usecurling.com/ppl/512?gender=female&seed=${Date.now() % 100}`,
+      avatarUrl,
+      photoUrl: avatarUrl,
+      avatar: avatarUrl,
       email,
       focus: 'Avaliação inicial · Teleconsulta rápida',
       progress: 'Novo',

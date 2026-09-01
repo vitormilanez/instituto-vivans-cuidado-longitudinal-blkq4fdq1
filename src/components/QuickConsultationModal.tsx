@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
+import { VivansAvatar } from '@/components/VivansAvatar'
 import { cn } from '@/lib/utils'
 import {
   Video,
@@ -449,16 +450,13 @@ export function QuickConsultationModal({
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div
-                            className={cn(
-                              'grid size-10 shrink-0 place-items-center rounded-xl text-xs font-bold transition-colors',
-                              isSelected
-                                ? 'bg-[#2E5E4E] text-[#FFFFFF]'
-                                : 'bg-[#FFFFFF] text-[#2E5E4E] border border-[#E8E3D9]',
-                            )}
-                          >
-                            {p.initials}
-                          </div>
+                          <VivansAvatar
+                            src={p.avatarUrl}
+                            name={p.name}
+                            initials={p.initials}
+                            size="md"
+                            className="border border-[#E8E3D9] shrink-0"
+                          />
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <h3 className="truncate font-bold text-xs sm:text-sm text-[#1E1E1C]">

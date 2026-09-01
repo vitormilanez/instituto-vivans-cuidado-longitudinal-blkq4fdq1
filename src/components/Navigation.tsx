@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 
 export function NavigationHeader() {
-  const { role, setRole, notify } = useVivans()
+  const { role, setRole, notify, patients } = useVivans()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -112,7 +112,7 @@ export function NavigationHeader() {
           <div className="hidden sm:flex items-center">
             {role === 'doctor' ? (
               <VivansAvatar
-                src={DOCTOR_PROFILE.avatarUrl}
+                src={DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl}
                 name={DOCTOR_PROFILE.name}
                 initials={DOCTOR_PROFILE.initials}
                 size="md"
@@ -120,7 +120,11 @@ export function NavigationHeader() {
               />
             ) : (
               <VivansAvatar
-                src="https://img.usecurling.com/ppl/512?gender=female&seed=88"
+                src={
+                  patients.find((p) => p.id === 'marina-costa')?.photoUrl ||
+                  patients.find((p) => p.id === 'marina-costa')?.avatarUrl ||
+                  'https://img.usecurling.com/ppl/512?gender=female&seed=88'
+                }
                 name="Marina Costa"
                 initials="MC"
                 size="md"
@@ -178,7 +182,7 @@ export function DoctorSidebar() {
           {/* Doctor Info Row */}
           <div className="flex items-start gap-3">
             <VivansAvatar
-              src={DOCTOR_PROFILE.avatarUrl}
+              src={DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl}
               name={DOCTOR_PROFILE.name}
               initials={DOCTOR_PROFILE.initials}
               size="lg"
