@@ -45,9 +45,9 @@ npm run build
 
 ### 2. Área do Médico (Desktop-First)
 - **Visão Geral (`/medico`)**: Coorte de 22 pacientes (17 regulares e 5 atrasados), 5 consultas do dia, **Caixa de Atenção Organizada por Exceção**, agenda em linha do tempo e ação de "Dar um cutucão nos 5" com confirmação.
-- **Agenda (`/medico/agenda`)**: Visões diária e semanal, filtros por status, acesso direto à sala de teleconsulta e ao dossiê.
+- **Agenda (`/medico/agenda`)**: Visões diária e semanal, filtros por status, acesso direto à sala de Consulta Online e ao dossiê.
 - **Pacientes (`/medico/pacientes`, `/medico/pacientes/:id`)**: Busca e filtros, perfil longitudinal com objetivo declarado nas palavras do paciente, histórico de check-ins, diário de fotos, linha do tempo e camada de **Evidências Médicas (PubMed, Cochrane, Conitec)**.
-- **Ambiente de Teleconsulta (`/medico/consulta/:id`)**: Sala de vídeo simulada lado a lado com o Copiloto Estruturador de Notas, anotações livres do médico e construtor de plano com aprovação mandatória antes do envio ao paciente.
+- **Ambiente de Consulta Online (`/medico/consulta/:id`)**: Sala de vídeo simulada lado a lado com o Copiloto Estruturador de Notas, atalho de Compartilhar Tela, anotações livres do médico e construtor de plano com aprovação mandatória antes do envio ao paciente.
 - **Mensagens & Relatórios (`/medico/mensagens`, `/medico/relatorios`)**: Caixa de entrada por paciente com rascunhos da IA em revisão, aprovação de relatórios quinzenais/mensais e exportação de PDF simulada.
 
 ---
@@ -71,5 +71,5 @@ npm run build
 Este projeto é um **protótipo funcional de alta fidelidade para validação com médicos e parceiros comerciais**. 
 
 Nesta fase:
-- Integrações com Apple HealthKit, Google Meet, WhatsApp, Prontuário Eletrônico (PEP) e Farmácia são demonstrativas/simuladas.
+- Integrações com Apple HealthKit, Consulta Online, WhatsApp, Prontuário Eletrônico (PEP) e Farmácia são demonstrativas/simuladas.
 - Autenticação real, isolamento multi-tenant de clínicas, auditoria HIPAA/LGPD em nível de banco de produção e pagamentos dependem de projeto específico e homologação antes de pilotos clínicos reais.

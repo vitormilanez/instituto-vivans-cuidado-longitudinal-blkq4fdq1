@@ -292,7 +292,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
       photoUrl: avatarUrl,
       avatar: avatarUrl,
       email,
-      focus: 'Avaliação inicial · Teleconsulta rápida',
+      focus: 'Avaliação inicial · Consulta Online rápida',
       progress: 'Novo',
       attention: 'Primeira Consulta',
       tone: 'green',
@@ -314,7 +314,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         summary: `Atendimento inicial iniciado via Consulta Online para o paciente ${name}.`,
         metrics: [
           ['Status', 'Novo cadastro'],
-          ['Canal', 'Teleconsulta Rápida'],
+          ['Canal', 'Consulta Online'],
         ],
       },
       prescription: {
@@ -326,7 +326,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
       insight: {
         title: 'Primeira consulta em andamento',
         detail: 'Coletando histórico clínico e alinhando os objetivos longitudinais.',
-        basis: 'Teleconsulta ao vivo.',
+        basis: 'Consulta Online ao vivo.',
       },
       activity: [
         ['Hoje · Agora', 'Consulta online rápida iniciada'],

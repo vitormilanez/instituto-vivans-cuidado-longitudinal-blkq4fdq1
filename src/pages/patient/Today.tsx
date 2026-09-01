@@ -327,7 +327,7 @@ export default function PatientToday() {
                 Retorno de 30 Dias com Dr. Guilherme
               </h3>
               <p className="text-xs text-[#5C5C57] mt-1 leading-relaxed">
-                Teleconsulta para avaliação dos despertares noturnos às 3h e evolução da perda de
+                Consulta Online para avaliação dos despertares noturnos às 3h e evolução da perda de
                 peso.
               </p>
             </div>

@@ -256,10 +256,9 @@ export default function PatientEvolution() {
             />
           </div>
           <p className="text-xs text-[#5C5C57] leading-relaxed">
-            A perda ponderal mantém ritmo seguro (−450g/semana). A correlação entre o horário da
-            última refeição e os despertares às 3h será aprofundada na teleconsulta com o Dr.
-            Guilherme.
-          </p>
+            A relação identificada entre o estresse vespertino, o pico de cortisol após a última
+            refeição e os despertares às 3h será aprofundada na Consulta Online com o Dr. Guilherme.
+          </p>{' '}
         </div>
       </section>
 

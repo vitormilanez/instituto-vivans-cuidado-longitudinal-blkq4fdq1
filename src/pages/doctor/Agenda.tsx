@@ -8,15 +8,17 @@ import { Calendar as CalendarIcon, Video, FileText, Filter } from 'lucide-react'
 export default function DoctorAgenda() {
   const { appointments } = useVivans()
   const [selectedDay, setSelectedDay] = useState<'hoje' | 'amanha' | 'semana'>('hoje')
-  const [modalityFilter, setModalityFilter] = useState<'todos' | 'teleconsulta' | 'presencial'>(
-    'todos',
-  )
+  const [modalityFilter, setModalityFilter] = useState<'todos' | 'online' | 'presencial'>('todos')
 
   const filteredAppointments = appointments.filter((apt) => {
     if (selectedDay === 'hoje' && !apt.date.toLowerCase().includes('hoje')) return false
     if (selectedDay === 'amanha' && !apt.date.toLowerCase().includes('amanhã')) return false
 
-    if (modalityFilter === 'teleconsulta' && !apt.modality.toLowerCase().includes('teleconsulta'))
+    if (
+      modalityFilter === 'online' &&
+      !apt.modality.toLowerCase().includes('online') &&
+      !apt.modality.toLowerCase().includes('teleconsulta')
+    )
       return false
     if (modalityFilter === 'presencial' && !apt.modality.toLowerCase().includes('presencial'))
       return false
@@ -71,18 +73,22 @@ export default function DoctorAgenda() {
         <div className="flex items-center gap-2">
           <Filter className="size-4 text-[#2E5E4E]" />
           <span className="font-bold text-[#1E1E1C]">Modalidade:</span>
-          {(['todos', 'teleconsulta', 'presencial'] as const).map((m) => (
+          {[
+            { id: 'todos', label: 'Todos' },
+            { id: 'online', label: 'Consulta Online' },
+            { id: 'presencial', label: 'Presencial' },
+          ].map((m) => (
             <button
-              key={m}
+              key={m.id}
               type="button"
-              onClick={() => setModalityFilter(m)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-bold capitalize transition-all cursor-pointer ${
-                modalityFilter === m
+              onClick={() => setModalityFilter(m.id as any)}
+              className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                modalityFilter === m.id
                   ? 'bg-[#E7EFEA] text-[#2E5E4E] border border-[#C3D6CC]'
                   : 'text-[#5C5C57] hover:text-[#1E1E1C]'
               }`}
             >
-              {m}
+              {m.label}
             </button>
           ))}
         </div>

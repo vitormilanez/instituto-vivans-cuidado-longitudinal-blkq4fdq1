@@ -25,7 +25,7 @@ export default function Index() {
 
         <p className="text-sm sm:text-base text-[#5C5C57] leading-relaxed max-w-2xl mx-auto">
           Uma plataforma estruturada para aproximar médico e paciente no seguimento de 90 dias:
-          hábitos, biossinais, adesão, teleconsultas e governança clínica.
+          hábitos, biossinais, adesão, consultas online e governança clínica.
         </p>
 
         {/* Quick Demo Context Badge */}

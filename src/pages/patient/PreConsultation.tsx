@@ -127,7 +127,7 @@ export default function PatientPreConsultation() {
 
               <div className="rounded-xl border border-[#C49A5B]/30 bg-[#FBF5EB] p-3 text-xs text-[#9E7A3D]">
                 💡 <strong className="text-[#1E1E1C]">Dica:</strong> Seja específica. Isso orienta o
-                foco inicial da teleconsulta.
+                foco inicial da Consulta Online.
               </div>
             </div>
           )}

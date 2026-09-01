@@ -229,7 +229,7 @@ export function QuickConsultationModal({
                   id="quick-consultation-title"
                   className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1E1E1C]"
                 >
-                  {activeAction === 'video' && 'Iniciar Teleconsulta Rápida'}
+                  {activeAction === 'video' && 'Iniciar Consulta Online'}
                   {activeAction === 'history' && 'Consultar Histórico Clínico'}
                   {activeAction === 'note' && 'Registrar Anotação Rápida'}
                 </h2>
@@ -379,7 +379,7 @@ export function QuickConsultationModal({
                   htmlFor="patient-search-input"
                   className="font-serif text-sm font-bold text-[#1E1E1C]"
                 >
-                  {activeAction === 'video' && 'Para quem é esta teleconsulta?'}
+                  {activeAction === 'video' && 'Para quem é esta Consulta Online?'}
                   {activeAction === 'history' && 'Qual prontuário deseja consultar?'}
                   {activeAction === 'note' && 'Para qual paciente é a anotação?'}
                 </label>
