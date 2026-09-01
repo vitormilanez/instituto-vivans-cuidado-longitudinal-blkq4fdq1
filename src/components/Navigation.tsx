@@ -41,46 +41,49 @@ export function NavigationHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-[#E8E3D9] bg-[#FFFFFF]/80 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-[1540px] items-center justify-between gap-3 px-4 sm:px-5 lg:px-8">
-        {/* Brand Logo & Title */}
-        <Link to="/" className="flex min-w-0 items-center gap-3 group">
-          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#2E5E4E] text-sm font-bold text-[#FFFFFF] shadow-subtle transition-transform group-hover:scale-105 border border-[#24493D] tracking-wider">
-            V
+        {/* Brand Logo & Title with refined editorial kerning */}
+        <Link to="/" className="flex min-w-0 items-center gap-3.5 group">
+          <div className="relative grid size-10 sm:size-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-[#2E5E4E] to-[#24493D] text-white shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-105 border border-[#24493D]">
+            <span className="font-serif text-lg font-semibold tracking-normal text-[#F4EADA]">
+              V
+            </span>
+            <div className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-[#C49A5B] ring-2 ring-white" />
           </div>
-          <div className="min-w-0">
-            <p className="truncate text-base sm:text-lg font-bold tracking-[0.2em] text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors font-serif uppercase">
+          <div className="min-w-0 flex flex-col justify-center">
+            <span className="font-serif text-sm sm:text-base font-semibold tracking-[0.26em] text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors uppercase leading-none">
               V I N V A N S E
-            </p>
-            <p className="hidden text-xs font-medium text-[#5C5C57] sm:block">
+            </span>
+            <span className="hidden sm:block text-[11px] font-medium tracking-[0.12em] text-[#8A8A84] uppercase mt-1">
               Saúde e Longevidade
-            </p>
+            </span>
           </div>
         </Link>
 
-        {/* Demo Indicator & Switcher */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          <div className="hidden md:flex items-center gap-1.5 rounded-full border border-[#C49A5B]/30 bg-[#FBF5EB] px-3 py-1 text-xs font-medium text-[#9E7A3D]">
-            <span className="size-2 rounded-full bg-[#C49A5B] animate-pulse" />
+        {/* Demo Indicator & Discretely Integrated Switcher */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden lg:inline-flex items-center gap-1.5 rounded-full border border-[#E8E3D9] bg-white/70 backdrop-blur-xs px-2.5 py-1 text-[11px] font-medium text-[#8A8A84] shadow-xs">
+            <span className="size-1.5 rounded-full bg-[#C49A5B]" />
             <span>Protótipo Demonstrativo</span>
           </div>
 
           <div
-            className="flex items-center rounded-2xl border border-[#E8E3D9] bg-[#F1EEE7] p-1 shadow-inner"
+            className="flex items-center rounded-full border border-[#E8E3D9] bg-[#FAF8F4] p-1 shadow-xs"
             aria-label="Alternador de perfil para demonstração"
           >
             <button
               type="button"
               onClick={() => handleRoleSwitch('doctor')}
               className={cn(
-                'flex items-center gap-1.5 min-h-9 rounded-xl px-3 text-xs font-bold transition-all sm:px-4 sm:text-xs cursor-pointer',
+                'flex items-center gap-1.5 min-h-8 sm:min-h-8.5 rounded-full px-3 text-xs font-semibold transition-all cursor-pointer',
                 role === 'doctor'
-                  ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
-                  : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-[#FFFFFF]/60',
+                  ? 'bg-[#2E5E4E] text-white shadow-xs'
+                  : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-white/70',
               )}
             >
               <span>Dr. Guilherme</span>
               <span
                 className={cn(
-                  'hidden lg:inline text-[10px]',
+                  'hidden md:inline text-[10px] font-normal opacity-80',
                   role === 'doctor' ? 'text-[#E7EFEA]' : 'text-[#8A8A84]',
                 )}
               >
@@ -91,16 +94,16 @@ export function NavigationHeader() {
               type="button"
               onClick={() => handleRoleSwitch('patient')}
               className={cn(
-                'flex items-center gap-1.5 min-h-9 rounded-xl px-3 text-xs font-bold transition-all sm:px-4 sm:text-xs cursor-pointer',
+                'flex items-center gap-1.5 min-h-8 sm:min-h-8.5 rounded-full px-3 text-xs font-semibold transition-all cursor-pointer',
                 role === 'patient'
-                  ? 'bg-[#2E5E4E] text-[#FFFFFF] shadow-sm'
-                  : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-[#FFFFFF]/60',
+                  ? 'bg-[#2E5E4E] text-white shadow-xs'
+                  : 'text-[#5C5C57] hover:text-[#1E1E1C] hover:bg-white/70',
               )}
             >
               <span>Marina Costa</span>
               <span
                 className={cn(
-                  'hidden lg:inline text-[10px]',
+                  'hidden md:inline text-[10px] font-normal opacity-80',
                   role === 'patient' ? 'text-[#E7EFEA]' : 'text-[#8A8A84]',
                 )}
               >
