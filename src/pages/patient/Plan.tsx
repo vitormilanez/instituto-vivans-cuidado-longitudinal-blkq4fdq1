@@ -56,6 +56,7 @@ export default function PatientPlan() {
     returnJourney,
     scheduledCheckins = [],
     completeScheduledCheckin,
+    latestApprovedPlan,
     preConsultation,
   } = useVivans()
 
@@ -178,6 +179,107 @@ export default function PatientPlan() {
           <Check className="size-3.5 text-[#FFFFFF]" />
         </Link>
       </div>
+
+      {/* BANNER DE PLANO VALIDADO E RECENTEMENTE ENVIADO PELO MÉDICO */}
+      {latestApprovedPlan && (
+        <article className="overflow-hidden rounded-3xl border border-[#2E5E4E]/30 bg-[#FFFFFF] shadow-card">
+          <div className="bg-[#2E5E4E] p-4 sm:p-5 text-[#FAF8F4] flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="grid size-10 place-items-center rounded-2xl bg-[#FAF8F4]/15 border border-[#FAF8F4]/20 text-[#FAF8F4] shrink-0">
+                <ShieldCheck className="size-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-serif text-sm sm:text-base font-bold text-[#FAF8F4]">
+                    Plano Validado em Consulta Online
+                  </span>
+                  <span className="rounded-full bg-[#FAF8F4]/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#FAF8F4]">
+                    Oficial V I N V A N S E
+                  </span>
+                </div>
+                <p className="text-xs text-[#FAF8F4]/80">
+                  {latestApprovedPlan.doctorName} · {latestApprovedPlan.approvedAt}
+                </p>
+              </div>
+            </div>
+
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF8F4] px-3 py-1 text-xs font-bold text-[#2E5E4E] shadow-sm">
+              <CheckCircle2 className="size-3.5 text-[#2E5E4E]" />
+              <span>Aprovado &amp; Ativo</span>
+            </span>
+          </div>
+
+          <div className="p-5 sm:p-6 space-y-4 text-xs text-[#1E1E1C]">
+            <div className="grid gap-4 sm:grid-cols-3">
+              {/* Col 1: Decisões e Condutas */}
+              <div className="rounded-2xl border border-[#C3D6CC] bg-[#E7EFEA] p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="grid size-5 place-items-center rounded-full bg-[#2E5E4E] text-[#FFFFFF] text-[10px] font-bold">
+                    1
+                  </span>
+                  <h4 className="font-serif text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
+                    Decisões &amp; Condutas
+                  </h4>
+                </div>
+                <ul className="space-y-1.5 pl-2">
+                  {latestApprovedPlan.decisions.map((dec, i) => (
+                    <li key={i} className="text-xs text-[#1E1E1C] flex items-start gap-1.5">
+                      <span className="text-[#2E5E4E] font-bold mt-0.5">•</span>
+                      <span>{dec}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Col 2: Pendências */}
+              <div className="rounded-2xl border border-[#EAD7BA] bg-[#FAF8F4] p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="grid size-5 place-items-center rounded-full bg-[#C49A5B] text-[#FFFFFF] text-[10px] font-bold">
+                    2
+                  </span>
+                  <h4 className="font-serif text-xs font-bold uppercase tracking-wider text-[#9E7A3D]">
+                    Pendências
+                  </h4>
+                </div>
+                <ul className="space-y-1.5 pl-2">
+                  {latestApprovedPlan.pendingTasks.map((pen, i) => (
+                    <li key={i} className="text-xs text-[#5C5C57] flex items-start gap-1.5">
+                      <span className="text-[#C49A5B] font-bold mt-0.5">•</span>
+                      <span>{pen}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Col 3: Próximos Passos */}
+              <div className="rounded-2xl border border-[#C8DFE8] bg-[#FAF8F4] p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="grid size-5 place-items-center rounded-full bg-[#2C6E8A] text-[#FFFFFF] text-[10px] font-bold">
+                    3
+                  </span>
+                  <h4 className="font-serif text-xs font-bold uppercase tracking-wider text-[#2C6E8A]">
+                    Próximos Passos
+                  </h4>
+                </div>
+                <ul className="space-y-1.5 pl-2">
+                  {latestApprovedPlan.nextSteps.map((step, i) => (
+                    <li key={i} className="text-xs text-[#5C5C57] flex items-start gap-1.5">
+                      <span className="text-[#2C6E8A] font-bold mt-0.5">•</span>
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {latestApprovedPlan.additionalNotes && (
+              <div className="rounded-xl bg-[#FAF8F4] border border-[#E8E3D9] p-3 text-[11px] text-[#5C5C57] italic">
+                <strong>Nota do Dr. Guilherme:</strong> “{latestApprovedPlan.additionalNotes}”
+              </div>
+            )}
+          </div>
+        </article>
+      )}
 
       {/* Hero Header: Objetivo da Marina */}
       <section className="overflow-hidden rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-5 sm:p-7 shadow-card">

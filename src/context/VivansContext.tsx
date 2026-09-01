@@ -13,6 +13,7 @@ import {
   PreConsultationData,
   ScheduledCheckin,
   ReturnJourneyPlan,
+  ApprovedConsultationPlan,
   PrescriptionRecord,
   MedicationItem,
   ExamRecord,
@@ -78,6 +79,10 @@ interface VivansContextType {
   nudged: boolean
   attentionNudged: boolean
   nudgedPatientIds: string[]
+  latestApprovedPlan: ApprovedConsultationPlan | null
+  publishApprovedConsultationPlan: (
+    plan: Omit<ApprovedConsultationPlan, 'id' | 'approvedAt'>,
+  ) => void
   toastMessage: string | null
   notify: (msg: string) => void
 }
@@ -104,6 +109,28 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
   const [suggestedProcedures, setSuggestedProcedures] = useState<SuggestedProcedure[]>(
     initialSuggestedProcedures,
   )
+  const [latestApprovedPlan, setLatestApprovedPlan] = useState<ApprovedConsultationPlan | null>({
+    id: 'approved-plan-initial',
+    patientId: 'marina-costa',
+    patientName: 'Marina Costa',
+    doctorName: 'Dr. Guilherme Martins',
+    approvedAt: 'Hoje · 10:45',
+    decisions: [
+      'Ajustar o jantar para até as 19h30 para reduzir os despertares noturnos das 3h.',
+      'Manter aporte hídrico de 500 ml antes das principais refeições.',
+      'Iniciar rotina de desaceleração sem telas às 22h.',
+    ],
+    pendingTasks: [
+      'Agendar exame de sangue complementar (perfil lipídico e glicemia de jejum).',
+      'Registrar 3 fotos do jantar no diário para acompanhamento de saciedade.',
+    ],
+    nextSteps: [
+      'Acompanhar check-in programado de sono no Dia 3.',
+      'Consulta de retorno em 14 dias para avaliação dos despertares.',
+    ],
+    careGoal: 'Regularização do sono e preservação de disposição diurna',
+    additionalNotes: 'Orientação focada em crononutrição e higiene do sono sem restrições severas.',
+  })
   const [nudged, setNudged] = useState<boolean>(false)
   const [attentionNudged, setAttentionNudged] = useState<boolean>(false)
   const [nudgedPatientIds, setNudgedPatientIds] = useState<string[]>([])
@@ -433,6 +460,71 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
     )
   }
 
+  const publishApprovedConsultationPlan = (
+    plan: Omit<ApprovedConsultationPlan, 'id' | 'approvedAt'>,
+  ) => {
+    const timeNow =
+      'Hoje · ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    const createdPlan: ApprovedConsultationPlan = {
+      ...plan,
+      id: `approved-plan-${Date.now()}`,
+      approvedAt: timeNow,
+    }
+
+    setLatestApprovedPlan(createdPlan)
+
+    // Add each decision/next step to carePlans if not already present
+    plan.decisions.forEach((decision, idx) => {
+      const exists = carePlans.some((cp) => cp.action.toLowerCase() === decision.toLowerCase())
+      if (!exists && decision.trim()) {
+        const item: CarePlanItem = {
+          id: `plan-consult-${Date.now()}-${idx}`,
+          action: decision.trim(),
+          category: 'Condutas da Consulta · Dr. Guilherme Martins',
+          type: 'medical',
+          completed: false,
+          isPrimaryToday: idx === 0,
+          period: idx === 0 ? 'noite' : idx === 1 ? 'manha' : 'tarde',
+          timingStatus: 'pendente_hoje',
+          frequency: 'Diário (pós-consulta)',
+          doctorRationale: 'Conduta aprovada e validada pelo médico durante a consulta online.',
+        }
+        setCarePlans((prev) => [item, ...prev])
+      }
+    })
+
+    // Update patient nextSteps and activity
+    setPatients((prev) =>
+      prev.map((p) => {
+        if (p.id === plan.patientId) {
+          return {
+            ...p,
+            nextSteps: plan.nextSteps.length > 0 ? plan.nextSteps : p.nextSteps,
+            activity: [
+              [timeNow, 'Plano aprovado em consulta online disponibilizado à paciente'],
+              ...p.activity,
+            ],
+            lastContact: timeNow,
+          }
+        }
+        return p
+      }),
+    )
+
+    // Send a confirmation system message in the chat thread
+    const confirmationMessage: MessageItem = {
+      id: `msg-plan-${Date.now()}`,
+      sender: 'doctor',
+      author: plan.doctorName || 'Dr. Guilherme Martins',
+      time: 'Agora',
+      content: `Olá, ${plan.patientName.split(' ')[0]}! O seu plano com as decisões e condutas da nossa consulta já foi aprovado e publicado na sua aba "Plano". Você pode consultá-lo a qualquer momento.`,
+      status: 'enviada',
+    }
+    setMessages((prev) => [...prev, confirmationMessage])
+
+    notify(`Plano aprovado com sucesso e enviado para a visão da paciente ${plan.patientName}.`)
+  }
+
   const activeAttentionCount = 3
 
   return (
@@ -479,6 +571,8 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         nudged,
         attentionNudged,
         nudgedPatientIds,
+        latestApprovedPlan,
+        publishApprovedConsultationPlan,
         toastMessage,
         notify,
       }}

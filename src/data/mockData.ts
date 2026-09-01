@@ -279,6 +279,19 @@ export interface ScheduledCheckin {
   notes?: string
 }
 
+export interface ApprovedConsultationPlan {
+  id: string
+  patientId: string
+  patientName: string
+  doctorName: string
+  approvedAt: string
+  decisions: string[]
+  pendingTasks: string[]
+  nextSteps: string[]
+  careGoal?: string
+  additionalNotes?: string
+}
+
 export interface ReturnJourneyPlan {
   id: string
   patientId: string
