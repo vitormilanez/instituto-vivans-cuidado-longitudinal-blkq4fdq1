@@ -299,7 +299,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
       reportCount: '0',
       prescriptionCount: 'Nenhuma',
       cycle: 'Dia 1 · Primeira Consulta',
-      lastContact: 'Agora · Google Meet',
+      lastContact: 'Agora · Consulta Online',
       nextConsultation: 'Hoje · Em andamento',
       adherence: '100%',
       weightLoss: '0,0 kg',
@@ -311,7 +311,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         title: 'Síntese de Primeira Consulta',
         period: 'Consulta de Abertura',
         status: 'Em andamento',
-        summary: `Atendimento inicial iniciado via Google Meet para o paciente ${name}.`,
+        summary: `Atendimento inicial iniciado via Consulta Online para o paciente ${name}.`,
         metrics: [
           ['Status', 'Novo cadastro'],
           ['Canal', 'Teleconsulta Rápida'],
@@ -329,7 +329,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
         basis: 'Teleconsulta ao vivo.',
       },
       activity: [
-        ['Hoje · Agora', 'Teleconsulta rápida iniciada via Google Meet'],
+        ['Hoje · Agora', 'Consulta online rápida iniciada'],
         ['Hoje · Agora', `Cadastro gerado para ${name} (${email || 'Sem e-mail informado'})`],
       ],
       nextSteps: [
@@ -429,7 +429,7 @@ export function VivansProvider({ children }: { children: React.ReactNode }) {
       prev.map((proc) => (proc.id === procedureId ? { ...proc, status: 'agendado' } : proc)),
     )
     notify(
-      'Interesse registrado! A equipe do Instituto entrará em contato para alinhar o agendamento.',
+      'Interesse registrado! A equipe da V I N V A N S E entrará em contato para alinhar o agendamento.',
     )
   }
 

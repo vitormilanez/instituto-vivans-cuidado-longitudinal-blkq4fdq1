@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { Send, CheckCircle2 } from 'lucide-react'
 
@@ -70,8 +70,6 @@ export default function DoctorMessages() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Central de Mensagens Clínicas · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>

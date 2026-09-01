@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import {
-  StatusBadge,
-  AiDraftBadge,
-  SimulationDisclaimer,
-  UrgentCareWarning,
-} from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge, UrgentCareWarning } from '@/components/CommonUI'
 import {
   CheckCircle2,
   Sparkles,
@@ -159,8 +154,6 @@ export default function PatientPlan() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Orientações Médicas e Ações de Cuidado · Instituto Vivans" />
-
       {/* Quick Entry Banner to Prescriptions & Exams */}
       <div className="rounded-2xl border border-[#E8E3D9] bg-[#FFFFFF] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-card">
         <div className="flex items-center gap-3">
@@ -891,7 +884,7 @@ export default function PatientPlan() {
 
             <div className="space-y-3 text-xs text-[#5C5C57] leading-relaxed">
               <p>
-                A <strong className="text-[#1E1E1C]">adesão</strong> no Instituto Vivans é uma
+                A <strong className="text-[#1E1E1C]">adesão</strong> na V I N V A N S E é uma
                 métrica de consistência de hábitos,{' '}
                 <strong className="text-[#1E1E1C]">não uma nota ou cobrança</strong>.
               </p>

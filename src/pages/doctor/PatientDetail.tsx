@@ -1,13 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import {
-  StatusBadge,
-  AiDraftBadge,
-  ClinicalLayerBadge,
-  SimulationDisclaimer,
-  EvidenceModal,
-} from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge, ClinicalLayerBadge, EvidenceModal } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { DOCTOR_PROFILE } from '@/data/mockData'
 import { Sparkles, Video, ShieldCheck, ChevronRight } from 'lucide-react'
@@ -57,8 +51,6 @@ export default function DoctorPatientDetail() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Dossiê Longitudinal do Paciente · Instituto Vivans" />
-
       {/* Patient Header Summary */}
       <section className="overflow-hidden rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-6 sm:p-8 text-[#1E1E1C] shadow-card space-y-5">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -109,7 +101,7 @@ export default function DoctorPatientDetail() {
               className="flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-[#2E5E4E] px-5 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm active:scale-95"
             >
               <Video className="size-4" />
-              <span>Iniciar Teleconsulta com {patient.name.split(' ')[0]}</span>
+              <span>Iniciar Consulta Online com {patient.name.split(' ')[0]}</span>
             </Link>
 
             <span className="text-[11px] text-center text-[#5C5C57]">

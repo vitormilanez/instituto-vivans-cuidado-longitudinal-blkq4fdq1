@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { Send, Bot, Shield, Clock, CheckCheck, Sparkles, Activity, ArrowRight } from 'lucide-react'
 
@@ -18,8 +18,6 @@ export default function PatientMessages() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Canal de Mensagens e Comunicação Clínica · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -210,7 +208,7 @@ export default function PatientMessages() {
 
                   <div className="mt-1 flex items-center gap-1 px-1 text-[10px] text-[#8A8A84]">
                     <CheckCheck className="size-3 text-[#2E5E4E]" />
-                    <span>Entregue à paciente · Oficial do Instituto Vivans</span>
+                    <span>Entregue à paciente · Oficial V I N V A N S E</span>
                   </div>
                 </div>
               )

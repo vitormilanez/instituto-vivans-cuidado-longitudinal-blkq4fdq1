@@ -1,11 +1,6 @@
 import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
-import {
-  StatusBadge,
-  AiDraftBadge,
-  SimulationDisclaimer,
-  UrgentCareWarning,
-} from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge, UrgentCareWarning } from '@/components/CommonUI'
 import {
   Camera,
   Plus,
@@ -69,8 +64,6 @@ export default function PatientDiary() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Diário Alimentar e Registro de Rotina Sem Julgamento · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>

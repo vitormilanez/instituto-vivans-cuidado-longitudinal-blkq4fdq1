@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, AiDraftBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge } from '@/components/CommonUI'
 import { DOCTOR_PROFILE } from '@/data/mockData'
 import {
   Video,
@@ -89,7 +89,7 @@ export default function DoctorConsultationRoom() {
     addCarePlanItem({
       action: newAction,
       category: isNewOrTempPatient
-        ? 'Protocolo Inicial · Instituto Vivans'
+        ? 'Protocolo Inicial · V I N V A N S E'
         : 'Crononutrição · Ajuste pós-consulta',
       type: 'medical',
       completed: false,
@@ -109,9 +109,6 @@ export default function DoctorConsultationRoom() {
       : 'https://img.usecurling.com/ppl/512?gender=female&seed=88')
   return (
     <div className="space-y-6">
-      {/* Simulation Banner */}
-      <SimulationDisclaimer text="Ambiente de Teleconsulta Simulado (Google Meet Integrado) · Instituto Vivans Telehealth" />
-
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E8E3D9] pb-4">
         <div>
@@ -119,7 +116,7 @@ export default function DoctorConsultationRoom() {
             <span className="size-2 rounded-full bg-[#B4553F] animate-pulse" />
             <span className="text-xs font-bold uppercase tracking-wider text-[#B4553F]">
               {consultationStage === 'in_call'
-                ? 'Consulta em Andamento (Google Meet · 00:14:32)'
+                ? 'Consulta em Andamento (00:14:32)'
                 : 'Consulta Encerrada · Síntese Final'}
             </span>
             <StatusBadge tone="green">
@@ -133,7 +130,7 @@ export default function DoctorConsultationRoom() {
             )}
           </div>
           <h2 className="font-serif text-2xl font-bold text-[#1E1E1C]">
-            Atendimento Clínico · Dr. Guilherme Martins
+            Consulta Online · Dr. Guilherme Martins
           </h2>
         </div>
 
@@ -185,14 +182,14 @@ export default function DoctorConsultationRoom() {
               )}
 
               {/* Doctor PiP preview */}
-              <div className="absolute top-3 right-3 w-28 h-20 rounded-xl border border-[#2E5E4E]/40 bg-[#FAF8F4] overflow-hidden shadow-card relative">
+              <div className="absolute bottom-3 right-3 z-10 w-28 h-20 sm:w-32 sm:h-24 rounded-2xl border-2 border-[#FFFFFF] bg-[#FAF8F4] overflow-hidden shadow-elevation">
                 <img
                   src={DOCTOR_PROFILE.photoUrl || DOCTOR_PROFILE.avatarUrl}
-                  alt={`Retrato de ${DOCTOR_PROFILE.name}`}
-                  className="w-full h-full object-cover"
+                  alt={DOCTOR_PROFILE.name}
+                  className="w-full h-full object-cover block"
                 />
-                <span className="absolute bottom-1 right-1 rounded bg-[#1E1E1C]/80 px-1 text-[9px] text-[#FFFFFF]">
-                  Você ({DOCTOR_PROFILE.name})
+                <span className="absolute bottom-1.5 right-1.5 rounded-md bg-[#1E1E1C]/85 px-1.5 py-0.5 text-[10px] font-semibold text-[#FFFFFF] backdrop-blur-sm shadow-sm pointer-events-none">
+                  Você
                 </span>
               </div>
             </div>

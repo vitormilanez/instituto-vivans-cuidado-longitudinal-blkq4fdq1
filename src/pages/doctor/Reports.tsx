@@ -2,12 +2,7 @@ import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { DOCTOR_PROFILE } from '@/data/mockData'
-import {
-  StatusBadge,
-  AiDraftBadge,
-  SimulationDisclaimer,
-  EvidenceModal,
-} from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge, EvidenceModal } from '@/components/CommonUI'
 import { Download, CheckCircle2 } from 'lucide-react'
 
 export default function DoctorReports() {
@@ -38,8 +33,6 @@ export default function DoctorReports() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Relatórios Clínicos e Sínteses para Validação Médica · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -239,7 +232,7 @@ export default function DoctorReports() {
                 </div>
               </div>
               <span className="text-[11px] text-[#8A8A84]">
-                Instituto Vivans · Sistema de Prontuário Eletrônico Auditado
+                V I N V A N S E · Sistema de Prontuário Eletrônico Auditado
               </span>
             </div>
           </article>

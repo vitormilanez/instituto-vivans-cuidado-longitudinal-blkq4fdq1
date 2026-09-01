@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import {
-  StatusBadge,
-  SimulationDisclaimer,
-  ConsentModal,
-  UrgentCareWarning,
-} from '@/components/CommonUI'
+import { StatusBadge, ConsentModal, UrgentCareWarning } from '@/components/CommonUI'
 import { Sparkles, ShieldCheck, CheckCircle2, ArrowRight, ArrowLeft, Lock } from 'lucide-react'
 
 export default function PatientPreConsultation() {
@@ -64,8 +59,6 @@ export default function PatientPreConsultation() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Pré-Consulta Guiada Estruturada · Instituto Vivans" />
-
       {/* Header */}
       <section>
         <div className="flex items-center gap-2">
@@ -310,7 +303,7 @@ export default function PatientPreConsultation() {
             </div>
             <p className="leading-relaxed">
               Os dados fornecidos são acessados unicamente pelo Dr. Guilherme Martins e pela equipe
-              clínica do Instituto Vivans.
+              clínica da V I N V A N S E.
             </p>
           </div>
         </aside>

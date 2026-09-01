@@ -289,7 +289,7 @@ export function ConsentModal({
             <h3 className="font-serif text-lg font-semibold text-[#1E1E1C]">
               Consentimento e Privacidade (LGPD)
             </h3>
-            <p className="text-xs text-[#5C5C57]">Pré-consulta Instituto Vivans</p>
+            <p className="text-xs text-[#5C5C57]">Pré-consulta V I N V A N S E</p>
           </div>
         </div>
 

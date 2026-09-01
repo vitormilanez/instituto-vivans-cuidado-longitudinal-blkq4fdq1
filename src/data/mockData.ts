@@ -1,4 +1,4 @@
-/* Centralized Typed Mock Data & Store for Instituto Vivans */
+/* Centralized Typed Mock Data & Store for V I N V A N S E */
 
 export type Role = 'doctor' | 'patient'
 
@@ -228,7 +228,7 @@ export interface Appointment {
   patientAvatarUrl?: string
   initials: string
   type: string
-  modality?: 'Teleconsulta (Google Meet)' | 'Presencial (Instituto Vivans)' | 'Híbrida'
+  modality?: 'Consulta Online' | 'Presencial (V I N V A N S E)' | 'Híbrida'
   status: string
   statusTone: 'green' | 'amber' | 'rose' | 'blue' | 'gray'
   preVisit: string
@@ -1584,7 +1584,7 @@ export const initialAppointments: Appointment[] = [
     patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=12',
     initials: 'LB',
     type: 'Retorno longevidade · 30 min',
-    modality: 'Teleconsulta (Google Meet)',
+    modality: 'Consulta Online',
     status: 'Concluída',
     statusTone: 'gray',
     preVisit: 'Pré-consulta revisada',
@@ -1615,7 +1615,7 @@ export const initialAppointments: Appointment[] = [
     patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=88',
     initials: 'MC',
     type: 'Retorno longevidade · 30 min',
-    modality: 'Teleconsulta (Google Meet)',
+    modality: 'Consulta Online',
     status: 'Próxima',
     statusTone: 'green',
     preVisit: 'Pré-consulta estruturada · Resumo pronto',
@@ -1648,7 +1648,7 @@ export const initialAppointments: Appointment[] = [
     patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=54',
     initials: 'RL',
     type: 'Primeira consulta · 50 min',
-    modality: 'Teleconsulta (Google Meet)',
+    modality: 'Consulta Online',
     status: 'Confirmada',
     statusTone: 'green',
     preVisit: 'Anamnese 68% concluída',
@@ -1675,7 +1675,7 @@ export const initialAppointments: Appointment[] = [
     patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=female&seed=42',
     initials: 'AR',
     type: 'Retorno força · 30 min',
-    modality: 'Teleconsulta (Google Meet)',
+    modality: 'Consulta Online',
     status: 'Confirmada',
     statusTone: 'green',
     preVisit: 'Voz concluída · relatório pronto',
@@ -1702,7 +1702,7 @@ export const initialAppointments: Appointment[] = [
     patientAvatarUrl: 'https://img.usecurling.com/ppl/512?gender=male&seed=33',
     initials: 'PM',
     type: 'Acompanhamento · 25 min',
-    modality: 'Teleconsulta (Google Meet)',
+    modality: 'Consulta Online',
     status: 'A confirmar',
     statusTone: 'amber',
     preVisit: 'Novo sintoma no check-in',
@@ -1922,7 +1922,7 @@ export const initialMeals: MealRecord[] = [
     status: 'Confirmada pela paciente',
     tone: 'green',
     recognized: 'Frango grelhado, arroz integral, feijão, folhas e legumes cozidos.',
-    analysis: 'Prato equilibrado alinhado às diretrizes do Instituto Vivans.',
+    analysis: 'Prato equilibrado alinhado às diretrizes da V I N V A N S E.',
     confidence: 'Alta confiança nos itens visíveis',
     ratings: [5, 5, 4],
     feedbackSent: true,
@@ -1947,7 +1947,7 @@ export const initialMessages: MessageItem[] = [
   {
     id: 'msg-team-summary',
     sender: 'team_summary',
-    author: 'Equipe Instituto Vivans',
+    author: 'Equipe V I N V A N S E',
     authorAvatarUrl: 'https://img.usecurling.com/i?q=hospital&color=0b7b68',
     time: 'Hoje · 08:00',
     content:
@@ -2280,7 +2280,7 @@ export const initialExams: ExamRecord[] = [
     title: 'Painel Metabólico & Perfil Lipídico Avançado',
     category: 'Laboratorial',
     performedAt: '05 de agosto de 2026',
-    laboratory: 'Laboratório Fleury / Vivans Integrado',
+    laboratory: 'Laboratório Fleury / V I N V A N S E Integrado',
     doctorRequester: 'Dr. Guilherme Martins',
     status: 'concluido',
     summary:
@@ -2391,7 +2391,7 @@ export const initialExams: ExamRecord[] = [
     title: 'Bioimpedância Segmentar InBody 770',
     category: 'Funcional',
     performedAt: '12 de agosto de 2026',
-    laboratory: 'Instituto Vivans · Avaliação Clínica',
+    laboratory: 'V I N V A N S E · Avaliação Clínica',
     doctorRequester: 'Dr. Guilherme Martins',
     status: 'concluido',
     summary:
@@ -2437,7 +2437,7 @@ export const initialExams: ExamRecord[] = [
     title: 'Painel Glicêmico & Perfil Hepático',
     category: 'Laboratorial',
     performedAt: '15 de agosto de 2026',
-    laboratory: 'Laboratório Dasa / Vivans',
+    laboratory: 'Laboratório Dasa / V I N V A N S E',
     doctorRequester: 'Dr. Guilherme Martins',
     status: 'concluido',
     summary: 'Curva glicêmica em acompanhamento. TGO/TGP discretamente limítrofes.',
@@ -2468,8 +2468,8 @@ export const initialSuggestedProcedures: SuggestedProcedure[] = [
     clinicalRationale:
       'Monitorar a taxa de preservação de massa muscular esquelética após 45 dias de crononutrição e readequação do sono.',
     patientExplanation:
-      'Exame rápido e indolor feito no próprio Instituto Vivans para conferir como seu corpo está trocando gordura por saúde e firmeza muscular.',
-    nextStepPrompt: 'Agendamento já programado para o retorno de 45 dias no Instituto.',
+      'Exame rápido e indolor feito no próprio centro V I N V A N S E para conferir como seu corpo está trocando gordura por saúde e firmeza muscular.',
+    nextStepPrompt: 'Agendamento já programado para o retorno de 45 dias na V I N V A N S E.',
   },
   {
     id: 'proc-marina-2',

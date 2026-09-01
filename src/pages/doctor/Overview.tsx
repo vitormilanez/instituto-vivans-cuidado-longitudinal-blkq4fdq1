@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { StatusBadge } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { DOCTOR_PROFILE } from '@/data/mockData'
 import { QuickConsultationModal } from '@/components/QuickConsultationModal'
@@ -58,8 +58,6 @@ export default function DoctorOverview() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Painel Clínico Longitudinal · Instituto Vivans" />
-
       {/* Hero Welcome Banner */}
       <section className="relative overflow-hidden rounded-[28px] border border-[#E8E3D9] bg-[#FFFFFF] p-6 sm:p-8 text-[#1E1E1C] shadow-card">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between relative z-10">
@@ -92,7 +90,7 @@ export default function DoctorOverview() {
                 className="flex min-h-11 items-center gap-2 rounded-2xl bg-[#2E5E4E] px-5 font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm active:scale-95 cursor-pointer"
               >
                 <Video className="size-4 text-[#FFFFFF]" />
-                <span>Iniciar Teleconsulta Rápida (Meet)</span>
+                <span>Iniciar Consulta Online</span>
               </button>
 
               <Link
@@ -352,7 +350,7 @@ export default function DoctorOverview() {
                   className="flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-[#2E5E4E] px-4 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm"
                 >
                   <Video className="size-4" />
-                  <span>Entrar na Sala Virtual (Meet)</span>
+                  <span>Entrar na Consulta Online</span>
                 </Link>
 
                 <Link
@@ -370,7 +368,9 @@ export default function DoctorOverview() {
           <div className="rounded-3xl border border-[#E8E3D9] bg-[#FAF8F4] p-5 text-xs text-[#5C5C57] space-y-2">
             <div className="flex items-center gap-1.5 font-bold text-[#2E5E4E]">
               <Sparkles className="size-4 text-[#2E5E4E]" />
-              <span className="text-xs">Copiloto Clínico Vivans</span>
+              <span className="text-xs font-serif font-bold tracking-wider">
+                Copiloto Clínico V I N V A N S E
+              </span>
             </div>
             <p className="leading-relaxed text-[#5C5C57]">
               Todas as sugestões diagnósticas e posológicas são compiladas como rascunhos de apoio.

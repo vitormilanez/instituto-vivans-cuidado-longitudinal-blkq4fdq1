@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, SimulationDisclaimer, UrgentCareWarning } from '@/components/CommonUI'
+import { StatusBadge, UrgentCareWarning } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { DOCTOR_PROFILE } from '@/data/mockData'
 import {
@@ -56,9 +56,6 @@ export default function PatientToday() {
 
   return (
     <div className="space-y-6">
-      {/* Top Disclaimer */}
-      <SimulationDisclaimer text="Acompanhamento de Saúde e Longevidade · Instituto Vivans" />
-
       {/* Hero Header Card */}
       <section className="relative overflow-hidden rounded-[28px] border border-[#E8E3D9] bg-[#FFFFFF] p-6 sm:p-8 text-[#1E1E1C] shadow-card">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between relative z-10">

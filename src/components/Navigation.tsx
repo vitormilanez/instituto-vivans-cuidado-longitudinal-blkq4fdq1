@@ -43,15 +43,15 @@ export function NavigationHeader() {
       <div className="mx-auto flex h-[72px] max-w-[1540px] items-center justify-between gap-3 px-4 sm:px-5 lg:px-8">
         {/* Brand Logo & Title */}
         <Link to="/" className="flex min-w-0 items-center gap-3 group">
-          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#2E5E4E] text-sm font-bold text-[#FFFFFF] shadow-subtle transition-transform group-hover:scale-105 border border-[#24493D]">
-            IV
+          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#2E5E4E] text-sm font-bold text-[#FFFFFF] shadow-subtle transition-transform group-hover:scale-105 border border-[#24493D] tracking-wider">
+            V
           </div>
           <div className="min-w-0">
-            <p className="truncate text-lg font-bold tracking-[-0.03em] text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors font-serif">
-              Instituto Vivans
+            <p className="truncate text-base sm:text-lg font-bold tracking-[0.2em] text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors font-serif uppercase">
+              V I N V A N S E
             </p>
             <p className="hidden text-xs font-medium text-[#5C5C57] sm:block">
-              Instituto de Saúde e Longevidade
+              Saúde e Longevidade
             </p>
           </div>
         </Link>
@@ -246,7 +246,7 @@ export function DoctorSidebar() {
             className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-2xl bg-[#2E5E4E] px-3 text-xs font-bold text-[#FFFFFF] shadow-sm transition-all hover:bg-[#24493D] active:scale-[0.98] cursor-pointer"
           >
             <Video className="size-4 shrink-0 text-[#FFFFFF]" />
-            <span>Iniciar Teleconsulta (Meet)</span>
+            <span>Iniciar Consulta Online</span>
           </button>
 
           {/* Two Secondary Quick Shortcuts: Consultar Histórico & Anotação Rápida */}

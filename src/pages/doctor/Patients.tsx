@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { StatusBadge } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { QuickConsultationModal } from '@/components/QuickConsultationModal'
 import { Search, Plus, ChevronRight } from 'lucide-react'
@@ -27,8 +27,6 @@ export default function DoctorPatients() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Carteira de Pacientes e Gestão de Coortes · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>

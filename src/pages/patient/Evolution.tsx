@@ -10,12 +10,7 @@ import {
   BarChart,
   Bar,
 } from 'recharts'
-import {
-  StatusBadge,
-  AiDraftBadge,
-  SimulationDisclaimer,
-  UrgentCareWarning,
-} from '@/components/CommonUI'
+import { StatusBadge, AiDraftBadge, UrgentCareWarning } from '@/components/CommonUI'
 import { TrendingDown, Moon, Footprints, Activity, Sparkles, Calendar } from 'lucide-react'
 
 export default function PatientEvolution() {
@@ -51,8 +46,6 @@ export default function PatientEvolution() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Painel de Evolução e Biomarcadores Longitudinais · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>

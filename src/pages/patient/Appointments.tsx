@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, SimulationDisclaimer, UrgentCareWarning } from '@/components/CommonUI'
+import { StatusBadge, UrgentCareWarning } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { DOCTOR_PROFILE } from '@/data/mockData'
 import { Calendar, Clock, Video, Sparkles, ChevronRight } from 'lucide-react'
@@ -11,8 +11,6 @@ export default function PatientAppointments() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Agendamentos e Jornada de Consultas · Instituto Vivans" />
-
       <section>
         <p className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">Suas Consultas</p>
         <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#1E1E1C]">
@@ -53,7 +51,7 @@ export default function PatientAppointments() {
               </div>
               <div className="flex items-center gap-1.5 rounded-xl bg-[#FAF8F4] border border-[#E8E3D9] px-3 py-1.5">
                 <Video className="size-4 text-[#2E5E4E]" />
-                <span className="font-bold text-[#1E1E1C]">Sala Virtual Google Meet</span>
+                <span className="font-bold text-[#1E1E1C]">Consulta Online</span>
               </div>
             </div>
           </div>
@@ -83,7 +81,7 @@ export default function PatientAppointments() {
             className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#2E5E4E] px-6 text-xs sm:text-sm font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all active:scale-95"
           >
             <Video className="size-4" />
-            <span>Entrar na Sala de Teleconsulta</span>
+            <span>Entrar na Consulta Online</span>
           </Link>
 
           <Link
@@ -148,7 +146,7 @@ export default function PatientAppointments() {
                 <span className="text-xs font-bold text-[#1E1E1C]">
                   Consulta de Abertura do Ciclo
                 </span>
-                <span className="text-[10px] text-[#8A8A84]">Presencial · Instituto Vivans</span>
+                <span className="text-[10px] text-[#8A8A84]">Presencial · V I N V A N S E</span>
               </div>
               <p className="text-xs text-[#5C5C57]">
                 28 de julho de 2024 · Definição do plano de longevidade de 90 dias

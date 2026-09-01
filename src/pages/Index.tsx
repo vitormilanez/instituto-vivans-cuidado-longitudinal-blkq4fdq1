@@ -14,7 +14,9 @@ export default function Index() {
       <section className="text-center max-w-3xl mx-auto space-y-5 px-4 relative">
         <div className="inline-flex items-center gap-2 rounded-full border border-[#C3D6CC] bg-[#E7EFEA] px-4 py-1.5 text-xs font-semibold text-[#2E5E4E] shadow-subtle">
           <Sparkles className="size-3.5 text-[#2E5E4E]" />
-          <span>Instituto Vivans · Cuidado Longitudinal &amp; Longevidade</span>
+          <span className="font-bold tracking-wider">
+            V I N V A N S E · Saúde &amp; Longevidade
+          </span>
         </div>
 
         <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1E1E1C] leading-[1.15]">
@@ -34,7 +36,7 @@ export default function Index() {
           </span>
           <span className="flex items-center gap-1.5 rounded-xl bg-[#FFFFFF] border border-[#E8E3D9] px-3 py-1.5 shadow-subtle">
             <Radio className="size-3.5 text-[#2E5E4E] animate-pulse" />
-            <span>Sala Virtual de Teleconsulta Integrada</span>
+            <span>Consulta Online Integrada</span>
           </span>
         </div>
       </section>
@@ -134,7 +136,7 @@ export default function Index() {
 
             <p className="text-xs text-[#5C5C57] leading-relaxed">
               Acesse o painel de coorte com 22 pacientes, sala de espera virtual, ambiente de
-              teleconsulta Google Meet com anotações automáticas e deliberação de condutas.
+              Consulta Online com anotações automáticas e deliberação de condutas.
             </p>
 
             <div className="grid grid-cols-3 gap-2 text-center text-xs pt-2">
@@ -162,8 +164,8 @@ export default function Index() {
 
       {/* Pillars Strip Footer */}
       <footer className="text-center text-xs text-[#8A8A84] max-w-xl mx-auto space-y-2 pt-6">
-        <p className="font-semibold text-[#5C5C57]">
-          Instituto Vivans · Sistema de Saúde e Longevidade Ativa
+        <p className="font-bold tracking-widest text-[#5C5C57]">
+          V I N V A N S E · Sistema de Saúde e Longevidade Ativa
         </p>
         <p className="text-[11px] text-[#8A8A84]">
           Dados fictícios gerados para demonstração de experiência longitudinal, acessibilidade e

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, SimulationDisclaimer, UrgentCareWarning } from '@/components/CommonUI'
+import { StatusBadge, UrgentCareWarning } from '@/components/CommonUI'
 import {
   Pill,
   FileText,
@@ -32,8 +32,6 @@ export default function PatientPrescriptionsExams() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Receituário Digital e Laudos Laboratoriais · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>

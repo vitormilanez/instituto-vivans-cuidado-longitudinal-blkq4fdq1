@@ -13,7 +13,7 @@ export default function NotFound() {
         <div className="space-y-2">
           <h1 className="font-serif text-2xl font-bold text-[#1E1E1C]">Página Não Encontrada</h1>
           <p className="text-xs text-[#5C5C57] leading-relaxed">
-            O endereço solicitado não existe ou foi movido dentro do sistema do Instituto Vivans.
+            O endereço solicitado não existe ou foi movido dentro do sistema V I N V A N S E.
           </p>
         </div>
 

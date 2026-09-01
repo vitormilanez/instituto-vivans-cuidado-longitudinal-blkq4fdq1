@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVivans } from '@/context/VivansContext'
-import { StatusBadge, SimulationDisclaimer } from '@/components/CommonUI'
+import { StatusBadge } from '@/components/CommonUI'
 import { VivansAvatar } from '@/components/VivansAvatar'
 import { Calendar as CalendarIcon, Video, FileText, Filter } from 'lucide-react'
 
@@ -26,8 +26,6 @@ export default function DoctorAgenda() {
 
   return (
     <div className="space-y-6">
-      <SimulationDisclaimer text="Agenda Clínica e Grade de Teleconsultas · Instituto Vivans" />
-
       {/* Header */}
       <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -41,7 +39,7 @@ export default function DoctorAgenda() {
             Agenda do Médico
           </h1>
           <p className="mt-1 text-xs sm:text-sm text-[#5C5C57]">
-            Gerenciamento de teleconsultas com Google Meet integrado e atendimentos presenciais.
+            Gerenciamento de consultas online integradas e atendimentos presenciais.
           </p>
         </div>
 
@@ -124,7 +122,7 @@ export default function DoctorAgenda() {
                   className="flex min-h-9 items-center gap-1.5 rounded-xl bg-[#2E5E4E] px-4 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all"
                 >
                   <Video className="size-3.5 text-[#FFFFFF]" />
-                  <span>Entrar no Meet</span>
+                  <span>Entrar na Consulta</span>
                 </Link>
               </div>
             </div>

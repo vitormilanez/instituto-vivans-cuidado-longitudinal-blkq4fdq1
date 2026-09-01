@@ -98,7 +98,7 @@ export function QuickConsultationModal({
       setFormError(null)
       setIsStarting(true)
 
-      notify('Simulando abertura de link do Google Meet...')
+      notify('Iniciando Consulta Online...')
 
       setTimeout(() => {
         const createdPatient = registerQuickPatient(newName.trim(), newEmail.trim())
@@ -115,7 +115,7 @@ export function QuickConsultationModal({
       setIsStarting(true)
 
       setSelectedPatientId(selectedPatientId)
-      notify('Simulando abertura de link do Google Meet...')
+      notify('Iniciando Consulta Online...')
 
       setTimeout(() => {
         setIsStarting(false)
@@ -248,7 +248,7 @@ export function QuickConsultationModal({
 
           <p className="mt-2.5 text-xs text-[#5C5C57] leading-relaxed">
             {activeAction === 'video' &&
-              'Abra uma sessão clínica integrada ao Google Meet com anotações automáticas e suporte do Copiloto Vivans.'}
+              'Abra uma sessão de Consulta Online com anotações automáticas e suporte do Copiloto V I N V A N S E.'}
             {activeAction === 'history' &&
               'Acesse diretamente o dossiê longitudinal, biossinais e linha do tempo do paciente sem iniciar vídeo.'}
             {activeAction === 'note' &&
@@ -272,8 +272,8 @@ export function QuickConsultationModal({
               )}
             >
               <Video className="size-3.5" />
-              <span className="hidden sm:inline">Teleconsulta</span>
-              <span className="sm:hidden">Meet</span>
+              <span className="hidden sm:inline">Consulta Online</span>
+              <span className="sm:hidden">Online</span>
             </button>
 
             <button
@@ -671,7 +671,9 @@ export function QuickConsultationModal({
                 className="flex-1 sm:flex-initial min-h-11 rounded-2xl bg-[#2E5E4E] px-6 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
               >
                 <Video className="size-4 text-[#FFFFFF]" />
-                <span>{isStarting ? 'Iniciando Meet...' : 'Iniciar Teleconsulta'}</span>
+                <span>
+                  {isStarting ? 'Iniciando Consulta Online...' : 'Iniciar Consulta Online'}
+                </span>
                 <ArrowRight className="size-3.5" />
               </button>
             )}
