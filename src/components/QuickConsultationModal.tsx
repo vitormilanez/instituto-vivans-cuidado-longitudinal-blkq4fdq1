@@ -459,7 +459,7 @@ export function QuickConsultationModal({
                           />
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <h3 className="truncate font-bold text-xs sm:text-sm text-[#1E1E1C]">
+                              <h3 className="font-bold text-xs sm:text-sm text-[#1E1E1C]">
                                 {p.name}
                               </h3>
                               {p.isOnlineInWaitingRoom && (

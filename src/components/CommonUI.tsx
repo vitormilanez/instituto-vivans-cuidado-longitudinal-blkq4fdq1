@@ -5,10 +5,12 @@ import { Sparkles, ShieldCheck, AlertCircle, ExternalLink, Info, CheckCircle2 } 
 export function StatusBadge({
   children,
   tone = 'green',
+  variant = 'badge',
   className,
 }: {
   children: ReactNode
   tone?: 'green' | 'amber' | 'rose' | 'blue' | 'gray'
+  variant?: 'badge' | 'subtle'
   className?: string
 }) {
   const tones = {
@@ -18,6 +20,38 @@ export function StatusBadge({
     blue: 'bg-[#EBF3F8] text-[#2C6E8A] border-[#C8DFE8]',
     gray: 'bg-[#F1EEE7] text-[#5C5C57] border-[#E8E3D9]',
   }
+
+  const subtleTextTones = {
+    green: 'text-[#2F7D5B]',
+    amber: 'text-[#96671E]',
+    rose: 'text-[#A04530]',
+    blue: 'text-[#2C6E8A]',
+    gray: 'text-[#5C5C57]',
+  }
+
+  const dotTones = {
+    green: 'bg-[#2F7D5B]',
+    amber: 'bg-[#B7832F]',
+    rose: 'bg-[#B4553F]',
+    blue: 'bg-[#2C6E8A]',
+    gray: 'bg-[#8A8A84]',
+  }
+
+  if (variant === 'subtle') {
+    return (
+      <span
+        className={cn(
+          'inline-flex items-center gap-1.5 text-xs font-medium tracking-tight',
+          subtleTextTones[tone],
+          className,
+        )}
+      >
+        <span aria-hidden="true" className={cn('size-1.5 rounded-full shrink-0', dotTones[tone])} />
+        <span>{children}</span>
+      </span>
+    )
+  }
+
   return (
     <span
       className={cn(
@@ -26,17 +60,7 @@ export function StatusBadge({
         className,
       )}
     >
-      <span
-        aria-hidden="true"
-        className={cn(
-          'size-1.5 rounded-full shrink-0',
-          tone === 'green' && 'bg-[#2F7D5B]',
-          tone === 'amber' && 'bg-[#B7832F]',
-          tone === 'rose' && 'bg-[#B4553F]',
-          tone === 'blue' && 'bg-[#2C6E8A]',
-          tone === 'gray' && 'bg-[#8A8A84]',
-        )}
-      />
+      <span aria-hidden="true" className={cn('size-1.5 rounded-full shrink-0', dotTones[tone])} />
       {children}
     </span>
   )

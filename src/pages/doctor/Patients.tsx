@@ -93,59 +93,95 @@ export default function DoctorPatients() {
         </div>
       </div>
 
-      {/* Patients Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* View Toggle & Count Indicator */}
+      <div className="flex items-center justify-between px-1 text-xs text-[#5C5C57]">
+        <span>
+          Mostrando{' '}
+          <strong className="text-[#1E1E1C] font-semibold">{filteredPatients.length}</strong> de{' '}
+          {patients.length} pacientes
+        </span>
+        <span className="text-[11px] text-[#8A8A84] hidden sm:inline">
+          Toque em qualquer paciente para abrir o prontuário completo
+        </span>
+      </div>
+
+      {/* Patients List with warm ivory / sage green editorial styling */}
+      <div className="space-y-3.5">
         {filteredPatients.map((p) => (
           <article
             key={p.id}
             onClick={() => navigate(`/medico/pacientes/${p.id}`)}
-            className="rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-5 shadow-card space-y-4 hover:border-[#2E5E4E]/50 hover:bg-[#FAF8F4] transition-all cursor-pointer flex flex-col justify-between"
+            className="group relative rounded-2xl sm:rounded-3xl border border-[#E8E3D9] bg-[#FFFFFF] p-4 sm:p-5 shadow-sm hover:shadow-card hover:border-[#2E5E4E]/40 hover:bg-[#FAF8F4] transition-all cursor-pointer"
           >
-            <div>
-              <div className="flex items-start justify-between gap-2 border-b border-[#EFECE5] pb-3">
-                <div className="flex items-center gap-3">
-                  <VivansAvatar
-                    src={p.avatarUrl}
-                    name={p.name}
-                    initials={p.initials}
-                    size="md"
-                    className="border border-[#E8E3D9]"
-                  />
-                  <div>
-                    <h2 className="font-bold text-sm text-[#1E1E1C]">{p.name}</h2>
-                    <span className="text-[11px] text-[#5C5C57]">{p.cycle}</span>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Left & Center: Portrait, Full Name, Focus & Subtle Indicator */}
+              <div className="flex items-start sm:items-center gap-4 min-w-0 flex-1">
+                <VivansAvatar
+                  src={p.avatarUrl}
+                  name={p.name}
+                  initials={p.initials}
+                  size="lg"
+                  className="border-2 border-[#FAF8F4] group-hover:border-[#C3D6CC] shadow-subtle shrink-0 transition-colors"
+                />
+
+                <div className="min-w-0 flex-1 space-y-1">
+                  {/* Row 1: Full Name (never truncated) & Subtle Symptom / Status Indicator */}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <h2 className="font-serif text-base sm:text-lg font-bold text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors whitespace-normal leading-snug">
+                      {p.name}
+                    </h2>
+
+                    {/* Subtle Symptom Indicator (small dot + discrete text, no heavy fill) */}
+                    <div className="inline-flex items-center gap-1.5 py-0.5 text-xs">
+                      <StatusBadge tone={p.tone} variant="subtle">
+                        {p.attention}
+                      </StatusBadge>
+                    </div>
                   </div>
+
+                  {/* Row 2: Focus & Clinical Context */}
+                  <p className="text-xs text-[#5C5C57] leading-relaxed">{p.focus}</p>
+
+                  {/* Row 3: Secondary Info in muted gray font for visual breathing room */}
+                  <p className="text-[11px] text-[#8A8A84]">{p.cycle}</p>
                 </div>
-                <StatusBadge tone={p.tone}>{p.attention}</StatusBadge>
               </div>
 
-              <div className="mt-3 space-y-2">
-                <p className="text-xs text-[#5C5C57]">
-                  <strong className="text-[#1E1E1C]">Foco:</strong> {p.focus}
-                </p>
-
-                <div className="grid grid-cols-2 gap-2 text-center text-xs pt-1">
-                  <div className="rounded-xl bg-[#FAF8F4] p-2 border border-[#E8E3D9]">
-                    <span className="text-[10px] uppercase font-bold text-[#8A8A84]">Adesão</span>
-                    <p className="font-bold text-[#1E1E1C] text-sm mt-0.5">{p.adherence}</p>
+              {/* Right: Adherence & Next Appointment + Discrete Action */}
+              <div className="flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 border-t md:border-t-0 border-[#EFECE5] shrink-0">
+                {/* Adherence & Next Appointment */}
+                <div className="text-left md:text-right space-y-0.5">
+                  <div className="flex items-baseline md:justify-end gap-1.5">
+                    <span className="text-xs font-bold text-[#1E1E1C]">{p.adherence}</span>
+                    <span className="text-[11px] text-[#5C5C57]">adesão</span>
+                    {p.progress && (
+                      <span className="text-[11px] font-medium text-[#2E5E4E] ml-1">
+                        ({p.progress})
+                      </span>
+                    )}
                   </div>
-                  <div className="rounded-xl bg-[#FAF8F4] p-2 border border-[#E8E3D9]">
-                    <span className="text-[10px] uppercase font-bold text-[#8A8A84]">Evolução</span>
-                    <p className="font-bold text-[#2E5E4E] text-sm mt-0.5">{p.progress}</p>
+                  <p className="text-xs text-[#5C5C57]">{p.nextConsultation}</p>
+                </div>
+
+                {/* Discrete Prontuário link/action button */}
+                <div className="flex items-center gap-1 text-xs font-bold text-[#2E5E4E] group-hover:translate-x-0.5 transition-transform">
+                  <span className="hidden sm:inline text-xs font-semibold text-[#5C5C57] group-hover:text-[#2E5E4E]">
+                    Prontuário
+                  </span>
+                  <div className="size-8 rounded-full bg-[#FAF8F4] group-hover:bg-[#E7EFEA] border border-[#E8E3D9] group-hover:border-[#C3D6CC] flex items-center justify-center transition-colors">
+                    <ChevronRight className="size-4 text-[#2E5E4E]" />
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="border-t border-[#EFECE5] pt-3 flex items-center justify-between text-xs">
-              <span className="text-[11px] text-[#5C5C57]">{p.nextConsultation}</span>
-              <span className="flex items-center gap-1 font-bold text-[#2E5E4E]">
-                <span>Ver Prontuário</span>
-                <ChevronRight className="size-3.5" />
-              </span>
             </div>
           </article>
         ))}
+
+        {filteredPatients.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-[#E8E3D9] bg-[#FAF8F4] p-8 text-center text-xs text-[#8A8A84]">
+            Nenhum paciente encontrado com o filtro aplicado.
+          </div>
+        )}
       </div>
 
       <QuickConsultationModal

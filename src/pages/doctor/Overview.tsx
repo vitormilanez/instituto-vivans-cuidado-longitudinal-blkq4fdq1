@@ -252,49 +252,52 @@ export default function DoctorOverview() {
           </div>
 
           {/* Patient Cards */}
-          <div className="space-y-3">
+          <div className="space-y-3.5">
             {filteredPatients.map((p) => {
               return (
                 <div
                   key={p.id}
                   onClick={() => navigate(`/medico/pacientes/${p.id}`)}
-                  className="rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4.5 hover:border-[#2E5E4E]/50 hover:bg-[#F1EEE7] transition-all cursor-pointer shadow-subtle group"
+                  className="rounded-2xl border border-[#E8E3D9] bg-[#FAF8F4] p-4 sm:p-4.5 hover:border-[#2E5E4E]/40 hover:bg-[#F1EEE7] transition-all cursor-pointer shadow-subtle group"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
                       <VivansAvatar
                         src={p.avatarUrl}
                         name={p.name}
                         initials={p.initials}
                         size="md"
-                        className="border border-[#E8E3D9] shrink-0"
+                        className="border border-[#E8E3D9] group-hover:border-[#C3D6CC] shrink-0 transition-colors"
                       />
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-bold text-sm text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors truncate">
+                      <div className="min-w-0 flex-1 space-y-0.5">
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                          <h3 className="font-serif font-bold text-sm sm:text-base text-[#1E1E1C] group-hover:text-[#2E5E4E] transition-colors whitespace-normal">
                             {p.name}
                           </h3>
-                          <StatusBadge tone={p.tone}>{p.attention}</StatusBadge>
+                          <StatusBadge tone={p.tone} variant="subtle">
+                            {p.attention}
+                          </StatusBadge>
                         </div>
-                        <p className="text-xs text-[#5C5C57] truncate">{p.focus}</p>
-                        <span className="text-[10px] text-[#8A8A84]">{p.cycle}</span>
+                        <p className="text-xs text-[#5C5C57] leading-relaxed">{p.focus}</p>
+                        <p className="text-[11px] text-[#8A8A84]">{p.cycle}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto text-xs">
-                      <div className="text-right hidden sm:block">
-                        <p className="font-bold text-[#1E1E1C]">{p.adherence} adesão</p>
-                        <p className="text-[10px] text-[#5C5C57]">{p.nextConsultation}</p>
+                    <div className="flex items-center justify-between sm:justify-end gap-3.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E8E3D9]/60 text-xs">
+                      <div className="text-left sm:text-right space-y-0.5">
+                        <p className="font-bold text-[#1E1E1C]">
+                          {p.adherence}{' '}
+                          <span className="font-normal text-[11px] text-[#5C5C57]">adesão</span>
+                        </p>
+                        <p className="text-[11px] text-[#5C5C57]">{p.nextConsultation}</p>
                       </div>
 
-                      <Link
-                        to={`/medico/pacientes/${p.id}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex min-h-9 items-center gap-1 rounded-xl bg-[#2E5E4E] px-3.5 text-xs font-bold text-[#FFFFFF] hover:bg-[#24493D] transition-all shadow-sm"
-                      >
-                        <span>Prontuário</span>
-                        <ChevronRight className="size-3.5 text-[#FFFFFF]" />
-                      </Link>
+                      <div className="flex items-center gap-1 text-xs font-semibold text-[#5C5C57] group-hover:text-[#2E5E4E] transition-colors">
+                        <span className="hidden md:inline">Prontuário</span>
+                        <div className="size-7 rounded-full bg-[#FFFFFF] group-hover:bg-[#E7EFEA] border border-[#E8E3D9] group-hover:border-[#C3D6CC] flex items-center justify-center transition-colors">
+                          <ChevronRight className="size-3.5 text-[#2E5E4E]" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

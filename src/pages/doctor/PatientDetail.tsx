@@ -72,12 +72,14 @@ export default function DoctorPatientDetail() {
             />
 
             <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1E1E1C]">
                   {patient.name}
                 </h1>
-                <StatusBadge tone={patient.tone}>{patient.attention}</StatusBadge>
-                <span className="text-xs text-[#5C5C57]">{patient.cycle}</span>
+                <StatusBadge tone={patient.tone} variant="subtle">
+                  {patient.attention}
+                </StatusBadge>
+                <span className="text-xs text-[#8A8A84]">{patient.cycle}</span>
               </div>
 
               <p className="text-xs sm:text-sm text-[#5C5C57]">
